@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Inter', Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .logo { font-size: 24px; font-weight: 900; color: #0052FF; text-decoration: none; letter-spacing: -1px; }
+    .content { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .button { display: inline-block; background: #0052FF; color: #ffffff !important; font-weight: bold; text-decoration: none; padding: 16px 32px; border-radius: 12px; margin-top: 24px; }
+    .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8; }
+    h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a; margin-top: 0; }
+    .highlight { color: #0052FF; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="https://plumbify.ai" class="logo">PLUMBIFY</a>
+    </div>
+    <div class="content">
+      <h1>Welcome to the Future, {{contact.first_name}}! ⚡</h1>
+      <p>Your 14-day trial account is officially being provisioned. You're one step away from stopping the "Revenue Leak" in your plumbing business.</p>
+      
+      <p><strong>Your Temporary Login Details:</strong><br>
+      Email: {{contact.email}}<br>
+      Password: <em>Sent in a separate secure email</em></p>
+
+      <p>While our AI is warming up your account, I highly recommend booking your <strong>10-minute "Money Machine" tour</strong>. We'll show you how to set up your first "Speed to Lead" automation live on the call.</p>
+
+      <a href="{{location.calendar_link}}" class="button">Book Your Onboarding Tour</a>
+
+      <p style="margin-top: 40px; font-size: 14px;">See you on the inside,<br><strong>The Plumbify Team</strong></p>
+    </div>
+    <div class="footer">
+      © 2026 Plumbify Inc. • Houston, TX<br>
+      <a href="{{unsubscribe_link}}">Unsubscribe</a>
+    </div>
+  </div>
+</body>
+</html>

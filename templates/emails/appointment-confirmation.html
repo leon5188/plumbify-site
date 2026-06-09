@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Inter', Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .logo { font-size: 24px; font-weight: 900; color: #0052FF; text-decoration: none; letter-spacing: -1px; }
+    .content { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .appointment-card { background: #f8fafc; border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #cbd5e1; }
+    .button { display: inline-block; background: #0052FF; color: #ffffff !important; font-weight: bold; text-decoration: none; padding: 16px 32px; border-radius: 12px; margin-top: 24px; }
+    .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8; }
+    h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a; margin-top: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="https://plumbify.ai" class="logo">PLUMBIFY</a>
+    </div>
+    <div class="content">
+      <h1>You're All Set! 🗓️</h1>
+      <p>Hi {{contact.first_name}}, we're looking forward to showing you the Plumbify ecosystem.</p>
+      
+      <div class="appointment-card">
+        <p style="margin: 0; font-weight: bold; color: #0052FF; text-transform: uppercase; font-size: 12px;">Appointment Details</p>
+        <p style="font-size: 18px; font-weight: bold; margin: 8px 0;">{{appointment.start_time}}</p>
+        <p style="margin: 0; font-size: 14px;"><strong>Location:</strong> Zoom Meeting</p>
+      </div>
+
+      <p>We'll cover:</p>
+      <ul style="padding-left: 20px;">
+        <li>Plugging the "Revenue Leak" (Missed Call Text-Back)</li>
+        <li>Automating your hiring pipeline with AI Voice</li>
+        <li>Collecting doorstep payments with Tap to Pay</li>
+      </ul>
+
+      <a href="{{appointment.meeting_location}}" class="button">Join the Zoom Call</a>
+
+      <p style="margin-top: 40px; font-size: 14px;">Talk soon,<br><strong>The Plumbify Strategy Team</strong></p>
+    </div>
+    <div class="footer">
+      <a href="{{appointment.cancel_link}}">Cancel Appointment</a> | <a href="{{appointment.reschedule_link}}">Reschedule</a>
+    </div>
+  </div>
+</body>
+</html>
