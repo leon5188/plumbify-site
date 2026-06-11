@@ -60,8 +60,8 @@
       return {
         bottom: "12px",
         right: "12px",
-        width: "980px",
-        height: "700px",
+        width: "840px",
+        height: "580px",
         borderRadius: "2rem"
       };
     }

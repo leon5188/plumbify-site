@@ -152,15 +152,57 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
     else if (language === "fr") langCode = "fr-FR";
 
     utterance.lang = langCode;
-    const matchingVoice = voices.find(voice => voice.lang.startsWith(langCode));
-    if (matchingVoice) {
-      utterance.voice = matchingVoice;
+
+    // Filter voices matching the target language
+    const langVoices = voices.filter(voice => 
+      voice.lang.startsWith(langCode) || 
+      voice.lang.replace('_', '-').startsWith(langCode)
+    );
+
+    // Prioritize natural-sounding neural voices depending on current language
+    let priorities: string[] = [];
+    if (language === "zh-TW") {
+      priorities = ["mei-jia", "sin-ji", "tingting", "yating", "google", "microsoft", "premium"];
+    } else if (language === "en") {
+      priorities = ["google", "samantha", "microsoft", "natural", "neural", "premium"];
+    } else if (language === "es") {
+      priorities = ["google", "monica", "microsoft", "premium", "natural"];
+    } else if (language === "fr") {
+      priorities = ["google", "thomas", "microsoft", "premium", "natural"];
+    }
+
+    // Select the best voice matching our priority keywords
+    let selectedVoice = null;
+    for (const keyword of priorities) {
+      selectedVoice = langVoices.find(voice => voice.name.toLowerCase().includes(keyword));
+      if (selectedVoice) break;
+    }
+
+    // Fallback to first available voice for the target language
+    if (!selectedVoice && langVoices.length > 0) {
+      selectedVoice = langVoices[0];
+    }
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
     }
     
     // Slow down speed slightly for premium, professional cadence
     utterance.rate = 0.95;
     window.speechSynthesis.speak(utterance);
   };
+
+  // Pre-load voices on component mount to avoid empty voice list latency
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+      if ("onvoiceschanged" in window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+        };
+      }
+    }
+  }, []);
 
   // Auto scroll chat
   useEffect(() => {
@@ -459,10 +501,10 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
           </div>
 
           {/* Body Content: Split Screen layout */}
-          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             
-            {/* LEFT PANE: LIVE PRODUCT DEMO SIMULATOR (40% width on large screens) */}
-            <div className="lg:w-[420px] shrink-0 border-b lg:border-b-0 lg:border-r border-slate-800 bg-[#060a13] p-6 flex flex-col justify-center items-center overflow-y-auto min-h-[220px] lg:min-h-0">
+            {/* LEFT PANE: LIVE PRODUCT DEMO SIMULATOR (40% width on medium/large screens) */}
+            <div className="md:w-[380px] shrink-0 border-b md:border-b-0 md:border-r border-slate-800 bg-[#060a13] p-6 flex flex-col justify-center items-center overflow-y-auto min-h-[220px] md:min-h-0">
               
               {/* Scenario 1: Welcome & Landing Visual */}
               {demoState === "welcome" && (
