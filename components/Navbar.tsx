@@ -1,13 +1,17 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronDown, Zap, Users, PhoneIncoming, BookOpen, Calendar, RefreshCcw, CreditCard, Heart, Shield } from "lucide-react";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenFeatures, setIsOpenFeatures] = useState(false);
   const [isOpenResources, setIsOpenResources] = useState(false);
   const [isOpenCompany, setIsOpenCompany] = useState(false);
+
+  if (pathname === "/widget-embed") return null;
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">

@@ -3,6 +3,33 @@ import { ArrowRight, Clock, User } from "lucide-react";
 
 const posts = [
   {
+    title: "The 2026 Guide to Scaling a Plumbing Business",
+    slug: "grow-plumbing-business-playbook",
+    excerpt: "Relying on referrals is a slow road to growth. Learn the exact digital playbook for scaling your trucks, marketing, and recruiting.",
+    date: "Jun 10, 2026",
+    author: "James Miller",
+    category: "Strategy",
+    color: "bg-blue-50"
+  },
+  {
+    title: "The Hidden Math of Missed Calls: How Plumbing Shops Leak $10k+ Monthly",
+    slug: "missed-calls-cost-plumbing",
+    excerpt: "If you don't answer the phone, your customer clicks the next plumber. Look at the math of missed calls and how automated texting recovers lost cash.",
+    date: "Jun 09, 2026",
+    author: "Sarah Jenkins",
+    category: "Speed to Lead",
+    color: "bg-emerald-50"
+  },
+  {
+    title: "Standardizing Plumbing Dispatching & Invoicing for Profitability",
+    slug: "standardize-plumbing-dispatching-invoicing",
+    excerpt: "Stop losing money on forgotten parts and delayed invoicing. Standardize your field service operations and collect cash instantly on site.",
+    date: "Jun 08, 2026",
+    author: "James Miller",
+    category: "Operations",
+    color: "bg-purple-50"
+  },
+  {
     title: "Plumbing Software 2026: Trends and Predictions",
     slug: "plumbing-software-2026",
     excerpt: "Discover how AI, automated dispatching, and mobile-first operating systems are redefining the plumbing industry in 2026.",
