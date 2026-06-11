@@ -821,6 +821,7 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
                     <option value="">{language === "zh-TW" ? "預設智慧引擎" : "Default Neural Engine"}</option>
                     {availableVoices
                       .filter(v => {
+                        if (!v || !v.lang) return false;
                         let langCode = "en-US";
                         if (language === "zh-TW") langCode = "zh-TW";
                         else if (language === "es") langCode = "es-ES";
@@ -904,7 +905,7 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
           <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             
             {/* LEFT PANE: LIVE PRODUCT DEMO SIMULATOR (40% width on medium/large screens) */}
-            <div className="md:w-[380px] shrink-0 border-b md:border-b-0 md:border-r border-slate-800 bg-[#060a13] p-6 flex flex-col justify-center items-center overflow-y-auto min-h-[220px] md:min-h-0">
+            <div className="md:w-[320px] shrink-0 border-b md:border-b-0 md:border-r border-slate-800 bg-[#060a13] p-6 flex flex-col justify-center items-center overflow-y-auto min-h-[220px] md:min-h-0">
               
               {/* Scenario 1: Welcome & Landing Visual */}
               {demoState === "welcome" && (
@@ -1259,7 +1260,7 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
               </div>
 
               {/* Checkout / CTA Buttons at the bottom of the dialogue feed if pricing is active */}
-              {messages.length > 0 && messages[messages.length - 1].text.includes(LOCALIZATION.en.pricingInfo.substring(0, 15)) || messages[messages.length - 1].text.includes(LOCALIZATION["zh-TW"].pricingInfo.substring(0, 15)) ? (
+              {messages.length > 0 && (messages[messages.length - 1].text.includes(LOCALIZATION.en.pricingInfo.substring(0, 15)) || messages[messages.length - 1].text.includes(LOCALIZATION["zh-TW"].pricingInfo.substring(0, 15))) ? (
                 <div className="px-4 py-3 bg-slate-900/40 border-t border-slate-900/60 flex gap-2 shrink-0">
                   <a 
                     href={process.env.NEXT_PUBLIC_STARTER_CHECKOUT_URL || "/pricing"} 
