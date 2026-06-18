@@ -67,7 +67,7 @@ export async function POST(request: Request) {
               body: JSON.stringify({
                 type: "Live_Chat",
                 contactId: contactId,
-                body: text
+                message: text
               })
             });
             if (!inboundRes.ok) {
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
             }
           }
           // Slight delay to guarantee correct chronological ordering in GHL dashboard
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
       } catch (syncError) {
         console.error("Failed to sync chat history to GHL Conversations:", syncError);
