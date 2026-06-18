@@ -903,7 +903,8 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
           lastName: leadForm.lastName,
           email: leadForm.email,
           phone: leadForm.phone,
-          company: leadForm.company
+          company: leadForm.company,
+          chatHistory: messages
         })
       });
 

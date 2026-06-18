@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, firstName, lastName, phone, company } = body;
+    const { email, firstName, lastName, phone, company, chatHistory } = body;
 
     // Retrieve the token from environment variables (NEVER hardcode in source)
     const GHL_API_KEY = process.env.GHL_PRIVATE_TOKEN;
@@ -41,7 +41,68 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to sync with GHL" }, { status: response.status });
     }
 
-    return NextResponse.json({ success: true, contactId: data.contact?.id });
+    const contactId = data.contact?.id;
+
+    // Sync Chat History to GoHighLevel Conversations stream
+    if (contactId && chatHistory && Array.isArray(chatHistory) && chatHistory.length > 0) {
+      try {
+        for (const msg of chatHistory) {
+          const text = msg.text?.trim();
+          if (!text) continue;
+
+          // Skip visual tool logs/diagnostic messages from being synced
+          if (text.startsWith("🔧") || text.includes("[AI Agent Action]")) {
+            continue;
+          }
+
+          if (msg.sender === "user") {
+            // Post Inbound Message (Visitor)
+            const inboundRes = await fetch("https://services.leadconnectorhq.com/conversations/inbound-messages", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${GHL_API_KEY}`,
+                "Version": "2021-07-28"
+              },
+              body: JSON.stringify({
+                type: "Live_Chat",
+                contactId: contactId,
+                body: text
+              })
+            });
+            if (!inboundRes.ok) {
+              const errTxt = await inboundRes.text();
+              console.error("GHL Inbound Msg Sync Error:", errTxt);
+            }
+          } else if (msg.sender === "agent" || msg.sender === "ai") {
+            // Post Outbound Message (AI Copilot)
+            const outboundRes = await fetch("https://services.leadconnectorhq.com/conversations/messages", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${GHL_API_KEY}`,
+                "Version": "2021-07-28"
+              },
+              body: JSON.stringify({
+                type: "Live_Chat",
+                contactId: contactId,
+                message: text
+              })
+            });
+            if (!outboundRes.ok) {
+              const errTxt = await outboundRes.text();
+              console.error("GHL Outbound Msg Sync Error:", errTxt);
+            }
+          }
+          // Slight delay to guarantee correct chronological ordering in GHL dashboard
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      } catch (syncError) {
+        console.error("Failed to sync chat history to GHL Conversations:", syncError);
+      }
+    }
+
+    return NextResponse.json({ success: true, contactId });
 
   } catch (error) {
     console.error("Server Error:", error);
