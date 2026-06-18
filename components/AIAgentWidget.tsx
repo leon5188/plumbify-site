@@ -736,70 +736,126 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
       const data = await response.json();
       let reply = data.reply || "";
 
-      // Parse trigger tags from Gemini's response
-      let matchedTrigger = "";
-      if (reply.includes("[TRIGGER: start_tour]")) {
-        matchedTrigger = "start_tour";
-        reply = reply.replace("[TRIGGER: start_tour]", "");
-      } else if (reply.includes("[TRIGGER: check_api]")) {
-        matchedTrigger = "check_api";
-        reply = reply.replace("[TRIGGER: check_api]", "");
-      } else if (reply.includes("[TRIGGER: upgrade_growth]")) {
-        matchedTrigger = "upgrade_growth";
-        reply = reply.replace("[TRIGGER: upgrade_growth]", "");
-      } else if (reply.includes("[TRIGGER: export_leads]")) {
-        matchedTrigger = "export_leads";
-        reply = reply.replace("[TRIGGER: export_leads]", "");
-      } else if (reply.includes("[TRIGGER: route_human]")) {
-        matchedTrigger = "route_human";
-        reply = reply.replace("[TRIGGER: route_human]", "");
-      } else if (reply.includes("[TRIGGER: reputation]")) {
-        matchedTrigger = "reputation";
-        reply = reply.replace("[TRIGGER: reputation]", "");
-      }
+      // 1. If a toolCall was returned, execute the tool and append a log message!
+      if (data.toolCall) {
+        const toolName = data.toolCall.name;
+        const args = data.toolCall.args || {};
 
-      reply = reply.trim();
+        // Execute visual transitions
+        if (toolName === "startOnboardingTour") {
+          setIsTourActive(true);
+          setTourStep(1);
+          setDemoState("missed_call");
+          startSMSDemo();
+        } else if (toolName === "checkApiStatus") {
+          setDemoState("api_settings");
+          setApiStatus({ twilio: "checking", ghl: "checking", wechat: "checking" });
+          setTimeout(() => {
+            setApiStatus({ twilio: "connected", ghl: "connected", wechat: "connected" });
+          }, 1500);
+        } else if (toolName === "upgradeSubscription") {
+          setDemoState("invoice");
+          setInvoicePaid(false);
+          setInvoiceStep(1);
+          const tier = args.tier || "growth";
+          setSubscriptionTier(tier as any);
+          setTimeout(() => {
+            setInvoiceStep(2);
+            setInvoicePaid(true);
+          }, 3000);
+        } else if (toolName === "exportLeadsToCsv") {
+          setExportState("loading");
+          setTimeout(() => {
+            setExportState("done");
+            const blob = new Blob(["Name,Phone,Source,Value\nJohn Doe,+15550192834,SMS,$850\nZhang Wei,+15550193492,WeChat,$450"], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.setAttribute("href", url);
+            a.setAttribute("download", "plumbify_synced_leads.csv");
+            a.click();
+          }, 2500);
+        } else if (toolName === "routeToHumanLeon") {
+          setHandoverState("routing");
+          setDemoState("lead_form");
+          setTimeout(() => {
+            setHandoverState("connected");
+          }, 2500);
+        } else if (toolName === "showReputationDashboard") {
+          setDemoState("reputation");
+        }
 
-      // Trigger UI visual transitions matching agent intents
-      if (matchedTrigger === "start_tour") {
-        setIsTourActive(true);
-        setTourStep(1);
-        setDemoState("missed_call");
-        startSMSDemo();
-      } else if (matchedTrigger === "check_api") {
-        setDemoState("api_settings");
-        setApiStatus({ twilio: "checking", ghl: "checking", wechat: "checking" });
-        setTimeout(() => {
-          setApiStatus({ twilio: "connected", ghl: "connected", wechat: "connected" });
-        }, 1500);
-      } else if (matchedTrigger === "upgrade_growth") {
-        setDemoState("invoice");
-        setInvoicePaid(false);
-        setInvoiceStep(1);
-        setSubscriptionTier("growth");
-        setTimeout(() => {
-          setInvoiceStep(2);
-          setInvoicePaid(true);
-        }, 3000);
-      } else if (matchedTrigger === "export_leads") {
-        setExportState("loading");
-        setTimeout(() => {
-          setExportState("done");
-          const blob = new Blob(["Name,Phone,Source,Value\nJohn Doe,+15550192834,SMS,$850\nZhang Wei,+15550193492,WeChat,$450"], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.setAttribute("href", url);
-          a.setAttribute("download", "plumbify_synced_leads.csv");
-          a.click();
-        }, 2500);
-      } else if (matchedTrigger === "route_human") {
-        setHandoverState("routing");
-        setDemoState("lead_form");
-        setTimeout(() => {
-          setHandoverState("connected");
-        }, 2500);
-      } else if (matchedTrigger === "reputation") {
-        setDemoState("reputation");
+        // Add a nice visual tool log message to the dialogue feed
+        const toolLogMsg: Message = {
+          sender: "agent",
+          text: `🔧 [AI Agent Action]: Executed ${toolName}(${JSON.stringify(args)}) successfully.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        };
+        setMessages(prev => [...prev, toolLogMsg]);
+      } else {
+        // Parse legacy trigger tags (fallback for old model iterations or raw text responses)
+        let matchedTrigger = "";
+        if (reply.includes("[TRIGGER: start_tour]")) {
+          matchedTrigger = "start_tour";
+          reply = reply.replace("[TRIGGER: start_tour]", "");
+        } else if (reply.includes("[TRIGGER: check_api]")) {
+          matchedTrigger = "check_api";
+          reply = reply.replace("[TRIGGER: check_api]", "");
+        } else if (reply.includes("[TRIGGER: upgrade_growth]")) {
+          matchedTrigger = "upgrade_growth";
+          reply = reply.replace("[TRIGGER: upgrade_growth]", "");
+        } else if (reply.includes("[TRIGGER: export_leads]")) {
+          matchedTrigger = "export_leads";
+          reply = reply.replace("[TRIGGER: export_leads]", "");
+        } else if (reply.includes("[TRIGGER: route_human]")) {
+          matchedTrigger = "route_human";
+          reply = reply.replace("[TRIGGER: route_human]", "");
+        } else if (reply.includes("[TRIGGER: reputation]")) {
+          matchedTrigger = "reputation";
+          reply = reply.replace("[TRIGGER: reputation]", "");
+        }
+
+        reply = reply.trim();
+
+        if (matchedTrigger === "start_tour") {
+          setIsTourActive(true);
+          setTourStep(1);
+          setDemoState("missed_call");
+          startSMSDemo();
+        } else if (matchedTrigger === "check_api") {
+          setDemoState("api_settings");
+          setApiStatus({ twilio: "checking", ghl: "checking", wechat: "checking" });
+          setTimeout(() => {
+            setApiStatus({ twilio: "connected", ghl: "connected", wechat: "connected" });
+          }, 1500);
+        } else if (matchedTrigger === "upgrade_growth") {
+          setDemoState("invoice");
+          setInvoicePaid(false);
+          setInvoiceStep(1);
+          setSubscriptionTier("growth");
+          setTimeout(() => {
+            setInvoiceStep(2);
+            setInvoicePaid(true);
+          }, 3000);
+        } else if (matchedTrigger === "export_leads") {
+          setExportState("loading");
+          setTimeout(() => {
+            setExportState("done");
+            const blob = new Blob(["Name,Phone,Source,Value\nJohn Doe,+15550192834,SMS,$850\nZhang Wei,+15550193492,WeChat,$450"], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.setAttribute("href", url);
+            a.setAttribute("download", "plumbify_synced_leads.csv");
+            a.click();
+          }, 2500);
+        } else if (matchedTrigger === "route_human") {
+          setHandoverState("routing");
+          setDemoState("lead_form");
+          setTimeout(() => {
+            setHandoverState("connected");
+          }, 2500);
+        } else if (matchedTrigger === "reputation") {
+          setDemoState("reputation");
+        }
       }
 
       const agentMsg: Message = {
