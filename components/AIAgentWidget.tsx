@@ -233,6 +233,16 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // Notify parent window of widget open/closed state changes
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.parent) {
+      window.parent.postMessage({
+        type: "plumbify-widget-state",
+        isOpen: isOpen
+      }, "*");
+    }
+  }, [isOpen]);
+
   // Hide widget layout on sub-embed route
   if (!isEmbedPage && pathname === "/widget-embed") {
     return null;
@@ -269,6 +279,16 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
 
   // Speaks text and sets caption subtitles
   const speakText = (text: string) => {
+    // If in Chat mode, never play audio or show subtitle overlay
+    if (communicationMode === "chat") {
+      setCurrentSubtitle("");
+      setIsSpeaking(false);
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      return;
+    }
+
     // Strip emojis for voice synthesis
     const cleanText = text.replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, "");
     setCurrentSubtitle(text);
@@ -1337,6 +1357,11 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
                     onClick={() => {
                       setCommunicationMode("chat");
                       setVoiceListening(false);
+                      if (typeof window !== "undefined" && window.speechSynthesis) {
+                        window.speechSynthesis.cancel();
+                      }
+                      setIsSpeaking(false);
+                      setCurrentSubtitle("");
                     }}
                     className={`px-3 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${
                       communicationMode === "chat" 
