@@ -3,40 +3,22 @@ import { ArrowRight, Clock, User } from "lucide-react";
 
 const posts = [
   {
-    title: "The 2026 Guide to Scaling a Plumbing Business",
-    slug: "grow-plumbing-business-playbook",
-    excerpt: "Relying on referrals is a slow road to growth. Learn the exact digital playbook for scaling your trucks, marketing, and recruiting.",
-    date: "Jun 10, 2026",
-    author: "James Miller",
-    category: "Strategy",
-    color: "bg-blue-50"
-  },
-  {
-    title: "The Hidden Math of Missed Calls: How Plumbing Shops Leak $10k+ Monthly",
-    slug: "missed-calls-cost-plumbing",
-    excerpt: "If you don't answer the phone, your customer clicks the next plumber. Look at the math of missed calls and how automated texting recovers lost cash.",
-    date: "Jun 09, 2026",
-    author: "Sarah Jenkins",
-    category: "Speed to Lead",
-    color: "bg-emerald-50"
-  },
-  {
-    title: "Standardizing Plumbing Dispatching & Invoicing for Profitability",
-    slug: "standardize-plumbing-dispatching-invoicing",
-    excerpt: "Stop losing money on forgotten parts and delayed invoicing. Standardize your field service operations and collect cash instantly on site.",
-    date: "Jun 08, 2026",
-    author: "James Miller",
-    category: "Operations",
+    title: "The Ultimate 10DLC Registration Guide for Trade Services",
+    slug: "10dlc-registration-guide",
+    excerpt: "Everything you need to know about SMS compliance. Don't let carriers block your customer communications.",
+    date: "Oct 05, 2026",
+    author: "Robert Vance",
+    category: "Compliance",
     color: "bg-purple-50"
   },
   {
-    title: "Plumbing Software 2026: Trends and Predictions",
-    slug: "plumbing-software-2026",
-    excerpt: "Discover how AI, automated dispatching, and mobile-first operating systems are redefining the plumbing industry in 2026.",
-    date: "Oct 15, 2026",
-    author: "James Miller",
-    category: "Technology",
-    color: "bg-blue-50"
+    title: "AI Answering vs. Answering Services: Which is Better for a Plumbing Shop?",
+    slug: "ai-answering-vs-answering-services-plumbers",
+    excerpt: "Compare live answering call centers with AI-powered receptionist automation. Learn which system captures more plumbing leads at a lower cost.",
+    date: "Jul 09, 2026",
+    author: "Sarah Jenkins",
+    category: "AI & Automation",
+    color: "bg-emerald-50"
   },
   {
     title: "How an AI Plumber Assistant Can Save You 20 Hours a Week",
@@ -48,13 +30,103 @@ const posts = [
     color: "bg-emerald-50"
   },
   {
-    title: "The Ultimate 10DLC Registration Guide for Trade Services",
-    slug: "10dlc-registration-guide",
-    excerpt: "Everything you need to know about SMS compliance. Don't let carriers block your customer communications.",
-    date: "Oct 05, 2026",
-    author: "Robert Vance",
-    category: "Compliance",
+    title: "The Goldmine in Your CRM: How to Generate 20+ Plumbing Jobs from Old Leads",
+    slug: "database-reactivation-plumbing-jobs",
+    excerpt: "Stop spending thousands on Google Ads. Learn how to reactivate past customers and cold leads to secure high-margin plumbing jobs instantly.",
+    date: "Jun 25, 2026",
+    author: "Leon",
+    category: "Speed to Lead",
+    color: "bg-emerald-50"
+  },
+  {
+    title: "Emergency Plumbing Dispatching: How to Cut Response Times by 50%",
+    slug: "emergency-plumbing-dispatching-guide",
+    excerpt: "When pipes burst, every minute counts. Learn how automated skill-based routing and GPS dispatching double your emergency response capacity.",
+    date: "Jun 22, 2026",
+    author: "James Miller",
+    category: "Operations",
     color: "bg-purple-50"
+  },
+  {
+    title: "Why Flat-Rate Pricing Wins: Scaling Your Plumbing Ticket Sizes",
+    slug: "flat-rate-pricing-plumbing-ticket-sizes",
+    excerpt: "Ditch the hourly billing. Learn how flat-rate pricing tiers and digital menu presentations increase ticket sizes by 35%.",
+    date: "Jul 13, 2026",
+    author: "James Miller",
+    category: "Strategy",
+    color: "bg-purple-50"
+  },
+  {
+    title: "How to Get 100+ Google Reviews for Your Plumbing Business on Autopilot",
+    slug: "google-reviews-plumbing-autopilot",
+    excerpt: "Reviews are the lifeblood of local SEO. Learn how review velocity and automatic follow-ups double your map pack ranking and revenue.",
+    date: "Jun 18, 2026",
+    author: "Leon",
+    category: "Strategy",
+    color: "bg-blue-50"
+  },
+  {
+    title: "The 2026 Guide to Scaling a Plumbing Business",
+    slug: "grow-plumbing-business-playbook",
+    excerpt: "Relying on referrals is a slow road to growth. Learn the exact digital playbook for scaling your trucks, marketing, and recruiting.",
+    date: "Jun 10, 2026",
+    author: "James Miller",
+    category: "Strategy",
+    color: "bg-blue-50"
+  },
+  {
+    title: "The Hidden Math of Missed Calls: How Plumbing Shops Leak $10,000+ Every Month",
+    slug: "missed-calls-cost-plumbing",
+    excerpt: "If you don't answer the phone, your customer clicks the next plumber. Look at the math of missed calls and how automated texting recovers lost cash.",
+    date: "Jun 09, 2026",
+    author: "Sarah Jenkins",
+    category: "Speed to Lead",
+    color: "bg-emerald-50"
+  },
+  {
+    title: "Plumbing Software 2026: Trends and Predictions",
+    slug: "plumbing-software-2026",
+    excerpt: "Discover how AI, automated dispatching, and mobile-first operating systems are redefining the plumbing industry in 2026.",
+    date: "Oct 15, 2026",
+    author: "James Miller",
+    category: "Technology",
+    color: "bg-blue-50"
+  },
+  {
+    title: "Standardizing Plumbing Dispatching & Invoicing for Profitability",
+    slug: "standardize-plumbing-dispatching-invoicing",
+    excerpt: "Stop losing money on forgotten parts and delayed invoicing. Standardize your field service operations and collect cash instantly on site.",
+    date: "Jun 08, 2026",
+    author: "James Miller",
+    category: "Operations",
+    color: "bg-purple-50"
+  },
+  {
+    title: "Tap-to-Pay for Plumbers: Accelerating Cash Flow from the Service Drive",
+    slug: "tap-to-pay-plumbers-cash-flow",
+    excerpt: "Ditch the paper invoices and card readers. Learn how mobile Tap-to-Pay captures payment instantly at the job site, reducing AR days to zero.",
+    date: "Jun 29, 2026",
+    author: "James Miller",
+    category: "Technology",
+    color: "bg-blue-50"
+  },
+  {
+    title: "Vetting Plumbing Helpers: Automating the Hiring Screening Process",
+    slug: "vetting-plumbing-helpers-automation",
+    excerpt: "Hiring is the biggest growth bottleneck in trade services. Learn how automated text-screening filters helper candidates on autopilot.",
+    date: "Jul 06, 2026",
+    author: "Sarah Jenkins",
+    category: "AI & Automation",
+    color: "bg-emerald-50"
+  },
+  {
+    title: "Capturing WeChat and Social Leads: The Untapped Pipeline for Trade Services",
+    slug: "wechat-social-leads-trade-services",
+    excerpt: "Your next high-value plumbing job is sitting in your social DMs. Learn how to capture and automate WeChat and Facebook messenger leads.",
+    date: "Jul 02, 2026",
+    author: "Leon",
+    category: "Strategy",
+    color: "bg-blue-50"
   }
 ];
 

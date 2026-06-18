@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Zap, Users, PhoneIncoming, BookOpen, Calendar, RefreshCcw, CreditCard, Heart, Shield } from "lucide-react";
+import { ChevronDown, Zap, Users, PhoneIncoming, BookOpen, Calendar, RefreshCcw, CreditCard, Heart, Shield, Sparkles } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -11,7 +11,7 @@ export default function Navbar() {
   const [isOpenResources, setIsOpenResources] = useState(false);
   const [isOpenCompany, setIsOpenCompany] = useState(false);
 
-  if (pathname === "/widget-embed") return null;
+  if (pathname === "/widget-embed" || pathname === "/tour") return null;
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
@@ -124,6 +124,10 @@ export default function Navbar() {
               <Link href="/resources/demos" className="flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl transition-colors">
                 <Zap size={18} className="text-orange-500" />
                 <div className="font-bold text-slate-900">Video Demo Center</div>
+              </Link>
+              <Link href="/tour" className="flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl transition-colors">
+                <Sparkles size={18} className="text-blue-500" />
+                <div className="font-bold text-slate-900">Interactive Tour</div>
               </Link>
             </div>
           </div>

@@ -184,6 +184,7 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [showAudioSettings, setShowAudioSettings] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false); // To drive the dynamic audio waveform visualizer
+  const [currentSubtitle, setCurrentSubtitle] = useState(""); // Captions text output
 
   // Dynamic Simulation Variables
   const [phoneStep, setPhoneStep] = useState(0);
@@ -227,6 +228,7 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
 
   // Initialize Speech synthesis voice with premium priorities
   const speakText = (text: string) => {
+    setCurrentSubtitle(text);
     if (isMuted || typeof window === "undefined" || !window.speechSynthesis) {
       setIsSpeaking(false);
       return;
@@ -585,47 +587,98 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
     }, 800);
   };
 
-  // Handle manual user message send
-  const handleSendText = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
+  // Helper to check if text contains any keywords
+  const containsAny = (str: string, ...keywords: string[]) => {
+    return keywords.some(kw => str.includes(kw));
+  };
+
+  // Shared message processor for both text inputs and auto-submitted voice inputs
+  const processUserMsg = (text: string) => {
+    if (!text.trim()) return;
 
     const userMsg: Message = {
       sender: "user",
-      text: inputText,
+      text: text,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     };
 
     setMessages(prev => [...prev, userMsg]);
-    setInputText("");
     setIsTyping(true);
 
     setTimeout(() => {
       let responseText = "";
-      const textLower = inputText.toLowerCase();
+      const textLower = text.toLowerCase();
 
-      if (textLower.includes("sms") || textLower.includes("簡訊") || textLower.includes("回撥") || textLower.includes("call") || textLower.includes("llamada")) {
-        responseText = t.smsIntro;
-        startSMSDemo();
-      } else if (textLower.includes("calendar") || textLower.includes("派單") || textLower.includes("行事曆") || textLower.includes("agenda")) {
-        responseText = t.calendarIntro;
-        setDemoState("calendar");
-      } else if (textLower.includes("invoice") || textLower.includes("pay") || textLower.includes("發票") || textLower.includes("收款") || textLower.includes("pago")) {
-        responseText = t.invoiceIntro;
-        startInvoiceDemo();
-      } else if (textLower.includes("recruit") || textLower.includes("招募") || textLower.includes("聘") || textLower.includes("empleo")) {
-        responseText = t.recruitIntro;
-        setDemoState("recruiting");
-      } else if (textLower.includes("price") || textLower.includes("cost") || textLower.includes("價格") || textLower.includes("方案") || textLower.includes("錢") || textLower.includes("cuesta")) {
-        responseText = t.pricingInfo;
-        setDemoState("invoice");
-      } else if (textLower.includes("book") || textLower.includes("預約") || textLower.includes("回電") || textLower.includes("reunión")) {
-        responseText = t.leadPrompt;
-        setDemoState("lead_form");
+      // Advanced Multilingual Q&A Database
+      if (language === "zh-TW") {
+        if (containsAny(textLower, "plumbify是什麼", "什麼是plumbify", "這是什麼", "plumbify is what", "介紹")) {
+          responseText = "Plumbify 是專為水電空調與工程行設計的 AI 客戶管理系統（CRM）。它能 24/7 自動運行簡訊回撥、微信對接、自動排程派單與 5 星 Google 評論自動生成，幫您鎖定每一筆潛在訂單，防止客戶流失！";
+          setDemoState("welcome");
+        } else if (containsAny(textLower, "價格", "收費", "方案", "多少錢", "方案價格", "費率", "定價")) {
+          responseText = "Plumbify 提供兩種主要方案：\n1. 基礎版 (Starter - $197/月)：包含簡訊回撥、智慧排程與手機感應收款。\n2. 專業成長版 (Growth - $397/月)：增加 AI 招募助理與客戶資料活化。\n所有方案都包含 14 天免費設定挑戰，不成交不收費！";
+          setDemoState("invoice");
+        } else if (containsAny(textLower, "servicetitan", "housecall", "hcp", "整合", "軟體連接", "系統連接", "串接")) {
+          responseText = "是的，我們完全支援整合！Plumbify 可以安裝在 ServiceTitan 或 Housecall Pro 的前端。它能先透過簡訊回撥搶下客戶並預約，再把工單資訊無縫傳送到您的原有排班系統中，讓您現有的流程不受影響。";
+          setDemoState("calendar");
+        } else if (containsAny(textLower, "微信", "wechat", "企業微信", "wecom", "華人", "中文")) {
+          responseText = "Plumbify 支援直接串接您的微信（WeChat）或企業微信（WeCom）。華人客戶透過微信諮詢時，對話會自動同步到系統，並且系統會自動進行中英雙向翻譯，讓英文調度員也能輕鬆溝通和接單！";
+          setDemoState("welcome");
+        } else if (containsAny(textLower, "簡訊", "回撥", "未接", "漏接", "簡訊回撥", "missed call", "電話")) {
+          responseText = "『漏電簡訊自動回撥』是我們的核心功能。當電話漏接時，系統會自動在 5 秒內發送簡訊給對方。70% 的客戶在撥不通時會改打別家，簡訊回撥能第一時間留住他們。您可以利用左側手機模擬器測試！";
+          startSMSDemo();
+        } else if (containsAny(textLower, "合約", "解約", "綁定", "簽約", "退款")) {
+          responseText = "Plumbify 不需要簽訂任何長期合約，您可以隨時取消訂閱。我們也提供 30 天無條件退款保證，讓您完全沒有風險。";
+          setDemoState("lead_form");
+        } else if (containsAny(textLower, "14天", "免費試用", "免費挑戰", "挑戰", "試用")) {
+          responseText = "我們的『14天免費挑戰』包含免費為您設定並串接電話與微信 14 天。如果系統在這期間內沒有幫您自動救回並成交至少 3 筆水電工單，您不需支付任何費用！";
+          setDemoState("lead_form");
+        } else if (containsAny(textLower, "評價", "評論", "google評論", "商家評價", "星級", "星", "口碑")) {
+          responseText = "Plumbify 會在完工收款後自動發送簡訊邀請評論。給 4-5 星的好評客戶會被直接引導至 Google 商家頁面，低分（1-3星）客戶則會被引導填寫私下反饋表，避免公開差評！";
+          setDemoState("welcome");
+        } else if (containsAny(textLower, "緊急", "修繕", "爆裂", "漏水", "沒熱水", "搶修")) {
+          responseText = "是的！AI 可以自動識別緊急漏水、水管爆裂等高優先級字眼，在 conversations 中標記為緊急線索，並即時向您的排班師傅發送派單推送。";
+          setDemoState("calendar");
+        } else if (containsAny(textLower, "招募", "聘", "找人", "雇", "找師傅")) {
+          responseText = "Plumber 招聘是主要痛點。我們的 AI 招募助理（在 Growth/Enterprise 級別啟用）會自動篩選招募管道、發送簡訊面試應徵者、核對證照類別，並將合適的人選直接約入您的面試行事曆。";
+          setDemoState("recruiting");
+        } else {
+          responseText = "您可以詢問我關於 Plumbify 的具體問題！試著輸入：『Plumbify是什麼？』、『價格多少？』、『如何串接 ServiceTitan？』、『微信如何整合？』或『什麼是14天免費挑戰？』。您也可以隨時點選上方的功能按鍵觀看模擬操作。";
+        }
       } else {
-        responseText = language === "zh-TW" 
-          ? "您可以點擊上方的四個功能卡片查看演示，或者輸入『價格』、『簡訊』、『行事曆』、『招募』、『預約』讓我為您解答。"
-          : "Feel free to select one of the four demo tabs above, or type 'price', 'sms', 'calendar', 'recruiting', or 'book' to explore Plumbify's tools.";
+        // English Q&A Matcher
+        if (containsAny(textLower, "what is plumbify", "how it works", "plumbify what", "about plumbify", "introduce", "what's plumbify")) {
+          responseText = "Plumbify is the #1 AI-first CRM operating system built for plumbing and trade businesses. It automates missed-call text-backs, WeChat/WeCom leads, smart scheduling, and 5-star Google review generation to keep your trucks full 24/7.";
+          setDemoState("welcome");
+        } else if (containsAny(textLower, "pricing", "cost", "price", "how much", "plans", "fee", "rate")) {
+          responseText = "Plumbify offers 3 simple plans:\n1. Starter ($197/mo): Twilio SMS text-backs, smart calendar, and mobile payment sync.\n2. Growth ($397/mo): Adds AI recruiting and database reactivation.\n3. Custom Enterprise: For fleets with 20+ trucks.\nAll plans start with a 14-day free setup challenge.";
+          setDemoState("invoice");
+        } else if (containsAny(textLower, "servicetitan", "housecall", "hcp", "integration", "integrate", "jobber")) {
+          responseText = "Yes! Plumbify connects fully with ServiceTitan, Housecall Pro, and Jobber. It secures the customer first via instant text-backs, books the slot, and syncs the details straight to your dispatch board so your existing workflow stays clean.";
+          setDemoState("calendar");
+        } else if (containsAny(textLower, "wechat", "wecom", "chinese", "translation", "translate")) {
+          responseText = "Plumbify connects your business WeChat/WeCom. Incoming messages are aggregated into your unified inbox and translated instantly in both directions, enabling your english-speaking dispatchers to book Chinese-speaking leads with ease.";
+          setDemoState("welcome");
+        } else if (containsAny(textLower, "sms", "text back", "missed call", "call back", "unanswered")) {
+          responseText = "Missed-Call Auto Text-Back detects missed calls and texts the customer in 5 seconds. This keeps them from calling other plumbers. You can test this using the phone simulator on the left!";
+          startSMSDemo();
+        } else if (containsAny(textLower, "contract", "cancel", "agreement", "refund")) {
+          responseText = "No contracts! Plumbify is month-to-month, and you can cancel anytime. We also offer a 30-day money-back guarantee.";
+          setDemoState("lead_form");
+        } else if (containsAny(textLower, "trial", "free challenge", "challenge", "free trial", "14 day")) {
+          responseText = "Our 14-Day Free Challenge includes full system setup. If the system does not rescue and secure at least 3 plumbing jobs that you would have otherwise missed or forgotten, you pay nothing.";
+          setDemoState("lead_form");
+        } else if (containsAny(textLower, "review", "reputation", "google reviews", "rating", "star", "maps")) {
+          responseText = "Plumbify automates review requests via SMS after billing. 4-5 star ratings go straight to Google Maps. 1-3 star feedback is routed privately to protect your reputation from negative public reviews.";
+          setDemoState("welcome");
+        } else if (containsAny(textLower, "recruit", "hiring", "hired", "applicant", "find plumber")) {
+          responseText = "AI Recruiting (Growth tier) scans job boards, text-screens applicants, qualifies license types, and books interviews with Master Plumbers automatically, saving you 15+ hours of manual screening weekly.";
+          setDemoState("recruiting");
+        } else if (containsAny(textLower, "emergency", "burst pipe", "leak", "no hot water", "clog")) {
+          responseText = "Yes, our AI is trained to detect high-priority keywords (like 'burst pipe' or 'leak') in incoming chats to tag them as urgent and immediately send push notifications to free technicians.";
+          setDemoState("calendar");
+        } else {
+          responseText = "I can answer specific questions about Plumbify! Try asking: 'What is Plumbify?', 'How much does it cost?', 'Does it integrate with ServiceTitan?', 'How does WeChat integration work?', or 'What is the 14-day free challenge?'. You can also select feature tabs above to watch a demo.";
+        }
       }
 
       const agentMsg: Message = {
@@ -638,6 +691,14 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
       setIsTyping(false);
       speakText(responseText);
     }, 1000);
+  };
+
+  // Handle manual user message send
+  const handleSendText = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    processUserMsg(inputText);
+    setInputText("");
   };
 
   // Submit Lead Form to GoHighLevel CRM
@@ -1329,23 +1390,37 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
                 </div>
               )}
 
-              {/* Dynamic Speech Waveform Visualizer */}
+              {/* Dynamic Speech Waveform Visualizer & Subtitles */}
               {isSpeaking && (
-                <div className="px-4 py-1.5 bg-blue-950/40 border-t border-slate-900 flex items-center gap-2 text-blue-400 shrink-0 select-none animate-in fade-in duration-200">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                  </span>
-                  <span className="text-[9px] font-black tracking-tight uppercase">{language === "zh-TW" ? "AI 語音導覽中" : "AI Voice Speaking"}</span>
-                  
-                  {/* Waveform Bars */}
-                  <div className="flex items-end gap-0.5 h-3 ml-auto pr-2">
-                    <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-full [animation-delay:0.1s]"></div>
-                    <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-[60%] [animation-delay:0.3s]"></div>
-                    <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-[80%] [animation-delay:0.2s]"></div>
-                    <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-[40%] [animation-delay:0.5s]"></div>
-                    <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-full [animation-delay:0.4s]"></div>
+                <div className="flex flex-col shrink-0 select-none animate-in fade-in duration-200">
+                  {/* Waveform Bar */}
+                  <div className="px-4 py-1.5 bg-blue-950/40 border-t border-slate-900 flex items-center gap-2 text-blue-400">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                    <span className="text-[9px] font-black tracking-tight uppercase">{language === "zh-TW" ? "AI 語音導覽中" : "AI Voice Speaking"}</span>
+                    
+                    {/* Waveform Bars */}
+                    <div className="flex items-end gap-0.5 h-3 ml-auto pr-2">
+                      <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-full [animation-delay:0.1s]"></div>
+                      <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-[60%] [animation-delay:0.3s]"></div>
+                      <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-[80%] [animation-delay:0.2s]"></div>
+                      <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-[40%] [animation-delay:0.5s]"></div>
+                      <div className="w-[2px] bg-blue-400 rounded-full animate-wave h-full [animation-delay:0.4s]"></div>
+                    </div>
                   </div>
+
+                  {/* Live Caption Text Box */}
+                  {currentSubtitle && (
+                    <div className="px-4 py-2.5 bg-slate-900 border-t border-slate-800 text-[10.5px] leading-relaxed text-slate-200 select-text max-h-24 overflow-y-auto font-medium">
+                      <div className="text-[8px] font-black uppercase text-blue-400 tracking-wider mb-1 flex items-center gap-1 select-none">
+                        <span>{language === "zh-TW" ? "🗣️ 語音字幕輸出" : "🗣️ Live Voice Captions"}</span>
+                      </div>
+                      <p>{currentSubtitle}</p>
+                    </div>
+                  )}
+
                   <style>{`
                     @keyframes wave-bounce {
                       0%, 100% { height: 30%; }
@@ -1386,7 +1461,8 @@ export default function AIAgentWidget({ isEmbedPage = false }: { isEmbedPage?: b
                       };
                       recognition.onresult = (event: any) => {
                         const transcript = event.results[0][0].transcript;
-                        setInputText(transcript);
+                        setInputText("");
+                        processUserMsg(transcript);
                       };
                       recognition.onerror = () => {
                         setInputText("");
