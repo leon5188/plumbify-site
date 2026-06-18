@@ -73,17 +73,30 @@ export default function ProductTour() {
     activeTechs: 8,
     jobsDispatched: 312
   });
+  const [recentLeads, setRecentLeads] = useState<any[]>([]);
 
-  // Fetch stats from Go Backend or run local mock timer
+  // Fetch stats from GoHighLevel endpoint
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/tour/dashboard-stats");
+        const res = await fetch("/api/dashboard-stats");
         if (res.ok) {
           const data = await res.json();
-          setStats(data);
+          setStats({
+            capturedLeads: data.capturedLeads,
+            savedRevenue: data.savedRevenue,
+            responseTime: data.responseTime,
+            reviewsCount: data.reviewsCount,
+            averageRating: data.averageRating,
+            activeTechs: data.activeTechs,
+            jobsDispatched: data.jobsDispatched
+          });
+          if (data.recentLeads) {
+            setRecentLeads(data.recentLeads);
+          }
         }
       } catch (e) {
+        console.error("Failed to fetch GHL dashboard stats, falling back to mock ticker:", e);
         // Fallback ticker
         const interval = setInterval(() => {
           setStats(prev => {
@@ -476,117 +489,180 @@ export default function ProductTour() {
           
           {/* TAB 1: DASHBOARD VIEW */}
           {activeTab === "dashboard" && (
-            <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="space-y-6 animate-in fade-in duration-300">
               <div className="flex justify-between items-center">
                 <div>
-                  <h1 className="text-2xl font-black text-white">Dashboard Overview</h1>
-                  <p className="text-xs text-slate-500">Sub-account metrics and auto-pilot lead statistics</p>
+                  <h1 className="text-2xl font-black text-white flex items-center gap-2">
+                    Dashboard Overview
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                  </h1>
+                  <p className="text-xs text-slate-500">Live sub-account metrics and auto-pilot lead statistics synced with GoHighLevel</p>
                 </div>
               </div>
 
               {/* Stats Row */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
-                  <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Captured Leads</div>
-                  <div className="text-2xl font-black text-white mt-1 font-mono">{stats.capturedLeads}</div>
-                  <div className="text-[9px] text-emerald-400 mt-1 flex items-center gap-0.5">
-                    ▲ 18.2% <span className="text-slate-500">vs last month</span>
+                <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-xl relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
+                  <div className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Captured Leads (GHL)</div>
+                  <div className="text-3xl font-black text-white mt-1.5 font-mono">{stats.capturedLeads}</div>
+                  <div className="text-[9px] text-emerald-400 mt-1.5 flex items-center gap-1 font-bold">
+                    ▲ 18.2% <span className="text-slate-500 font-normal">vs last month</span>
                   </div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
-                  <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Revenue Captured</div>
-                  <div className="text-2xl font-black text-emerald-400 mt-1 font-mono">{formatCurrency(stats.savedRevenue)}</div>
-                  <div className="text-[9px] text-slate-500 mt-1">Average ticket: $820</div>
+                <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-xl relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                  <div className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Revenue Captured (GHL)</div>
+                  <div className="text-3xl font-black text-emerald-400 mt-1.5 font-mono">{formatCurrency(stats.savedRevenue)}</div>
+                  <div className="text-[9px] text-slate-500 mt-1.5">Avg plumbing ticket: $820</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
-                  <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Google Review Average</div>
-                  <div className="text-2xl font-black text-amber-500 mt-1 font-mono flex items-center gap-1">
-                    {stats.averageRating} <Star size={16} className="fill-current text-amber-500" />
+                <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-xl relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                  <div className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Google Review Average</div>
+                  <div className="text-3xl font-black text-amber-500 mt-1.5 font-mono flex items-center gap-1.5">
+                    {stats.averageRating} <Star size={18} className="fill-current text-amber-500" />
                   </div>
-                  <div className="text-[9px] text-slate-500 mt-1">{stats.reviewsCount} Google Map reviews</div>
+                  <div className="text-[9px] text-slate-500 mt-1.5">{stats.reviewsCount} Google Map reviews</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
-                  <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">AI Lead Response Time</div>
-                  <div className="text-2xl font-black text-blue-400 mt-1 font-mono">{stats.responseTime}</div>
-                  <div className="text-[9px] text-blue-400 mt-1 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Auto-pilot active
+                <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-xl relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                  <div className="text-[9px] text-slate-500 font-black uppercase tracking-wider">AI Lead Response Time</div>
+                  <div className="text-3xl font-black text-blue-400 mt-1.5 font-mono">{stats.responseTime}</div>
+                  <div className="text-[9px] text-blue-400 mt-1.5 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Auto-pilot active
                   </div>
                 </div>
               </div>
 
-              {/* Grid 2 Cols: Lead Source chart + Activity Feed */}
+              {/* Grid 3 Cols: Lead Source chart + GHL Feed + Activity Feed */}
               <div className="grid lg:grid-cols-12 gap-6">
                 
                 {/* Simulated Lead Sources chart */}
-                <div className="lg:col-span-7 p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between">
+                <div className="lg:col-span-4 p-6 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-xl flex flex-col justify-between min-h-[290px] relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">Omnichannel Lead Distribution</h3>
+                    <h3 className="text-sm font-black text-white mb-1">Omnichannel Lead Distribution</h3>
                     <p className="text-[10px] text-slate-500 mb-4">Real-time leads integrated from all connected APIs</p>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     <div>
                       <div className="flex justify-between items-center text-[10px] font-bold mb-1">
                         <span className="text-slate-300">Missed Call Text-Back (Twilio)</span>
-                        <span className="font-mono">52%</span>
+                        <span className="font-mono text-blue-400">52%</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-800">
+                      <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-850">
                         <div className="h-full bg-blue-600 rounded-full" style={{ width: "52%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between items-center text-[10px] font-bold mb-1">
                         <span className="text-slate-300">WeChat / WeCom gateway</span>
-                        <span className="font-mono">28%</span>
+                        <span className="font-mono text-emerald-400">28%</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-800">
+                      <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-850">
                         <div className="h-full bg-emerald-500 rounded-full" style={{ width: "28%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between items-center text-[10px] font-bold mb-1">
                         <span className="text-slate-300">Google Local Service Ads</span>
-                        <span className="font-mono">14%</span>
+                        <span className="font-mono text-amber-500">14%</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-800">
-                        <div className="h-full bg-orange-500 rounded-full" style={{ width: "14%" }}></div>
+                      <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-850">
+                        <div className="h-full bg-amber-500 rounded-full" style={{ width: "14%" }}></div>
                       </div>
                     </div>
                     <div>
                       <div className="flex justify-between items-center text-[10px] font-bold mb-1">
                         <span className="text-slate-300">Facebook Leads & Emails</span>
-                        <span className="font-mono">6%</span>
+                        <span className="font-mono text-slate-400">6%</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-800">
+                      <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden p-[1px] border border-slate-850">
                         <div className="h-full bg-slate-600 rounded-full" style={{ width: "6%" }}></div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Live Activity Feed */}
-                <div className="lg:col-span-5 p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                  <h3 className="text-sm font-bold text-white mb-3">Live System Log</h3>
-                  <div className="space-y-3 max-h-48 overflow-y-auto pr-1 scrollbar-none font-mono text-[9px] text-slate-400">
-                    <div className="p-2 rounded-lg bg-slate-950 border border-slate-850 flex items-center justify-between">
+                {/* Live GHL Sync Feed card */}
+                <div className="lg:col-span-4 p-6 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-2xl relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300 flex flex-col justify-between min-h-[290px]">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/10 transition-all duration-300"></div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live GHL Contacts Feed
+                      </h3>
+                      <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase font-mono tracking-wider">GHL CRM</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 mb-3">Real-time sync from GoHighLevel Location</p>
+                  </div>
+
+                  <div className="space-y-2 max-h-[175px] overflow-y-auto pr-1 scrollbar-none flex-1">
+                    {recentLeads && recentLeads.length > 0 ? (
+                      recentLeads.map((lead) => (
+                        <div key={lead.id} className="p-2 rounded-xl bg-slate-950/60 border border-slate-850 hover:border-slate-800 transition-all flex items-center justify-between gap-2.5">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-slate-200 truncate max-w-[100px]">{lead.name}</span>
+                              <span className="text-[7.5px] font-bold px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800/50 uppercase font-mono truncate max-w-[70px]">
+                                {lead.source}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 mt-0.5 text-[8.5px] text-slate-500 font-mono">
+                              <span className="truncate">{lead.phone}</span>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="text-[8.5px] font-bold text-slate-500 font-mono">{lead.date}</span>
+                            <div className="flex gap-1 mt-1 justify-end">
+                              {lead.tags && lead.tags.map((tag: string, idx: number) => (
+                                <span key={idx} className="text-[7px] font-black px-1 bg-blue-600/10 text-blue-400 rounded-full border border-blue-500/10 lowercase">
+                                  #{tag.length > 10 ? tag.slice(0, 8) + ".." : tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-12 text-center text-[10px] text-slate-500 font-bold">
+                        No contacts found. Register a lead to sync in real-time.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Live System Log card */}
+                <div className="lg:col-span-4 p-6 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 shadow-2xl relative overflow-hidden group hover:border-slate-700/60 transition-all duration-300 flex flex-col justify-between min-h-[290px]">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/10 transition-all duration-300"></div>
+                  <div>
+                    <h3 className="text-sm font-black text-white mb-1">Live Automation System Log</h3>
+                    <p className="text-[10px] text-slate-500 mb-3">Real-time background agent dispatches</p>
+                  </div>
+                  <div className="space-y-2 max-h-[175px] overflow-y-auto pr-1 scrollbar-none flex-1">
+                    <div className="p-2 rounded-xl bg-slate-950/60 border border-slate-850 flex items-center justify-between gap-3 text-[9px] font-mono text-slate-300 hover:border-slate-800 transition-all">
                       <div>
-                        <span className="text-blue-400 font-bold">[Auto-Pilot]</span> Scheduled Dave for burst pipe
+                        <span className="text-blue-400 font-bold">[Auto-Pilot]</span> Dispatch Dave: Burst pipe
                         <div className="text-slate-500 mt-0.5">Elm St (austin_zone_1)</div>
                       </div>
-                      <span className="text-emerald-400 font-bold">+$850</span>
+                      <span className="text-emerald-400 font-bold font-sans shrink-0">+$820</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-slate-950 border border-slate-850 flex items-center justify-between">
+                    <div className="p-2 rounded-xl bg-slate-950/60 border border-slate-850 flex items-center justify-between gap-3 text-[9px] font-mono text-slate-300 hover:border-slate-800 transition-all">
                       <div>
                         <span className="text-amber-500 font-bold">[Review Boost]</span> 5⭐ review from Robert K.
                         <div className="text-slate-500 mt-0.5">Synced with Google API</div>
                       </div>
-                      <span className="text-amber-500 font-bold">5 Stars</span>
+                      <span className="text-amber-500 font-sans font-bold shrink-0">5 Stars</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-slate-950 border border-slate-850 flex items-center justify-between">
+                    <div className="p-2 rounded-xl bg-slate-950/60 border border-slate-850 flex items-center justify-between gap-3 text-[9px] font-mono text-slate-300 hover:border-slate-800 transition-all">
                       <div>
-                        <span className="text-emerald-500 font-bold">[WeChat]</span> Received lead "Zhang Wei"
-                        <div className="text-slate-500 mt-0.5">Translated: "Need water heater repair"</div>
+                        <span className="text-emerald-500 font-bold">[WeChat Gate]</span> Sync lead "Zhang Wei"
+                        <div className="text-slate-500 mt-0.5">Translated: "Need hot water fix"</div>
                       </div>
-                      <span className="text-slate-500">Logged</span>
+                      <span className="text-slate-500 shrink-0">Logged</span>
                     </div>
                   </div>
                 </div>
