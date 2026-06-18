@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
           if (msg.sender === "user") {
             // Post Inbound Message (Visitor)
-            const inboundRes = await fetch("https://services.leadconnectorhq.com/conversations/inbound-messages", {
+            const inboundRes = await fetch("https://services.leadconnectorhq.com/conversations/messages/inbound", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
