@@ -556,21 +556,7 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
     return keywords.some(kw => str.includes(kw));
   };
 
-  // ==========================================
-  // CONVERSATIONAL AI & AGENTIC ACTION EXECUTOR
-  // ==========================================
-  const processUserMsg = (text: string) => {
-    if (!text.trim()) return;
-
-    const userMsg: Message = {
-      sender: "user",
-      text: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    };
-
-    setMessages(prev => [...prev, userMsg]);
-    setIsTyping(true);
-
+  const runFallbackMsg = (text: string) => {
     setTimeout(() => {
       let responseText = "";
       const textLower = text.toLowerCase();
@@ -709,6 +695,127 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
       setIsTyping(false);
       speakText(responseText);
     }, 1200);
+  };
+
+  // ==========================================
+  // CONVERSATIONAL AI & AGENTIC ACTION EXECUTOR
+  // ==========================================
+  const processUserMsg = async (text: string) => {
+    if (!text.trim()) return;
+
+    const userMsg: Message = {
+      sender: "user",
+      text: text,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    };
+
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setIsTyping(true);
+
+    // Reset states on new commands to prevent UI lockups
+    setExportState("idle");
+    if (handoverState !== "connected") setHandoverState("idle");
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messages: newMessages,
+          language: language
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Gemini API server returned error status");
+      }
+
+      const data = await response.json();
+      let reply = data.reply || "";
+
+      // Parse trigger tags from Gemini's response
+      let matchedTrigger = "";
+      if (reply.includes("[TRIGGER: start_tour]")) {
+        matchedTrigger = "start_tour";
+        reply = reply.replace("[TRIGGER: start_tour]", "");
+      } else if (reply.includes("[TRIGGER: check_api]")) {
+        matchedTrigger = "check_api";
+        reply = reply.replace("[TRIGGER: check_api]", "");
+      } else if (reply.includes("[TRIGGER: upgrade_growth]")) {
+        matchedTrigger = "upgrade_growth";
+        reply = reply.replace("[TRIGGER: upgrade_growth]", "");
+      } else if (reply.includes("[TRIGGER: export_leads]")) {
+        matchedTrigger = "export_leads";
+        reply = reply.replace("[TRIGGER: export_leads]", "");
+      } else if (reply.includes("[TRIGGER: route_human]")) {
+        matchedTrigger = "route_human";
+        reply = reply.replace("[TRIGGER: route_human]", "");
+      } else if (reply.includes("[TRIGGER: reputation]")) {
+        matchedTrigger = "reputation";
+        reply = reply.replace("[TRIGGER: reputation]", "");
+      }
+
+      reply = reply.trim();
+
+      // Trigger UI visual transitions matching agent intents
+      if (matchedTrigger === "start_tour") {
+        setIsTourActive(true);
+        setTourStep(1);
+        setDemoState("missed_call");
+        startSMSDemo();
+      } else if (matchedTrigger === "check_api") {
+        setDemoState("api_settings");
+        setApiStatus({ twilio: "checking", ghl: "checking", wechat: "checking" });
+        setTimeout(() => {
+          setApiStatus({ twilio: "connected", ghl: "connected", wechat: "connected" });
+        }, 1500);
+      } else if (matchedTrigger === "upgrade_growth") {
+        setDemoState("invoice");
+        setInvoicePaid(false);
+        setInvoiceStep(1);
+        setSubscriptionTier("growth");
+        setTimeout(() => {
+          setInvoiceStep(2);
+          setInvoicePaid(true);
+        }, 3000);
+      } else if (matchedTrigger === "export_leads") {
+        setExportState("loading");
+        setTimeout(() => {
+          setExportState("done");
+          const blob = new Blob(["Name,Phone,Source,Value\nJohn Doe,+15550192834,SMS,$850\nZhang Wei,+15550193492,WeChat,$450"], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.setAttribute("href", url);
+          a.setAttribute("download", "plumbify_synced_leads.csv");
+          a.click();
+        }, 2500);
+      } else if (matchedTrigger === "route_human") {
+        setHandoverState("routing");
+        setDemoState("lead_form");
+        setTimeout(() => {
+          setHandoverState("connected");
+        }, 2500);
+      } else if (matchedTrigger === "reputation") {
+        setDemoState("reputation");
+      }
+
+      const agentMsg: Message = {
+        sender: "agent",
+        text: reply,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      };
+
+      setMessages(prev => [...prev, agentMsg]);
+      setIsTyping(false);
+      speakText(reply);
+
+    } catch (err) {
+      console.warn("Gemini API call failed, running local keywords matcher fallback:", err);
+      runFallbackMsg(text);
+    }
   };
 
   const handleSendText = (e: React.FormEvent) => {
