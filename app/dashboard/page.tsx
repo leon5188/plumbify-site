@@ -245,7 +245,7 @@ export default function LiveMapDashboard() {
         <div>
           {/* Logo */}
           <div className="h-20 border-b border-slate-800 flex items-center px-6">
-            <span className="text-2xl font-black text-blue-500 tracking-tighter">PLUMBIFY</span>
+            <img src="/logo.png" alt="PLUMBIFY" className="h-12 w-auto object-contain" />
           </div>
 
           {/* Navigation Links */}

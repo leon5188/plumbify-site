@@ -16,8 +16,8 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-black text-blue-600 tracking-tighter">
-          PLUMBIFY
+        <Link href="/" className="flex items-center">
+          <img src="/logo.png" alt="PLUMBIFY" className="h-10 w-auto object-contain" />
         </Link>
         
         <div className="hidden md:flex gap-8 text-sm font-medium text-slate-600">
