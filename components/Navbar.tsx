@@ -11,7 +11,7 @@ export default function Navbar() {
   const [isOpenResources, setIsOpenResources] = useState(false);
   const [isOpenCompany, setIsOpenCompany] = useState(false);
 
-  if (pathname === "/widget-embed" || pathname === "/tour") return null;
+  if (pathname === "/widget-embed" || pathname === "/tour" || pathname?.startsWith("/dashboard")) return null;
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
