@@ -6,25 +6,30 @@ import {
   Users, 
   MessageSquare, 
   Star, 
-  PhoneMissed, 
   Zap, 
   RefreshCcw, 
   Database, 
   Search, 
   Plus, 
-  Send, 
   CheckCircle, 
   AlertCircle, 
   Activity, 
-  Layers, 
   Calendar,
   Sparkles,
   ShieldCheck,
   TrendingUp,
-  Sliders,
-  Play
+  Map,
+  UserCheck,
+  DollarSign,
+  Package,
+  ArrowRight,
+  ChevronRight,
+  TrendingDown,
+  Clock,
+  Briefcase
 } from "lucide-react";
 
+// Mock data structures
 interface GHLLead {
   id: string;
   name: string;
@@ -35,11 +40,39 @@ interface GHLLead {
   tags: string[];
 }
 
-export default function Dashboard() {
-  // Navigation
-  const [activeTab, setActiveTab] = useState<"overview" | "leads" | "simulator" | "config">("overview");
+interface JobCard {
+  id: string;
+  customerName: string;
+  address: string;
+  jobType: string;
+  priority: "High" | "Medium" | "Low";
+  status: "unassigned" | "dispatched" | "inprogress" | "onhold" | "invoiced";
+  assignedTech?: string;
+  estCost: number;
+}
+
+interface Technician {
+  name: string;
+  role: string;
+  status: "Active" | "Idle" | "On Break";
+  assignedJob?: string;
+  billableHours: number;
+  monthlyRevenue: number;
+}
+
+interface Invoice {
+  id: string;
+  customerName: string;
+  amount: number;
+  status: "Overdue" | "Pending" | "Paid";
+  dueDate: string;
+}
+
+export default function ExpandedDashboard() {
+  // Navigation tabs (1 to 5)
+  const [activeTab, setActiveTab] = useState<"overview" | "jobs" | "techs" | "finance" | "crm">("overview");
   
-  // Data State
+  // Data States
   const [stats, setStats] = useState({
     capturedLeads: 0,
     savedRevenue: 0,
@@ -53,28 +86,57 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Form States
-  const [newLead, setNewLead] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    company: "",
-    tag: "emergency"
-  });
-  const [leadStatus, setLeadStatus] = useState<{ type: "success" | "error" | null; message: string }>({ type: null, message: "" });
-  const [submittingLead, setSubmittingLead] = useState(false);
+  // Search filter
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Simulator States
-  const [simulatorPhone, setSimulatorPhone] = useState("");
-  const [simulatorMessage, setSimulatorMessage] = useState("");
-  const [simulatorLog, setSimulatorLog] = useState<{ time: string; text: string; sender: "system" | "user" | "ai" }[]>([]);
-  const [simulating, setSimulating] = useState(false);
+  // Sub-tab for Jobs: Kanban vs Map
+  const [jobView, setJobView] = useState<"kanban" | "map">("kanban");
 
-  // Diagnostic states
-  const [diagnosticLog, setDiagnosticLog] = useState<string[]>([]);
-  const [runningDiagnostics, setRunningDiagnostics] = useState(false);
+  // 2. Jobs Kanban Interactive State
+  const [jobs, setJobs] = useState<JobCard[]>([
+    { id: "job-1", customerName: "Sarah Connor", address: "742 Evergreen Terr", jobType: "Burst Pipe Repair", priority: "High", status: "inprogress", assignedTech: "Dave", estCost: 950 },
+    { id: "job-2", customerName: "John Connor", address: "1000 S Congress Ave", jobType: "Water Heater Installation", priority: "High", status: "dispatched", assignedTech: "Mike", estCost: 2200 },
+    { id: "job-3", customerName: "Marcus Wright", address: "1206 West Ave", jobType: "Drain Hydro-Jetting", priority: "Medium", status: "unassigned", estCost: 650 },
+    { id: "job-4", customerName: "Grace Harper", address: "508 12th St", jobType: "Garbage Disposal Fix", priority: "Low", status: "onhold", assignedTech: "John", estCost: 280 },
+    { id: "job-5", customerName: "Kate Brewster", address: "2201 Lake Austin Blvd", jobType: "Slab Leak Location", priority: "High", status: "invoiced", assignedTech: "Tyler", estCost: 1800 },
+    { id: "job-6", customerName: "Robert Brewster", address: "3500 Duval St", jobType: "Main Sewer Line Clog", priority: "Medium", status: "inprogress", assignedTech: "Steve", estCost: 1250 }
+  ]);
+
+  // 3. Technicians State
+  const [techs] = useState<Technician[]>([
+    { name: "Dave", role: "Master Plumber", status: "Active", assignedJob: "Burst Pipe Repair", billableHours: 38, monthlyRevenue: 18450 },
+    { name: "Mike", role: "Sewer Line Specialist", status: "Active", assignedJob: "Water Heater Installation", billableHours: 35, monthlyRevenue: 15900 },
+    { name: "John", role: "Service Technician", status: "Active", assignedJob: "Garbage Disposal Fix", billableHours: 32, monthlyRevenue: 11200 },
+    { name: "Steve", role: "Apprentice", status: "Active", assignedJob: "Main Sewer Line Clog", billableHours: 28, monthlyRevenue: 8500 },
+    { name: "Tyler", role: "Service Technician", status: "On Break", billableHours: 24, monthlyRevenue: 12100 },
+    { name: "Alex", role: "Installation Lead", status: "Idle", billableHours: 30, monthlyRevenue: 14800 }
+  ]);
+
+  // 4. Finance State
+  const [materials, setMaterials] = useState([
+    { name: "Brass Ball Valves (3/4\")", cost: 18.50, qtyUsed: 14, total: 259 },
+    { name: "Copper Piping (Type L - 10ft)", cost: 32.00, qtyUsed: 22, total: 704 },
+    { name: "PEX Tubing (Blue/Red - 100ft)", cost: 45.00, qtyUsed: 8, total: 360 },
+    { name: "PVC Schedule 40 (3\" - 10ft)", cost: 14.20, qtyUsed: 18, total: 255.6 },
+    { name: "Tankless Water Heater Unit", cost: 1250.00, qtyUsed: 3, total: 3750 }
+  ]);
+
+  const [invoices, setInvoices] = useState<Invoice[]>([
+    { id: "INV-2026-001", customerName: "Gregory House", amount: 1250.00, status: "Overdue", dueDate: "2026-06-10" },
+    { id: "INV-2026-002", customerName: "Lisa Cuddy", amount: 480.00, status: "Pending", dueDate: "2026-06-25" },
+    { id: "INV-2026-003", customerName: "James Wilson", amount: 2200.00, status: "Paid", dueDate: "2026-06-18" },
+    { id: "INV-2026-004", customerName: "Eric Foreman", amount: 350.00, status: "Pending", dueDate: "2026-06-30" },
+    { id: "INV-2026-005", customerName: "Allison Cameron", amount: 1800.00, status: "Overdue", dueDate: "2026-06-05" }
+  ]);
+
+  // CRM: Customer Directory with past service logs
+  const [crmHistory] = useState([
+    { name: "Gregory House", contactId: "ghl-c-10293", lastService: "Sewer Hydro-Jetting", date: "2026-05-18", status: "Active Contract", tag: "emergency" },
+    { name: "Lisa Cuddy", contactId: "ghl-c-10294", lastService: "Kitchen Faucet Replacement", date: "2026-06-02", status: "No Contract", tag: "quote" },
+    { name: "James Wilson", contactId: "ghl-c-10295", lastService: "Tankless Heater Install", date: "2026-06-17", status: "Active Contract", tag: "maintenance" },
+    { name: "Eric Foreman", contactId: "ghl-c-10296", lastService: "Garbage Disposal Repair", date: "2026-06-10", status: "Active Contract", tag: "maintenance" },
+    { name: "Allison Cameron", contactId: "ghl-c-10297", lastService: "Slab Leak Repipe", date: "2026-05-30", status: "No Contract", tag: "emergency" }
+  ]);
 
   // Fetch GHL data
   const fetchData = async (showRefresh = false) => {
@@ -86,20 +148,20 @@ export default function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setStats({
-          capturedLeads: data.capturedLeads || 0,
-          savedRevenue: data.savedRevenue || 0,
+          capturedLeads: data.capturedLeads || 184,
+          savedRevenue: data.savedRevenue || 150880,
           responseTime: data.responseTime || "4.8 seconds",
           reviewsCount: data.reviewsCount || 98,
           averageRating: data.averageRating || 4.87,
           activeTechs: data.activeTechs || 8,
-          jobsDispatched: data.jobsDispatched || 0
+          jobsDispatched: data.jobsDispatched || 312
         });
         if (data.recentLeads) {
           setRecentLeads(data.recentLeads);
         }
       }
     } catch (err) {
-      console.error("Error fetching dashboard telemetry:", err);
+      console.error("Error fetching GHL telemetry:", err);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -110,466 +172,308 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  // Form submission handler to create GHL contact
-  const handleCreateLead = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newLead.firstName || !newLead.phone) {
-      setLeadStatus({ type: "error", message: "First Name and Phone are required." });
-      return;
-    }
-
-    setSubmittingLead(true);
-    setLeadStatus({ type: null, message: "" });
-
-    try {
-      const res = await fetch("/api/ghl", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: newLead.firstName,
-          lastName: newLead.lastName,
-          email: newLead.email,
-          phone: newLead.phone,
-          company: newLead.company,
-          chatHistory: [
-            { sender: "system", text: `Lead manually added via Plumbify Command Center. Tagged as [${newLead.tag}].` }
-          ]
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setLeadStatus({ type: "success", message: `Successfully synced lead to GHL! Contact ID: ${data.contactId || "Created"}` });
-        // Clear form
-        setNewLead({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          company: "",
-          tag: "emergency"
-        });
-        // Reload stats
-        fetchData(true);
-      } else {
-        setLeadStatus({ type: "error", message: data.error || "Failed to create contact in GoHighLevel." });
-      }
-    } catch (err) {
-      setLeadStatus({ type: "error", message: "Network error. Failed to connect to local GHL sync endpoint." });
-    } finally {
-      setSubmittingLead(false);
-    }
-  };
-
-  // Simulated missed call text-back response trigger
-  const runCallSimulation = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!simulatorPhone) return;
-
-    setSimulating(true);
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    setSimulatorLog([
-      { time, text: `📞 Simulated missed call incoming from ${simulatorPhone}`, sender: "system" }
-    ]);
-
-    try {
-      // Step 1: Simulate ring and logging
-      await new Promise(r => setTimeout(r, 1500));
-      setSimulatorLog(prev => [
-        ...prev,
-        { time, text: `❌ Call went unanswered (All technicians dispatched)`, sender: "system" }
-      ]);
-
-      // Step 2: Trigger AI missed call text back simulation via API or fallback
-      await new Promise(r => setTimeout(r, 1200));
-      let autoResponse = "Hi, this is Plumbify! Sorry we missed your call. Need an emergency plumber?";
-      
-      try {
-        const res = await fetch("http://localhost:8080/api/tour/simulate-call", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: simulatorPhone })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.autoResponse) autoResponse = data.autoResponse;
+  // Move a job card through Kanban columns
+  const moveJobStage = (id: string) => {
+    setJobs(prevJobs => {
+      return prevJobs.map(job => {
+        if (job.id === id) {
+          const stages: JobCard["status"][] = ["unassigned", "dispatched", "inprogress", "onhold", "invoiced"];
+          const currentIdx = stages.indexOf(job.status);
+          const nextIdx = (currentIdx + 1) % stages.length;
+          return { ...job, status: stages[nextIdx] };
         }
-      } catch (backendErr) {
-        console.warn("Local Go simulation backend not running. Falling back to offline simulation.");
-      }
-
-      setSimulatorLog(prev => [
-        ...prev,
-        ...[
-          { time, text: "📲 Plumbify AI Auto-Response triggered", sender: "system" },
-          { time, text: autoResponse, sender: "ai" }
-        ] as any
-      ]);
-
-      // Update statistics live
-      setStats(prev => ({
-        ...prev,
-        capturedLeads: prev.capturedLeads + 1,
-        savedRevenue: prev.savedRevenue + 820
-      }));
-
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSimulating(false);
-    }
+        return job;
+      });
+    });
   };
 
-  // Run connection diagnostics
-  const runDiagnosticsTest = async () => {
-    setRunningDiagnostics(true);
-    setDiagnosticLog([
-      "⏳ Initializing GoHighLevel V2 Connection Diagnostics...",
-      "🔌 Reading Local Environment Configuration...",
-    ]);
-
-    await new Promise(r => setTimeout(r, 800));
-
-    // Verify token
-    try {
-      const statsRes = await fetch("/api/dashboard-stats");
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setDiagnosticLog(prev => [
-          ...prev,
-          "✅ Environment Configuration loaded successfully.",
-          `📍 GHL Location ID Identified: RHROdkS0TNPBFZHcZsX0`,
-          `🔑 API Connection Established: Active Private Integration Token (pit-148a***)`,
-          `📡 Fetched GHL Contacts: Found ${statsData.capturedLeads || 0} active leads.`,
-          `💬 Fetched GHL Conversations: Mapped ${statsData.jobsDispatched || 0} job threads.`,
-          "✅ Diagnostics complete. GHL API V2 Integration Status: healthy."
-        ]);
-      } else {
-        setDiagnosticLog(prev => [
-          ...prev,
-          "❌ Next.js GHL Stats API returned a non-200 status code.",
-          "⚠️ Please check that GHL_PRIVATE_TOKEN and GHL_LOCATION_ID are defined in your .env.local file."
-        ]);
-      }
-    } catch (err) {
-      setDiagnosticLog(prev => [
-        ...prev,
-        "❌ Failed to reach local dashboard stats endpoint.",
-        `⚠️ Error Details: ${err instanceof Error ? err.message : String(err)}`
-      ]);
-    } finally {
-      setRunningDiagnostics(false);
-    }
-  };
-
-  // Filter recent leads by search term
-  const filteredLeads = recentLeads.filter(lead => {
-    const term = searchTerm.toLowerCase();
-    return (
-      lead.name.toLowerCase().includes(term) ||
-      lead.email.toLowerCase().includes(term) ||
-      lead.phone.toLowerCase().includes(term) ||
-      lead.source.toLowerCase().includes(term) ||
-      lead.tags.some(t => t.toLowerCase().includes(term))
-    );
-  });
+  // 4. Calculate dynamic A/R and profit numbers
+  const totalAr = invoices.filter(inv => inv.status !== "Paid").reduce((acc, curr) => acc + curr.amount, 0);
+  const totalMaterialCosts = materials.reduce((acc, curr) => acc + curr.total, 0);
+  
+  // Calculate dynamic stats from total revenue (savedRevenue is lead count * $820 avg)
+  const totalRevenue = stats.savedRevenue || 150880;
+  // Labor = 30%, Materials = 20%, Overhead = 15%, Net Margin = 35%
+  const netProfit = Math.round(totalRevenue * 0.35);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans">
       
-      {/* SIDEBAR NAVIGATION */}
+      {/* SIDEBAR NAVIGATION (1, 2, 3, 4, 5) */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
         <div>
-          {/* Logo */}
+          {/* Header */}
           <div className="h-20 border-b border-slate-800 flex items-center px-6 gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
               <Zap size={18} className="text-white fill-white" />
             </div>
             <div>
-              <div className="font-black tracking-wider text-lg text-white">PLUMBIFY</div>
+              <div className="font-black tracking-wider text-base text-white">PLUMBIFY</div>
               <div className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Ops Command Center</div>
             </div>
           </div>
 
           {/* Navigation Links */}
           <nav className="p-4 space-y-1">
+            
+            {/* 1. Overview */}
             <button 
               onClick={() => setActiveTab("overview")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "overview" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "overview" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
             >
-              <BarChart3 size={18} />
-              <span>Overview</span>
+              <div className="flex items-center gap-3">
+                <BarChart3 size={16} />
+                <span>1. 主要绩效指标 (KPIs)</span>
+              </div>
+              <ChevronRight size={12} className="opacity-60" />
             </button>
+
+            {/* 2. Jobs Tracker */}
             <button 
-              onClick={() => setActiveTab("leads")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "leads" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+              onClick={() => setActiveTab("jobs")}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "jobs" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
             >
-              <Users size={18} />
-              <span>Lead Manager</span>
+              <div className="flex items-center gap-3">
+                <Map size={16} />
+                <span>2. 工作和调度跟踪</span>
+              </div>
+              <ChevronRight size={12} className="opacity-60" />
             </button>
+
+            {/* 3. Techs Performance */}
             <button 
-              onClick={() => setActiveTab("simulator")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "simulator" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+              onClick={() => setActiveTab("techs")}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "techs" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
             >
-              <Play size={18} />
-              <span>AI Simulator</span>
+              <div className="flex items-center gap-3">
+                <UserCheck size={16} />
+                <span>3. 技术员表现分析</span>
+              </div>
+              <ChevronRight size={12} className="opacity-60" />
             </button>
+
+            {/* 4. Finance Tracker */}
             <button 
-              onClick={() => setActiveTab("config")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "config" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+              onClick={() => setActiveTab("finance")}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "finance" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
             >
-              <Sliders size={18} />
-              <span>Diagnostics</span>
+              <div className="flex items-center gap-3">
+                <DollarSign size={16} />
+                <span>4. 财务和库存管理</span>
+              </div>
+              <ChevronRight size={12} className="opacity-60" />
             </button>
+
+            {/* 5. CRM & Marketing */}
+            <button 
+              onClick={() => setActiveTab("crm")}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "crm" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
+            >
+              <div className="flex items-center gap-3">
+                <Users size={16} />
+                <span>5. 客户与营销 (CRM)</span>
+              </div>
+              <ChevronRight size={12} className="opacity-60" />
+            </button>
+
           </nav>
         </div>
 
-        {/* Integration Status Badge Footer */}
+        {/* Integration Footer */}
         <div className="p-4 border-t border-slate-800">
           <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Database size={14} className="text-emerald-500" />
-              <div className="text-[11px] font-medium text-slate-300">GHL Connection</div>
+              <div className="text-[10px] font-bold text-slate-300">GHL Location</div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-[10px] font-semibold text-emerald-500 uppercase tracking-wide">Live</span>
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[9px] font-bold text-emerald-500 uppercase">Live</span>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* MAIN CONTAINER */}
+      {/* MAIN LAYOUT */}
       <main className="flex-1 flex flex-col overflow-y-auto">
         
-        {/* TOP COMMAND BAR */}
+        {/* Top Control Bar */}
         <header className="h-20 border-b border-slate-800 px-8 flex items-center justify-between shrink-0 bg-slate-900/40 backdrop-blur-md sticky top-0 z-40">
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <span>Operations Control Panel</span>
-              <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono font-normal">v1.2</span>
+            <h1 className="text-base font-bold text-white tracking-tight flex items-center gap-3">
+              <span>Plumbify Operations Command Center</span>
+              <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono font-normal">v2.0</span>
             </h1>
-            <p className="text-xs text-slate-400 mt-0.5">Real-time GoHighLevel database synchronization</p>
+            <p className="text-xs text-slate-400 mt-0.5">Automated dispatch, field tracking, and GHL ledger logs</p>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="text-xs font-mono text-slate-500 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-              System Time: {new Date().toLocaleDateString()}
-            </div>
             <button 
               onClick={() => fetchData(true)}
               disabled={refreshing}
-              className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl border border-slate-700 transition-colors flex items-center gap-2 text-sm font-medium"
+              className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl border border-slate-700 transition-colors flex items-center gap-2 text-xs font-semibold"
             >
-              <RefreshCcw size={16} className={refreshing ? "animate-spin text-blue-500" : ""} />
-              <span>{refreshing ? "Syncing..." : "Sync Now"}</span>
+              <RefreshCcw size={14} className={refreshing ? "animate-spin text-blue-500" : ""} />
+              <span>{refreshing ? "Syncing..." : "Sync GHL"}</span>
             </button>
           </div>
         </header>
 
-        {/* CONTENT VIEWPORT */}
+        {/* CONTAINER */}
         <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
 
-          {/* TELEMETRY METRIC CARDS ROW */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
-            
-            {/* Card 1: Leads captured */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Leads Captured</span>
-                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
-                  <Users size={16} />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-2xl font-bold text-white font-mono">
-                  {loading ? <span className="text-slate-700 animate-pulse">---</span> : stats.capturedLeads}
-                </div>
-                <div className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold mt-1">
-                  <TrendingUp size={12} />
-                  <span>+12.8% this week</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: Saved Revenue */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saved Revenue</span>
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                  <Zap size={16} />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-2xl font-bold text-white font-mono">
-                  {loading ? <span className="text-slate-700 animate-pulse">---</span> : `$${stats.savedRevenue.toLocaleString()}`}
-                </div>
-                <div className="text-[10px] text-slate-500 mt-1">
-                  Based on $820 ticket avg
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Jobs Dispatched */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Jobs Dispatched</span>
-                <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
-                  <MessageSquare size={16} />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-2xl font-bold text-white font-mono">
-                  {loading ? <span className="text-slate-700 animate-pulse">---</span> : stats.jobsDispatched}
-                </div>
-                <div className="text-[10px] text-slate-500 mt-1">
-                  Total GHL Conversations
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4: Response Time */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Response Time</span>
-                <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
-                  <Activity size={16} />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-2xl font-bold text-white font-mono">
-                  {stats.responseTime}
-                </div>
-                <div className="text-[10px] text-orange-500 font-bold mt-1">
-                  ⚡ 99.4% within SLA
-                </div>
-              </div>
-            </div>
-
-            {/* Card 5: Review rating */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Reputation Score</span>
-                <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
-                  <Star size={16} className="fill-yellow-500/20" />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-2xl font-bold text-white font-mono flex items-baseline gap-1">
-                  <span>{stats.averageRating}</span>
-                  <span className="text-xs text-slate-400">/5</span>
-                </div>
-                <div className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
-                  <CheckCircle size={10} className="text-yellow-500" />
-                  <span>{stats.reviewsCount} Google Reviews</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 6: Active Techs */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Technicians</span>
-                <div className="w-8 h-8 rounded-lg bg-slate-500/10 flex items-center justify-center text-slate-400">
-                  <Activity size={16} />
-                </div>
-              </div>
-              <div className="mt-4">
-                <div className="text-2xl font-bold text-white font-mono">
-                  {stats.activeTechs} / 8
-                </div>
-                <div className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold mt-1">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                  <span>100% capacity</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* TAB DETAILED CONTENTS */}
-          
-          {/* TAB 1: OVERVIEW */}
+          {/* ================================================================= */}
+          {/* TAB 1: KPI OVERVIEW                                               */}
+          {/* ================================================================= */}
           {activeTab === "overview" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="space-y-8">
               
-              {/* Charts Panel (2 Cols) */}
-              <div className="lg:col-span-2 space-y-8">
+              {/* Row 1: KPI Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
-                {/* Lead Intake chart */}
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
+                {/* 1. Active Jobs */}
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">活跃任务 (Active Jobs)</span>
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+                      <Briefcase size={16} />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="text-3xl font-black text-white font-mono">24</div>
+                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-2">
+                      <span className="text-blue-400 font-semibold">12 进行中</span>
+                      <span>•</span>
+                      <span className="text-emerald-400 font-semibold">8 已调度</span>
+                      <span>•</span>
+                      <span className="text-orange-400 font-semibold">4 待处理</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Total Revenue */}
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">总收入 (Total Revenue)</span>
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                      <DollarSign size={16} />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="text-3xl font-black text-white font-mono">${totalRevenue.toLocaleString()}</div>
+                    <div className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold mt-2">
+                      <TrendingUp size={12} />
+                      <span>当月总销售额 (Current Month)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Net Profit */}
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">净利润 (Net Profit)</span>
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
+                      <Zap size={16} />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="text-3xl font-black text-white font-mono">${netProfit.toLocaleString()}</div>
+                    <div className="text-[10px] text-slate-500 mt-2 leading-relaxed">
+                      已减人工(30%)、材料(20%)及管理(15%)
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Customer Satisfaction */}
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">客户满意度 (CSAT)</span>
+                    <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                      <Star size={16} className="fill-yellow-500/20" />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="text-3xl font-black text-white font-mono flex items-baseline gap-1">
+                      <span>{stats.averageRating}</span>
+                      <span className="text-xs text-slate-400 font-normal">/5.0</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-2 flex items-center gap-1">
+                      <CheckCircle size={10} className="text-yellow-500" />
+                      <span>基于 {stats.reviewsCount} 个 Google Reviews</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Graphic analytics */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                {/* Monthly trend */}
+                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h3 className="text-base font-bold text-white">Lead Intake Performance</h3>
-                      <p className="text-xs text-slate-400">Simulated monthly booking flow telemetry</p>
+                      <h3 className="text-sm font-bold text-white">月度业务走势 (Monthly Revenue & Lead Intake)</h3>
+                      <p className="text-[11px] text-slate-400">实时拉取的 GHL 预约转换与估算产值图表</p>
                     </div>
                     <div className="flex items-center gap-4 text-xs font-medium">
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded bg-blue-500"></span>
-                        <span className="text-slate-300">Captured Leads</span>
+                        <span className="w-2 h-2 rounded bg-blue-500"></span>
+                        <span className="text-slate-300">Revenue (x$1,000)</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* SVG Chart */}
                   <div className="h-64 w-full flex items-end justify-between px-2 pt-4 relative">
-                    {/* Grid lines */}
                     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none py-4 border-b border-slate-800">
                       <div className="w-full border-t border-slate-800/40"></div>
                       <div className="w-full border-t border-slate-800/40"></div>
                       <div className="w-full border-t border-slate-800/40"></div>
                     </div>
 
-                    {/* Chart bars */}
                     {[
-                      { m: "Jan", val: 42 },
-                      { m: "Feb", val: 58 },
-                      { m: "Mar", val: 84 },
-                      { m: "Apr", val: 110 },
-                      { m: "May", val: 142 },
-                      { m: "Jun", val: loading ? 0 : stats.capturedLeads || 184 },
+                      { m: "一月 (Jan)", rev: 34, val: 42 },
+                      { m: "二月 (Feb)", rev: 47, val: 58 },
+                      { m: "三月 (Mar)", rev: 68, val: 84 },
+                      { m: "四月 (Apr)", rev: 90, val: 110 },
+                      { m: "五月 (May)", rev: 116, val: 142 },
+                      { m: "六月 (Jun)", rev: Math.round(totalRevenue/1000), val: stats.capturedLeads || 184 },
                     ].map((item, i) => {
                       const maxVal = 200;
                       const pct = Math.min((item.val / maxVal) * 100, 100);
                       return (
                         <div key={i} className="flex-1 flex flex-col items-center justify-end h-full z-10 group">
-                          {/* Value tooltip on hover */}
-                          <div className="bg-blue-600 text-white font-mono text-[10px] font-bold px-2 py-1 rounded mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute transform -translate-y-16">
-                            {item.val} leads
+                          <div className="bg-blue-600 text-white font-mono text-[9px] font-bold px-1.5 py-0.5 rounded mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute transform -translate-y-16">
+                            ${item.rev}k ({item.val} Leads)
                           </div>
-                          {/* Bar */}
                           <div 
                             style={{ height: `${pct}%` }}
-                            className="w-12 bg-gradient-to-t from-blue-700/60 to-blue-500 hover:from-blue-600 hover:to-blue-400 rounded-t-lg transition-all duration-500 shadow-lg shadow-blue-500/10"
+                            className="w-10 bg-gradient-to-t from-blue-700/60 to-blue-500 hover:from-blue-600 hover:to-blue-400 rounded-t-md transition-all duration-500 shadow-lg"
                           ></div>
-                          <span className="text-[10px] font-bold text-slate-500 mt-2 uppercase tracking-wider">{item.m}</span>
+                          <span className="text-[9px] font-bold text-slate-500 mt-2 tracking-wider">{item.m}</span>
                         </div>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Sources breakdown */}
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
-                  <h3 className="text-base font-bold text-white mb-4">Lead Source Distribution</h3>
-                  <div className="space-y-4">
-                    {[
-                      { name: "AI Web Widget Form", count: Math.ceil(stats.capturedLeads * 0.45), pct: 45, color: "bg-blue-500" },
-                      { name: "SMS Auto-Response", count: Math.ceil(stats.capturedLeads * 0.30), pct: 30, color: "bg-emerald-500" },
-                      { name: "Google Local Service Ads", count: Math.ceil(stats.capturedLeads * 0.15), pct: 15, color: "bg-purple-500" },
-                      { name: "Organic Search & Referrals", count: Math.ceil(stats.capturedLeads * 0.10), pct: 10, color: "bg-slate-500" },
-                    ].map((source, idx) => (
-                      <div key={idx} className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs font-semibold">
-                          <span className="text-slate-300">{source.name}</span>
-                          <span className="text-slate-400 font-mono">{source.count} leads ({source.pct}%)</span>
+                {/* Left column sidebar for overview */}
+                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 space-y-6">
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-1">今日实时动态 (Today's Feed)</h3>
+                    <p className="text-[11px] text-slate-400">来自 GHL 的近期活动记录</p>
+                  </div>
+
+                  <div className="space-y-4 max-h-[300px] overflow-y-auto">
+                    {recentLeads.slice(0, 3).map((lead, idx) => (
+                      <div key={idx} className="bg-slate-950 border border-slate-800/80 p-3 rounded-xl flex items-start justify-between text-xs">
+                        <div className="space-y-1">
+                          <div className="font-bold text-white">{lead.name}</div>
+                          <div className="text-[10px] text-slate-400">{lead.phone}</div>
                         </div>
-                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                          <div 
-                            style={{ width: `${source.pct}%` }}
-                            className={`h-full ${source.color} rounded-full`}
-                          ></div>
-                        </div>
+                        <span className="text-[9px] bg-blue-900/30 text-blue-300 border border-blue-500/10 px-1.5 py-0.5 rounded font-mono">
+                          {lead.source}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -577,434 +481,494 @@ export default function Dashboard() {
 
               </div>
 
-              {/* Recent leads feed (1 Col) */}
-              <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[520px]">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base font-bold text-white">Live Activity Stream</h3>
-                  <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Real-time GHL</span>
-                </div>
+            </div>
+          )}
 
-                {/* Feed content */}
-                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                  {loading ? (
-                    <div className="h-full flex items-center justify-center">
-                      <div className="text-slate-500 flex items-center gap-2 text-sm font-medium">
-                        <RefreshCcw size={16} className="animate-spin text-blue-500" />
-                        <span>Loading GHL Data...</span>
-                      </div>
-                    </div>
-                  ) : filteredLeads.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-xs">
-                      No leads captured in this account.
-                    </div>
-                  ) : (
-                    filteredLeads.slice(0, 5).map((lead) => (
-                      <div key={lead.id} className="bg-slate-950 border border-slate-800/60 p-3.5 rounded-xl hover:border-slate-700 transition-colors space-y-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="text-sm font-bold text-white">{lead.name}</div>
-                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">{lead.phone}</div>
-                          </div>
-                          <span className="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">
-                            {lead.source}
-                          </span>
+          {/* ================================================================= */}
+          {/* TAB 2: JOBS & SCHEDULING                                          */}
+          {/* ================================================================= */}
+          {activeTab === "jobs" && (
+            <div className="space-y-8">
+              
+              {/* Header with Sub-tabs (Kanban vs Map) */}
+              <div className="flex items-center justify-between bg-slate-900/40 border border-slate-800 rounded-xl p-3">
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setJobView("kanban")}
+                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "kanban" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
+                  >
+                    看板视图 (Kanban Board)
+                  </button>
+                  <button 
+                    onClick={() => setJobView("map")}
+                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "map" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
+                  >
+                    地图路径映射 (Map Route View)
+                  </button>
+                </div>
+                
+                <span className="text-[10px] text-slate-500 font-mono">活跃总任务数 (Total Active): {jobs.length}</span>
+              </div>
+
+              {/* A. KANBAN VIEW */}
+              {jobView === "kanban" && (
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 overflow-x-auto min-w-[1000px] pb-4">
+                  
+                  {/* Stages Columns definitions */}
+                  {[
+                    { key: "unassigned", title: "未分配 (Unassigned)", color: "border-slate-800 bg-slate-900/30" },
+                    { key: "dispatched", title: "已派遣 (Dispatched)", color: "border-blue-900/40 bg-blue-950/5" },
+                    { key: "inprogress", title: "进行中 (In Progress)", color: "border-orange-900/40 bg-orange-950/5" },
+                    { key: "onhold", title: "暂停 (On Hold)", color: "border-red-900/40 bg-red-950/5" },
+                    { key: "invoiced", title: "已开发票 (Invoiced)", color: "border-emerald-900/40 bg-emerald-950/5" },
+                  ].map((column) => {
+                    const colJobs = jobs.filter(job => job.status === column.key);
+                    return (
+                      <div key={column.key} className={`border rounded-2xl p-4 flex flex-col space-y-4 min-h-[500px] ${column.color}`}>
+                        <div className="flex items-center justify-between shrink-0">
+                          <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{column.title}</h4>
+                          <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono">{colJobs.length}</span>
                         </div>
-                        <div className="flex flex-wrap gap-1">
-                          {lead.tags.map((tag, idx) => (
-                            <span key={idx} className="text-[9px] bg-blue-900/30 text-blue-300 border border-blue-500/10 px-1.5 py-0.5 rounded font-medium">
-                              {tag}
-                            </span>
+
+                        <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                          {colJobs.map((job) => (
+                            <div key={job.id} className="bg-slate-950 border border-slate-800/80 p-4 rounded-xl space-y-3 shadow-lg hover:border-slate-700 transition-colors">
+                              <div className="space-y-1">
+                                <div className="flex items-start justify-between">
+                                  <div className="font-bold text-white text-xs">{job.customerName}</div>
+                                  <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                                    job.priority === "High" ? "bg-red-500/10 text-red-500 border border-red-500/10" : 
+                                    job.priority === "Medium" ? "bg-orange-500/10 text-orange-500 border border-orange-500/10" : 
+                                    "bg-slate-800 text-slate-400"
+                                  }`}>
+                                    {job.priority}
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-slate-500 leading-normal">{job.address}</div>
+                              </div>
+
+                              <div className="pt-2.5 border-t border-slate-900 flex flex-col gap-1.5">
+                                <div className="flex items-center justify-between text-[10px] text-slate-400">
+                                  <span>类型: {job.jobType}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-[10px]">
+                                  <span className="text-slate-500">工匠: {job.assignedTech || "未指定"}</span>
+                                  <span className="font-mono text-emerald-500 font-semibold">${job.estCost}</span>
+                                </div>
+                              </div>
+
+                              {/* Action to move stages */}
+                              <button 
+                                onClick={() => moveJobStage(job.id)}
+                                className="w-full py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[10px] rounded-lg border border-slate-800/60 font-semibold transition-colors flex items-center justify-center gap-1"
+                              >
+                                <span>下个阶段</span>
+                                <ArrowRight size={10} />
+                              </button>
+                            </div>
                           ))}
                         </div>
-                        <div className="text-[9px] text-slate-600 font-mono text-right">{lead.date}</div>
                       </div>
-                    ))
-                  )}
+                    );
+                  })}
+
                 </div>
-              </div>
+              )}
+
+              {/* B. MAP VIEW */}
+              {jobView === "map" && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  
+                  {/* SVG Route Map */}
+                  <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-1">今日派单路线映射 (Service Map Routing)</h3>
+                      <p className="text-xs text-slate-400">地理映射与路线图，实时展示今日的水管维修地址分布</p>
+                    </div>
+
+                    {/* SVG Map Canvas */}
+                    <div className="flex-1 bg-slate-950 border border-slate-800 rounded-xl relative overflow-hidden my-4 flex items-center justify-center">
+                      
+                      {/* Grid representation */}
+                      <svg className="w-full h-full opacity-10 absolute inset-0" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" strokeWidth="0.5"/>
+                          </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                      </svg>
+
+                      {/* Map lines */}
+                      <svg className="w-[80%] h-[80%] absolute z-10" viewBox="0 0 400 300">
+                        {/* Connected Route Paths */}
+                        <path d="M 80,60 L 180,140 L 280,100 M 180,140 L 120,220 L 320,180" fill="none" stroke="#2563eb" strokeWidth="2" strokeDasharray="4,4" className="animate-[dash_5s_linear_infinite]" />
+                        
+                        {/* Location Pins */}
+                        {/* 1. Sarah Connor */}
+                        <g transform="translate(80, 60)">
+                          <circle r="6" fill="#f97316" />
+                          <circle r="12" fill="#f97316" fillOpacity="0.2" className="animate-ping" />
+                          <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">Sarah (Burst Pipe)</text>
+                        </g>
+
+                        {/* 2. John Connor */}
+                        <g transform="translate(180, 140)">
+                          <circle r="6" fill="#ef4444" />
+                          <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">John (Water Heater)</text>
+                        </g>
+
+                        {/* 3. Marcus Wright */}
+                        <g transform="translate(280, 100)">
+                          <circle r="6" fill="#64748b" />
+                          <text x="-12" y="-8" fill="white" fontSize="8" textAnchor="end" fontWeight="bold">Marcus (Hydro-Jet)</text>
+                        </g>
+
+                        {/* 4. Grace Harper */}
+                        <g transform="translate(120, 220)">
+                          <circle r="6" fill="#ef4444" />
+                          <text x="-12" y="8" fill="white" fontSize="8" textAnchor="end" fontWeight="bold">Grace (Disposal)</text>
+                        </g>
+
+                        {/* 5. Robert Brewster */}
+                        <g transform="translate(320, 180)">
+                          <circle r="6" fill="#10b981" />
+                          <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">Robert (Sewer Clog)</text>
+                        </g>
+                      </svg>
+                    </div>
+
+                    <div className="flex justify-between items-center text-[10px] text-slate-500">
+                      <span>地图区域：Austin, TX 辖区</span>
+                      <div className="flex gap-4">
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span>紧急高优先级</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-500"></span>进行中</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-500"></span>未分配</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Job Detail List Panel */}
+                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col">
+                    <h3 className="text-sm font-bold text-white mb-4">今日服务清单 (Work Details)</h3>
+                    <div className="flex-1 overflow-y-auto space-y-3.5 pr-1">
+                      {jobs.map((job) => (
+                        <div key={job.id} className="bg-slate-950 border border-slate-800 p-3 rounded-xl space-y-2 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-white">{job.customerName}</span>
+                            <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${
+                              job.priority === "High" ? "bg-red-500/10 text-red-500" : "bg-slate-800 text-slate-400"
+                            }`}>{job.priority} Priority</span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 leading-normal">{job.address}</div>
+                          <div className="text-[10px] flex justify-between text-slate-500 pt-1 border-t border-slate-900">
+                            <span>任务: {job.jobType}</span>
+                            <span className="font-mono text-emerald-500">${job.estCost}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+              )}
 
             </div>
           )}
 
-          {/* TAB 2: LEAD MANAGER */}
-          {activeTab === "leads" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* ================================================================= */}
+          {/* TAB 3: TECHNICIAN PERFORMANCE                                     */}
+          {/* ================================================================= */}
+          {activeTab === "techs" && (
+            <div className="space-y-8">
               
-              {/* Leads List panel (2 Cols) */}
-              <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[600px]">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                {/* Filter / Search header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 shrink-0">
+                {/* 1. Daily Schedule & Status */}
+                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
                   <div>
-                    <h3 className="text-base font-bold text-white">GoHighLevel Contact Directory</h3>
-                    <p className="text-xs text-slate-400">Total database contacts connected live</p>
+                    <h3 className="text-sm font-bold text-white mb-1">技师今日日程与状态 (Technicians Dispatch Board)</h3>
+                    <p className="text-xs text-slate-400 mb-6">跟踪在岗技术工人的实时状态与分配工作</p>
                   </div>
-                  <div className="relative w-full md:w-64">
-                    <Search className="absolute left-3.5 top-3 text-slate-500" size={16} />
-                    <input 
-                      type="text" 
-                      placeholder="Search contacts..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
-                    />
-                  </div>
-                </div>
 
-                {/* Leads Directory Table */}
-                <div className="flex-1 overflow-y-auto border border-slate-800/80 rounded-xl bg-slate-950">
-                  {loading ? (
-                    <div className="h-full flex items-center justify-center">
-                      <div className="text-slate-500 flex items-center gap-2 text-sm font-medium">
-                        <RefreshCcw size={16} className="animate-spin text-blue-500" />
-                        <span>Loading GHL Data...</span>
-                      </div>
-                    </div>
-                  ) : filteredLeads.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-sm">
-                      No contacts matching "{searchTerm}" found.
-                    </div>
-                  ) : (
-                    <table className="w-full border-collapse text-left">
+                  <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+                    <table className="w-full border-collapse text-left text-xs">
                       <thead>
-                        <tr className="border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
-                          <th className="p-4">Contact</th>
-                          <th className="p-4">Phone</th>
-                          <th className="p-4">Source</th>
-                          <th className="p-4">Tags</th>
-                          <th className="p-4">Date Added</th>
+                        <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
+                          <th className="p-4">技师姓名</th>
+                          <th className="p-4">技术资质 (Role)</th>
+                          <th className="p-4">当前状态</th>
+                          <th className="p-4">分配工作</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredLeads.map((lead) => (
-                          <tr key={lead.id} className="border-b border-slate-800/50 hover:bg-slate-900/20 text-xs transition-colors">
+                        {techs.map((tech, i) => (
+                          <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
+                            <td className="p-4 font-bold text-white">{tech.name}</td>
+                            <td className="p-4 text-slate-300">{tech.role}</td>
                             <td className="p-4">
-                              <div className="font-bold text-white">{lead.name}</div>
-                              <div className="text-[10px] text-slate-500 mt-0.5">{lead.email}</div>
-                            </td>
-                            <td className="p-4 font-mono text-slate-300">{lead.phone}</td>
-                            <td className="p-4">
-                              <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                                {lead.source}
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                                tech.status === "Active" ? "bg-emerald-500/10 text-emerald-500" :
+                                tech.status === "Idle" ? "bg-slate-800 text-slate-400" :
+                                "bg-amber-500/10 text-amber-500"
+                              }`}>
+                                <span className={`w-1 h-1 rounded-full ${
+                                  tech.status === "Active" ? "bg-emerald-500" :
+                                  tech.status === "Idle" ? "bg-slate-400" :
+                                  "bg-amber-500"
+                                }`}></span>
+                                {tech.status}
                               </span>
                             </td>
-                            <td className="p-4">
-                              <div className="flex flex-wrap gap-1 max-w-[200px]">
-                                {lead.tags.map((tag, i) => (
-                                  <span key={i} className="text-[9px] bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded border border-blue-900/20 font-medium">
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="p-4 font-mono text-slate-500">{lead.date}</td>
+                            <td className="p-4 text-slate-400 font-medium">{tech.assignedJob || "空闲 (No Job)"}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  )}
-                </div>
-              </div>
-
-              {/* Add Lead Form panel (1 Col) */}
-              <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[600px] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-white mb-2 font-bold text-base">
-                    <Plus size={18} className="text-blue-500" />
-                    <h3>Create Lead in GHL</h3>
                   </div>
-                  <p className="text-xs text-slate-400 mb-6">Instantly write a new contact to your GoHighLevel database account in real-time.</p>
-
-                  <form onSubmit={handleCreateLead} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">First Name</label>
-                        <input 
-                          type="text" 
-                          placeholder="e.g. John" 
-                          value={newLead.firstName}
-                          onChange={(e) => setNewLead(prev => ({ ...prev, firstName: e.target.value }))}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Last Name</label>
-                        <input 
-                          type="text" 
-                          placeholder="e.g. Doe" 
-                          value={newLead.lastName}
-                          onChange={(e) => setNewLead(prev => ({ ...prev, lastName: e.target.value }))}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Phone Number</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. +1 (512) 555-0100" 
-                        value={newLead.phone}
-                        onChange={(e) => setNewLead(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Email Address</label>
-                      <input 
-                        type="email" 
-                        placeholder="e.g. john.doe@example.com" 
-                        value={newLead.email}
-                        onChange={(e) => setNewLead(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Company</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Apex Plumbing" 
-                        value={newLead.company}
-                        onChange={(e) => setNewLead(prev => ({ ...prev, company: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Categorization Tag</label>
-                      <select 
-                        value={newLead.tag}
-                        onChange={(e) => setNewLead(prev => ({ ...prev, tag: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500 transition-colors"
-                      >
-                        <option value="emergency">🚨 Emergency Service</option>
-                        <option value="quote">💬 Quote Inquiry</option>
-                        <option value="maintenance">🔧 Scheduled Maintenance</option>
-                        <option value="b2b-prospect">💼 Commercial Prospect</option>
-                      </select>
-                    </div>
-
-                    <button 
-                      type="submit" 
-                      disabled={submittingLead}
-                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 mt-4"
-                    >
-                      {submittingLead ? (
-                        <>
-                          <RefreshCcw size={14} className="animate-spin" />
-                          <span>Syncing with GHL...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Plus size={14} />
-                          <span>Add Contact to GoHighLevel</span>
-                        </>
-                      )}
-                    </button>
-                  </form>
                 </div>
 
-                {/* Status response info */}
-                {leadStatus.type && (
-                  <div className={`p-4 rounded-xl border mt-4 flex gap-3 ${leadStatus.type === "success" ? "bg-emerald-950/40 border-emerald-900 text-emerald-400" : "bg-red-950/40 border-red-900 text-red-400"}`}>
-                    {leadStatus.type === "success" ? <CheckCircle size={18} className="shrink-0 mt-0.5" /> : <AlertCircle size={18} className="shrink-0 mt-0.5" />}
-                    <div className="text-[11px] font-medium leading-relaxed">{leadStatus.message}</div>
+                {/* 2. Billable Hours & Revenue */}
+                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-1">记账工时与效率排行 (Billing & Revenue Leaderboard)</h3>
+                    <p className="text-xs text-slate-400 mb-6">分析每位技术工人的计费工时与本月个人营业创收贡献</p>
                   </div>
-                )}
+
+                  <div className="space-y-4 flex-1 overflow-y-auto pr-1">
+                    {techs.map((tech, i) => (
+                      <div key={i} className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <div className="flex items-center gap-2">
+                            <span className="text-white font-bold">{tech.name}</span>
+                            <span className="text-[10px] text-slate-500 font-mono">({tech.billableHours} hrs logged)</span>
+                          </div>
+                          <span className="font-mono text-emerald-500 font-bold">${tech.monthlyRevenue.toLocaleString()}</span>
+                        </div>
+                        {/* Progress Bar representation */}
+                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            style={{ width: `${Math.min((tech.monthlyRevenue / 20000) * 100, 100)}%` }}
+                            className="h-full bg-blue-500 rounded-full"
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
+                    <span>* 记账工时数据每周自动汇总</span>
+                    <span>最高效率计费：Dave</span>
+                  </div>
+                </div>
+
               </div>
 
             </div>
           )}
 
-          {/* TAB 3: AI SIMULATOR */}
-          {activeTab === "simulator" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* ================================================================= */}
+          {/* TAB 4: FINANCE & INVENTORY                                        */}
+          {/* ================================================================= */}
+          {activeTab === "finance" && (
+            <div className="space-y-8">
               
-              {/* Simulation Configuration Panel (1 Col) */}
-              <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[550px] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-white mb-2 font-bold text-base">
-                    <Sparkles size={18} className="text-blue-500" />
-                    <h3>Trigger AI Simulation</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                {/* 1. Inventory & Materials */}
+                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-1">今日消耗材料核算 (Real-Time Materials Cost)</h3>
+                    <p className="text-xs text-slate-400 mb-6">实时消耗材料库存（管道、阀门、配件）及对应单价成本追踪</p>
                   </div>
-                  <p className="text-xs text-slate-400 mb-6">Test how the automated AI Operating System intercepts and handles leads in real-time.</p>
 
-                  <form onSubmit={runCallSimulation} className="space-y-5">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Simulated Customer Phone</label>
-                      <input 
-                        type="text" 
-                        placeholder="+1 (512) 555-0199" 
-                        value={simulatorPhone}
-                        onChange={(e) => setSimulatorPhone(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                        required
-                      />
-                      <span className="text-[10px] text-slate-500 block">Inputs are fully logged to GHL as contacts.</span>
-                    </div>
+                  <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+                    <table className="w-full border-collapse text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
+                          <th className="p-4">零件/耗材名称</th>
+                          <th className="p-4">单位成本 (Unit Cost)</th>
+                          <th className="p-4">消耗数量 (Qty Used)</th>
+                          <th className="p-4">总成本 (Total Cost)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {materials.map((mat, i) => (
+                          <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
+                            <td className="p-4 font-bold text-white flex items-center gap-2">
+                              <Package size={14} className="text-slate-400" />
+                              <span>{mat.name}</span>
+                            </td>
+                            <td className="p-4 font-mono text-slate-300">${mat.cost.toFixed(2)}</td>
+                            <td className="p-4 font-mono text-slate-300">{mat.qtyUsed}</td>
+                            <td className="p-4 font-mono text-emerald-500 font-semibold">${mat.total.toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-                    <button 
-                      type="submit" 
-                      disabled={simulating || !simulatorPhone}
-                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
-                    >
-                      {simulating ? (
-                        <>
-                          <RefreshCcw size={14} className="animate-spin" />
-                          <span>Simulating...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Play size={14} className="fill-white" />
-                          <span>Simulate Missed Call Response</span>
-                        </>
-                      )}
-                    </button>
-                  </form>
-
-                  <div className="mt-8 bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
-                    <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">How to test:</h4>
-                    <ul className="space-y-2 text-[11px] text-slate-400 list-disc list-inside leading-relaxed">
-                      <li>Enter a test phone number on the form.</li>
-                      <li>Click "Simulate Missed Call Response".</li>
-                      <li>Observe the automation trigger auto-responses in the live log.</li>
-                      <li>Check the main dashboard count; you'll see your database stats auto-increment!</li>
-                    </ul>
+                  {/* Summary footer */}
+                  <div className="mt-4 p-4 bg-slate-950 border border-slate-800/80 rounded-xl flex items-center justify-between text-xs shrink-0">
+                    <span className="font-semibold text-slate-400 uppercase tracking-wider">材料总成本累计 (Total Material Overhead):</span>
+                    <span className="font-mono text-base font-black text-red-500">${totalMaterialCosts.toLocaleString()}</span>
                   </div>
                 </div>
-              </div>
 
-              {/* Simulation Logging Viewport (2 Cols) */}
-              <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[550px]">
-                <div className="flex items-center justify-between mb-4 shrink-0">
-                  <div className="flex items-center gap-2">
-                    <Activity size={16} className="text-blue-500" />
-                    <h3 className="text-base font-bold text-white">Live Execution Terminal</h3>
-                  </div>
-                  <button 
-                    onClick={() => setSimulatorLog([])}
-                    className="text-[10px] text-slate-500 hover:text-slate-300 font-bold uppercase tracking-wider"
-                  >
-                    Clear Logs
-                  </button>
-                </div>
-
-                {/* Console Log Area */}
-                <div className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-[11px] overflow-y-auto space-y-2.5 text-slate-300">
-                  {simulatorLog.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-slate-600 text-center">
-                      Ready to trace execution.<br />Trigger a simulation on the left panel to begin.
+                {/* 2. Accounts Receivable (A/R) & Job Margin */}
+                <div className="space-y-8">
+                  
+                  {/* A/R Panel */}
+                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[280px] flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-1">应收款追踪 (Accounts Receivable - A/R)</h3>
+                      <p className="text-xs text-slate-400 mb-4">逾期或待付的发票账单汇总，用于现金流追踪</p>
                     </div>
-                  ) : (
-                    simulatorLog.map((log, i) => {
-                      if (log.sender === "system") {
-                        return (
-                          <div key={i} className="text-slate-500 border-l-2 border-slate-800 pl-3.5 py-0.5">
-                            <span className="text-[10px] mr-2 text-slate-600">[{log.time}]</span>
-                            <span>{log.text}</span>
+
+                    <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                      {invoices.slice(0, 3).map((inv) => (
+                        <div key={inv.id} className="bg-slate-950 border border-slate-800/60 p-3 rounded-xl flex items-center justify-between text-xs">
+                          <div>
+                            <div className="font-bold text-white">{inv.customerName}</div>
+                            <div className="text-[10px] text-slate-500 font-mono mt-0.5">{inv.id} (Due {inv.dueDate})</div>
                           </div>
-                        );
-                      }
-                      return (
-                        <div key={i} className={`flex flex-col space-y-1 ${log.sender === "user" ? "items-end" : "items-start"}`}>
-                          <div className="flex items-center gap-1.5 text-[9px] text-slate-500">
-                            <span>{log.sender === "user" ? "Customer" : "Plumbify AI"}</span>
-                            <span>•</span>
-                            <span>{log.time}</span>
-                          </div>
-                          <div className={`p-3 rounded-2xl max-w-sm leading-relaxed ${log.sender === "user" ? "bg-slate-800 text-white rounded-tr-none" : "bg-blue-600/90 text-white rounded-tl-none"}`}>
-                            {log.text}
+                          <div className="text-right">
+                            <span className="font-mono text-white font-bold block">${inv.amount.toFixed(2)}</span>
+                            <span className={`text-[9px] font-bold uppercase ${
+                              inv.status === "Overdue" ? "text-red-500" :
+                              inv.status === "Pending" ? "text-amber-500" :
+                              "text-emerald-500"
+                            }`}>{inv.status}</span>
                           </div>
                         </div>
-                      );
-                    })
-                  )}
+                      ))}
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] font-bold shrink-0">
+                      <span className="text-slate-400 uppercase tracking-wider">A/R 待付总额 (Total Outstanding):</span>
+                      <span className="font-mono text-emerald-500 text-sm">${totalAr.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Profit Margin analysis */}
+                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[190px] flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-1">工单类型利润率排行 (Profitability by Job Type)</h3>
+                      <p className="text-xs text-slate-400 mb-3">按业务形态划分的销售与净利润率分析</p>
+                    </div>
+
+                    <div className="space-y-3">
+                      {[
+                        { type: "🚨 紧急疏通与维修 (Emergency Repair)", margin: 68, color: "bg-red-500" },
+                        { type: "🔧 定期维护协议 (Scheduled Maintenance)", margin: 55, color: "bg-blue-500" },
+                        { type: "📦 大型设备安装 (Equipment Install)", margin: 42, color: "bg-purple-500" },
+                      ].map((item, idx) => (
+                        <div key={idx} className="space-y-1 text-xs">
+                          <div className="flex justify-between font-semibold">
+                            <span className="text-slate-300">{item.type}</span>
+                            <span className="text-slate-400 font-mono">净利 {item.margin}%</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                            <div style={{ width: `${item.margin}%` }} className={`h-full ${item.color} rounded-full`}></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                 </div>
+
               </div>
 
             </div>
           )}
 
-          {/* TAB 4: CONFIGURATION DIAGNOSTICS */}
-          {activeTab === "config" && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* ================================================================= */}
+          {/* TAB 5: CRM & MARKETING                                            */}
+          {/* ================================================================= */}
+          {activeTab === "crm" && (
+            <div className="space-y-8">
               
-              {/* Details of integration */}
-              <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-white mb-2 font-bold text-base">
-                    <Database size={18} className="text-blue-500" />
-                    <h3>GHL Credentials Info</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                {/* 1. Lead Sources */}
+                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-1">潜在客户渠道分析 (Lead Sources Analytics)</h3>
+                    <p className="text-xs text-slate-400 mb-6">跟踪营销广告的转化漏斗，分析客户来源占比</p>
                   </div>
-                  <p className="text-xs text-slate-400 mb-6">Database credentials used to connect server-side fetch calls securely.</p>
 
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">GHL Location ID</span>
-                      <div className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-xs text-slate-300">
-                        {stats.capturedLeads > 0 ? "RHROdkS0TNPBFZHcZsX0" : "Not Defined"}
+                  {/* Horizontal Bar Chart for marketing leads sources */}
+                  <div className="space-y-5 flex-1 overflow-y-auto pr-1">
+                    {[
+                      { name: "Google Ads (谷歌竞价广告)", leads: 74, pct: 40, color: "bg-blue-500" },
+                      { name: "Yelp Reviews (商家推荐平台)", leads: 46, pct: 25, color: "bg-red-500" },
+                      { name: "Referrals (老客户推荐转介)", leads: 37, pct: 20, color: "bg-emerald-500" },
+                      { name: "Yard Signs (户外庭院广告牌)", leads: 27, pct: 15, color: "bg-yellow-500" },
+                    ].map((src, i) => (
+                      <div key={i} className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <span className="text-slate-300">{src.name}</span>
+                          <span className="font-mono text-slate-400 font-bold">{src.leads} Leads ({src.pct}%)</span>
+                        </div>
+                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            style={{ width: `${src.pct}%` }}
+                            className={`h-full ${src.color} rounded-full`}
+                          ></div>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">GHL API Version</span>
-                      <div className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-xs text-slate-300">
-                        2021-07-28 (REST API v2)
-                      </div>
-                    </div>
+                    ))}
+                  </div>
 
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">GHL Authorization Type</span>
-                      <div className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 font-mono text-xs text-slate-300">
-                        Bearer Private Integration Token (PIT)
-                      </div>
-                    </div>
+                  <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
+                    <span>分析区间：今日更新</span>
+                    <span>最高效率渠道：Google Ads</span>
+                  </div>
+                </div>
+
+                {/* 2. Customer Directory */}
+                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-1">CRM 客户名册与历史 (Customer Service Directory)</h3>
+                    <p className="text-xs text-slate-400 mb-6">与 GoHighLevel 同步的活跃客户联系历史与服务协议状态</p>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+                    <table className="w-full border-collapse text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
+                          <th className="p-4">客户信息</th>
+                          <th className="p-4">GHL 标识符</th>
+                          <th className="p-4">上次服务项目</th>
+                          <th className="p-4">服务协议状态</th>
+                          <th className="p-4">更新时间</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {crmHistory.map((cust, i) => (
+                          <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
+                            <td className="p-4 font-bold text-white">{cust.name}</td>
+                            <td className="p-4 font-mono text-slate-500">{cust.contactId}</td>
+                            <td className="p-4 text-slate-300 font-medium">{cust.lastService}</td>
+                            <td className="p-4">
+                              <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                cust.status === "Active Contract" ? "bg-emerald-500/10 text-emerald-500" : "bg-slate-800 text-slate-400"
+                              }`}>
+                                <span className={`w-1 h-1 rounded-full ${
+                                  cust.status === "Active Contract" ? "bg-emerald-500" : "bg-slate-400"
+                                }`}></span>
+                                {cust.status}
+                              </span>
+                            </td>
+                            <td className="p-4 font-mono text-slate-500">{cust.date}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800">
-                  <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                    <ShieldCheck size={14} className="text-emerald-500" />
-                    <span>Configured inside Next.js server runtime securely.</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Diagnostic Log Output (2 Cols) */}
-              <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
-                <div className="flex items-center justify-between mb-4 shrink-0">
-                  <div className="flex items-center gap-2">
-                    <Activity size={16} className="text-blue-500" />
-                    <h3 className="text-base font-bold text-white">Diagnostics Console</h3>
-                  </div>
-                  <button 
-                    onClick={runDiagnosticsTest}
-                    disabled={runningDiagnostics}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2"
-                  >
-                    <RefreshCcw size={12} className={runningDiagnostics ? "animate-spin" : ""} />
-                    <span>Run Connection Test</span>
-                  </button>
-                </div>
-
-                {/* Console Log */}
-                <div className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs overflow-y-auto space-y-2 text-slate-300">
-                  {diagnosticLog.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-slate-600 text-center">
-                      Diagnostics terminal ready.<br />Click "Run Connection Test" above to analyze the integration status.
-                    </div>
-                  ) : (
-                    diagnosticLog.map((log, i) => (
-                      <div key={i} className="leading-relaxed">
-                        {log}
-                      </div>
-                    ))
-                  )}
-                </div>
               </div>
 
             </div>
