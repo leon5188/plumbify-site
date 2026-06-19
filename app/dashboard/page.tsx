@@ -24,12 +24,10 @@ import {
   Package,
   ArrowRight,
   ChevronRight,
-  TrendingDown,
   Clock,
   Briefcase
 } from "lucide-react";
 
-// Mock data structures
 interface GHLLead {
   id: string;
   name: string;
@@ -68,7 +66,7 @@ interface Invoice {
   dueDate: string;
 }
 
-export default function ExpandedDashboard() {
+export default function EnglishDashboard() {
   // Navigation tabs (1 to 5)
   const [activeTab, setActiveTab] = useState<"overview" | "jobs" | "techs" | "finance" | "crm">("overview");
   
@@ -92,7 +90,7 @@ export default function ExpandedDashboard() {
   // Sub-tab for Jobs: Kanban vs Map
   const [jobView, setJobView] = useState<"kanban" | "map">("kanban");
 
-  // 2. Jobs Kanban Interactive State
+  // Jobs Kanban Data
   const [jobs, setJobs] = useState<JobCard[]>([
     { id: "job-1", customerName: "Sarah Connor", address: "742 Evergreen Terr", jobType: "Burst Pipe Repair", priority: "High", status: "inprogress", assignedTech: "Dave", estCost: 950 },
     { id: "job-2", customerName: "John Connor", address: "1000 S Congress Ave", jobType: "Water Heater Installation", priority: "High", status: "dispatched", assignedTech: "Mike", estCost: 2200 },
@@ -102,7 +100,7 @@ export default function ExpandedDashboard() {
     { id: "job-6", customerName: "Robert Brewster", address: "3500 Duval St", jobType: "Main Sewer Line Clog", priority: "Medium", status: "inprogress", assignedTech: "Steve", estCost: 1250 }
   ]);
 
-  // 3. Technicians State
+  // Technicians Data
   const [techs] = useState<Technician[]>([
     { name: "Dave", role: "Master Plumber", status: "Active", assignedJob: "Burst Pipe Repair", billableHours: 38, monthlyRevenue: 18450 },
     { name: "Mike", role: "Sewer Line Specialist", status: "Active", assignedJob: "Water Heater Installation", billableHours: 35, monthlyRevenue: 15900 },
@@ -112,16 +110,16 @@ export default function ExpandedDashboard() {
     { name: "Alex", role: "Installation Lead", status: "Idle", billableHours: 30, monthlyRevenue: 14800 }
   ]);
 
-  // 4. Finance State
-  const [materials, setMaterials] = useState([
+  // Finance & Inventory Data
+  const [materials] = useState([
     { name: "Brass Ball Valves (3/4\")", cost: 18.50, qtyUsed: 14, total: 259 },
     { name: "Copper Piping (Type L - 10ft)", cost: 32.00, qtyUsed: 22, total: 704 },
     { name: "PEX Tubing (Blue/Red - 100ft)", cost: 45.00, qtyUsed: 8, total: 360 },
-    { name: "PVC Schedule 40 (3\" - 10ft)", cost: 14.20, qtyUsed: 18, total: 255.6 },
-    { name: "Tankless Water Heater Unit", cost: 1250.00, qtyUsed: 3, total: 3750 }
+    { name: "PVC Schedule 40 (3\" - 10ft)", cost: 14.20, qtyUsed: 18, total: 255.60 },
+    { name: "Tankless Water Heater Unit", cost: 1250.00, qtyUsed: 3, total: 3750.00 }
   ]);
 
-  const [invoices, setInvoices] = useState<Invoice[]>([
+  const [invoices] = useState<Invoice[]>([
     { id: "INV-2026-001", customerName: "Gregory House", amount: 1250.00, status: "Overdue", dueDate: "2026-06-10" },
     { id: "INV-2026-002", customerName: "Lisa Cuddy", amount: 480.00, status: "Pending", dueDate: "2026-06-25" },
     { id: "INV-2026-003", customerName: "James Wilson", amount: 2200.00, status: "Paid", dueDate: "2026-06-18" },
@@ -187,22 +185,19 @@ export default function ExpandedDashboard() {
     });
   };
 
-  // 4. Calculate dynamic A/R and profit numbers
+  // Finance Calculations
   const totalAr = invoices.filter(inv => inv.status !== "Paid").reduce((acc, curr) => acc + curr.amount, 0);
   const totalMaterialCosts = materials.reduce((acc, curr) => acc + curr.total, 0);
-  
-  // Calculate dynamic stats from total revenue (savedRevenue is lead count * $820 avg)
   const totalRevenue = stats.savedRevenue || 150880;
-  // Labor = 30%, Materials = 20%, Overhead = 15%, Net Margin = 35%
   const netProfit = Math.round(totalRevenue * 0.35);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans">
       
-      {/* SIDEBAR NAVIGATION (1, 2, 3, 4, 5) */}
+      {/* SIDEBAR NAVIGATION */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
         <div>
-          {/* Header */}
+          {/* Logo */}
           <div className="h-20 border-b border-slate-800 flex items-center px-6 gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
               <Zap size={18} className="text-white fill-white" />
@@ -223,7 +218,7 @@ export default function ExpandedDashboard() {
             >
               <div className="flex items-center gap-3">
                 <BarChart3 size={16} />
-                <span>1. 主要绩效指标 (KPIs)</span>
+                <span>1. Overview (KPIs)</span>
               </div>
               <ChevronRight size={12} className="opacity-60" />
             </button>
@@ -235,7 +230,7 @@ export default function ExpandedDashboard() {
             >
               <div className="flex items-center gap-3">
                 <Map size={16} />
-                <span>2. 工作和调度跟踪</span>
+                <span>2. Job & Dispatch Tracker</span>
               </div>
               <ChevronRight size={12} className="opacity-60" />
             </button>
@@ -247,7 +242,7 @@ export default function ExpandedDashboard() {
             >
               <div className="flex items-center gap-3">
                 <UserCheck size={16} />
-                <span>3. 技术员表现分析</span>
+                <span>3. Technician Performance</span>
               </div>
               <ChevronRight size={12} className="opacity-60" />
             </button>
@@ -259,7 +254,7 @@ export default function ExpandedDashboard() {
             >
               <div className="flex items-center gap-3">
                 <DollarSign size={16} />
-                <span>4. 财务和库存管理</span>
+                <span>4. Finance & Inventory</span>
               </div>
               <ChevronRight size={12} className="opacity-60" />
             </button>
@@ -271,7 +266,7 @@ export default function ExpandedDashboard() {
             >
               <div className="flex items-center gap-3">
                 <Users size={16} />
-                <span>5. 客户与营销 (CRM)</span>
+                <span>5. Customer & CRM</span>
               </div>
               <ChevronRight size={12} className="opacity-60" />
             </button>
@@ -284,7 +279,7 @@ export default function ExpandedDashboard() {
           <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Database size={14} className="text-emerald-500" />
-              <div className="text-[10px] font-bold text-slate-300">GHL Location</div>
+              <div className="text-[10px] font-bold text-slate-300">GHL Connection</div>
             </div>
             <div className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -334,7 +329,7 @@ export default function ExpandedDashboard() {
                 {/* 1. Active Jobs */}
                 <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">活跃任务 (Active Jobs)</span>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Jobs</span>
                     <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
                       <Briefcase size={16} />
                     </div>
@@ -342,11 +337,11 @@ export default function ExpandedDashboard() {
                   <div className="mt-4">
                     <div className="text-3xl font-black text-white font-mono">24</div>
                     <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-2">
-                      <span className="text-blue-400 font-semibold">12 进行中</span>
+                      <span className="text-blue-400 font-semibold">12 In Progress</span>
                       <span>•</span>
-                      <span className="text-emerald-400 font-semibold">8 已调度</span>
+                      <span className="text-emerald-400 font-semibold">8 Scheduled</span>
                       <span>•</span>
-                      <span className="text-orange-400 font-semibold">4 待处理</span>
+                      <span className="text-orange-400 font-semibold">4 Pending</span>
                     </div>
                   </div>
                 </div>
@@ -354,7 +349,7 @@ export default function ExpandedDashboard() {
                 {/* 2. Total Revenue */}
                 <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">总收入 (Total Revenue)</span>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Revenue</span>
                     <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                       <DollarSign size={16} />
                     </div>
@@ -363,7 +358,7 @@ export default function ExpandedDashboard() {
                     <div className="text-3xl font-black text-white font-mono">${totalRevenue.toLocaleString()}</div>
                     <div className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold mt-2">
                       <TrendingUp size={12} />
-                      <span>当月总销售额 (Current Month)</span>
+                      <span>Total Monthly Sales</span>
                     </div>
                   </div>
                 </div>
@@ -371,7 +366,7 @@ export default function ExpandedDashboard() {
                 {/* 3. Net Profit */}
                 <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">净利润 (Net Profit)</span>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Profit</span>
                     <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
                       <Zap size={16} />
                     </div>
@@ -379,7 +374,7 @@ export default function ExpandedDashboard() {
                   <div className="mt-4">
                     <div className="text-3xl font-black text-white font-mono">${netProfit.toLocaleString()}</div>
                     <div className="text-[10px] text-slate-500 mt-2 leading-relaxed">
-                      已减人工(30%)、材料(20%)及管理(15%)
+                      After labor (30%), materials (20%), and overhead (15%)
                     </div>
                   </div>
                 </div>
@@ -387,7 +382,7 @@ export default function ExpandedDashboard() {
                 {/* 4. Customer Satisfaction */}
                 <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">客户满意度 (CSAT)</span>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer Satisfaction</span>
                     <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
                       <Star size={16} className="fill-yellow-500/20" />
                     </div>
@@ -399,7 +394,7 @@ export default function ExpandedDashboard() {
                     </div>
                     <div className="text-[10px] text-slate-500 mt-2 flex items-center gap-1">
                       <CheckCircle size={10} className="text-yellow-500" />
-                      <span>基于 {stats.reviewsCount} 个 Google Reviews</span>
+                      <span>Based on {stats.reviewsCount} Google Reviews</span>
                     </div>
                   </div>
                 </div>
@@ -413,12 +408,12 @@ export default function ExpandedDashboard() {
                 <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h3 className="text-sm font-bold text-white">月度业务走势 (Monthly Revenue & Lead Intake)</h3>
-                      <p className="text-[11px] text-slate-400">实时拉取的 GHL 预约转换与估算产值图表</p>
+                      <h3 className="text-sm font-bold text-white">Monthly Revenue & Lead Intake</h3>
+                      <p className="text-[11px] text-slate-400">Live GoHighLevel synchronization database telemetry</p>
                     </div>
                     <div className="flex items-center gap-4 text-xs font-medium">
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded bg-blue-500"></span>
+                        <span className="w-2.5 h-2.5 rounded bg-blue-500"></span>
                         <span className="text-slate-300">Revenue (x$1,000)</span>
                       </div>
                     </div>
@@ -432,12 +427,12 @@ export default function ExpandedDashboard() {
                     </div>
 
                     {[
-                      { m: "一月 (Jan)", rev: 34, val: 42 },
-                      { m: "二月 (Feb)", rev: 47, val: 58 },
-                      { m: "三月 (Mar)", rev: 68, val: 84 },
-                      { m: "四月 (Apr)", rev: 90, val: 110 },
-                      { m: "五月 (May)", rev: 116, val: 142 },
-                      { m: "六月 (Jun)", rev: Math.round(totalRevenue/1000), val: stats.capturedLeads || 184 },
+                      { m: "Jan", rev: 34, val: 42 },
+                      { m: "Feb", rev: 47, val: 58 },
+                      { m: "Mar", rev: 68, val: 84 },
+                      { m: "Apr", rev: 90, val: 110 },
+                      { m: "May", rev: 116, val: 142 },
+                      { m: "Jun", rev: Math.round(totalRevenue/1000), val: stats.capturedLeads || 184 },
                     ].map((item, i) => {
                       const maxVal = 200;
                       const pct = Math.min((item.val / maxVal) * 100, 100);
@@ -458,13 +453,13 @@ export default function ExpandedDashboard() {
                 </div>
 
                 {/* Left column sidebar for overview */}
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">今日实时动态 (Today's Feed)</h3>
-                    <p className="text-[11px] text-slate-400">来自 GHL 的近期活动记录</p>
+                    <h3 className="text-sm font-bold text-white mb-1">Live Activity Stream</h3>
+                    <p className="text-[11px] text-slate-400">Recent customer interactions routed via GHL API</p>
                   </div>
 
-                  <div className="space-y-4 max-h-[300px] overflow-y-auto">
+                  <div className="space-y-4 max-h-[300px] overflow-y-auto mt-4">
                     {recentLeads.slice(0, 3).map((lead, idx) => (
                       <div key={idx} className="bg-slate-950 border border-slate-800/80 p-3 rounded-xl flex items-start justify-between text-xs">
                         <div className="space-y-1">
@@ -497,17 +492,17 @@ export default function ExpandedDashboard() {
                     onClick={() => setJobView("kanban")}
                     className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "kanban" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
                   >
-                    看板视图 (Kanban Board)
+                    Kanban Board
                   </button>
                   <button 
                     onClick={() => setJobView("map")}
                     className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "map" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
                   >
-                    地图路径映射 (Map Route View)
+                    Map Route View
                   </button>
                 </div>
                 
-                <span className="text-[10px] text-slate-500 font-mono">活跃总任务数 (Total Active): {jobs.length}</span>
+                <span className="text-[10px] text-slate-500 font-mono font-bold">Active Jobs Count: {jobs.length}</span>
               </div>
 
               {/* A. KANBAN VIEW */}
@@ -516,11 +511,11 @@ export default function ExpandedDashboard() {
                   
                   {/* Stages Columns definitions */}
                   {[
-                    { key: "unassigned", title: "未分配 (Unassigned)", color: "border-slate-800 bg-slate-900/30" },
-                    { key: "dispatched", title: "已派遣 (Dispatched)", color: "border-blue-900/40 bg-blue-950/5" },
-                    { key: "inprogress", title: "进行中 (In Progress)", color: "border-orange-900/40 bg-orange-950/5" },
-                    { key: "onhold", title: "暂停 (On Hold)", color: "border-red-900/40 bg-red-950/5" },
-                    { key: "invoiced", title: "已开发票 (Invoiced)", color: "border-emerald-900/40 bg-emerald-950/5" },
+                    { key: "unassigned", title: "Unassigned", color: "border-slate-800 bg-slate-900/30" },
+                    { key: "dispatched", title: "Dispatched", color: "border-blue-900/40 bg-blue-950/5" },
+                    { key: "inprogress", title: "In Progress", color: "border-orange-900/40 bg-orange-950/5" },
+                    { key: "onhold", title: "On Hold", color: "border-red-900/40 bg-red-950/5" },
+                    { key: "invoiced", title: "Invoiced", color: "border-emerald-900/40 bg-emerald-950/5" },
                   ].map((column) => {
                     const colJobs = jobs.filter(job => job.status === column.key);
                     return (
@@ -549,10 +544,10 @@ export default function ExpandedDashboard() {
 
                               <div className="pt-2.5 border-t border-slate-900 flex flex-col gap-1.5">
                                 <div className="flex items-center justify-between text-[10px] text-slate-400">
-                                  <span>类型: {job.jobType}</span>
+                                  <span>Type: {job.jobType}</span>
                                 </div>
                                 <div className="flex items-center justify-between text-[10px]">
-                                  <span className="text-slate-500">工匠: {job.assignedTech || "未指定"}</span>
+                                  <span className="text-slate-500">Tech: {job.assignedTech || "Unassigned"}</span>
                                   <span className="font-mono text-emerald-500 font-semibold">${job.estCost}</span>
                                 </div>
                               </div>
@@ -562,7 +557,7 @@ export default function ExpandedDashboard() {
                                 onClick={() => moveJobStage(job.id)}
                                 className="w-full py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[10px] rounded-lg border border-slate-800/60 font-semibold transition-colors flex items-center justify-center gap-1"
                               >
-                                <span>下个阶段</span>
+                                <span>Next Stage</span>
                                 <ArrowRight size={10} />
                               </button>
                             </div>
@@ -582,8 +577,8 @@ export default function ExpandedDashboard() {
                   {/* SVG Route Map */}
                   <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-white mb-1">今日派单路线映射 (Service Map Routing)</h3>
-                      <p className="text-xs text-slate-400">地理映射与路线图，实时展示今日的水管维修地址分布</p>
+                      <h3 className="text-sm font-bold text-white mb-1">Service Map Routing</h3>
+                      <p className="text-xs text-slate-400">Geographic mapping and routing details for today's dispatched technicians</p>
                     </div>
 
                     {/* SVG Map Canvas */}
@@ -605,32 +600,27 @@ export default function ExpandedDashboard() {
                         <path d="M 80,60 L 180,140 L 280,100 M 180,140 L 120,220 L 320,180" fill="none" stroke="#2563eb" strokeWidth="2" strokeDasharray="4,4" className="animate-[dash_5s_linear_infinite]" />
                         
                         {/* Location Pins */}
-                        {/* 1. Sarah Connor */}
                         <g transform="translate(80, 60)">
                           <circle r="6" fill="#f97316" />
                           <circle r="12" fill="#f97316" fillOpacity="0.2" className="animate-ping" />
                           <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">Sarah (Burst Pipe)</text>
                         </g>
 
-                        {/* 2. John Connor */}
                         <g transform="translate(180, 140)">
                           <circle r="6" fill="#ef4444" />
                           <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">John (Water Heater)</text>
                         </g>
 
-                        {/* 3. Marcus Wright */}
                         <g transform="translate(280, 100)">
                           <circle r="6" fill="#64748b" />
                           <text x="-12" y="-8" fill="white" fontSize="8" textAnchor="end" fontWeight="bold">Marcus (Hydro-Jet)</text>
                         </g>
 
-                        {/* 4. Grace Harper */}
                         <g transform="translate(120, 220)">
                           <circle r="6" fill="#ef4444" />
                           <text x="-12" y="8" fill="white" fontSize="8" textAnchor="end" fontWeight="bold">Grace (Disposal)</text>
                         </g>
 
-                        {/* 5. Robert Brewster */}
                         <g transform="translate(320, 180)">
                           <circle r="6" fill="#10b981" />
                           <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">Robert (Sewer Clog)</text>
@@ -639,18 +629,18 @@ export default function ExpandedDashboard() {
                     </div>
 
                     <div className="flex justify-between items-center text-[10px] text-slate-500">
-                      <span>地图区域：Austin, TX 辖区</span>
+                      <span>Service Area: Austin, TX Metro</span>
                       <div className="flex gap-4">
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span>紧急高优先级</span>
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-500"></span>进行中</span>
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-500"></span>未分配</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span>High Priority</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-500"></span>In Progress</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-500"></span>Unassigned</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Job Detail List Panel */}
                   <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col">
-                    <h3 className="text-sm font-bold text-white mb-4">今日服务清单 (Work Details)</h3>
+                    <h3 className="text-sm font-bold text-white mb-4">Job Specifications</h3>
                     <div className="flex-1 overflow-y-auto space-y-3.5 pr-1">
                       {jobs.map((job) => (
                         <div key={job.id} className="bg-slate-950 border border-slate-800 p-3 rounded-xl space-y-2 text-xs">
@@ -662,7 +652,7 @@ export default function ExpandedDashboard() {
                           </div>
                           <div className="text-[10px] text-slate-400 leading-normal">{job.address}</div>
                           <div className="text-[10px] flex justify-between text-slate-500 pt-1 border-t border-slate-900">
-                            <span>任务: {job.jobType}</span>
+                            <span>Service: {job.jobType}</span>
                             <span className="font-mono text-emerald-500">${job.estCost}</span>
                           </div>
                         </div>
@@ -687,18 +677,18 @@ export default function ExpandedDashboard() {
                 {/* 1. Daily Schedule & Status */}
                 <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">技师今日日程与状态 (Technicians Dispatch Board)</h3>
-                    <p className="text-xs text-slate-400 mb-6">跟踪在岗技术工人的实时状态与分配工作</p>
+                    <h3 className="text-sm font-bold text-white mb-1">Technicians Dispatch Board</h3>
+                    <p className="text-xs text-slate-400 mb-6">Real-time tracking of active technicians and assigned field operations</p>
                   </div>
 
                   <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
                         <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
-                          <th className="p-4">技师姓名</th>
-                          <th className="p-4">技术资质 (Role)</th>
-                          <th className="p-4">当前状态</th>
-                          <th className="p-4">分配工作</th>
+                          <th className="p-4">Technician Name</th>
+                          <th className="p-4">Role / Specialization</th>
+                          <th className="p-4">Current Status</th>
+                          <th className="p-4">Assigned Active Job</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -720,7 +710,7 @@ export default function ExpandedDashboard() {
                                 {tech.status}
                               </span>
                             </td>
-                            <td className="p-4 text-slate-400 font-medium">{tech.assignedJob || "空闲 (No Job)"}</td>
+                            <td className="p-4 text-slate-400 font-medium">{tech.assignedJob || "No Active Job"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -731,8 +721,8 @@ export default function ExpandedDashboard() {
                 {/* 2. Billable Hours & Revenue */}
                 <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">记账工时与效率排行 (Billing & Revenue Leaderboard)</h3>
-                    <p className="text-xs text-slate-400 mb-6">分析每位技术工人的计费工时与本月个人营业创收贡献</p>
+                    <h3 className="text-sm font-bold text-white mb-1">Billing & Revenue Leaderboard</h3>
+                    <p className="text-xs text-slate-400 mb-6">Comparison of total billable hours and personal monthly revenue contributions</p>
                   </div>
 
                   <div className="space-y-4 flex-1 overflow-y-auto pr-1">
@@ -745,7 +735,6 @@ export default function ExpandedDashboard() {
                           </div>
                           <span className="font-mono text-emerald-500 font-bold">${tech.monthlyRevenue.toLocaleString()}</span>
                         </div>
-                        {/* Progress Bar representation */}
                         <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                           <div 
                             style={{ width: `${Math.min((tech.monthlyRevenue / 20000) * 100, 100)}%` }}
@@ -757,8 +746,8 @@ export default function ExpandedDashboard() {
                   </div>
 
                   <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
-                    <span>* 记账工时数据每周自动汇总</span>
-                    <span>最高效率计费：Dave</span>
+                    <span>* Billable hours updated weekly</span>
+                    <span>Top Performer: Dave</span>
                   </div>
                 </div>
 
@@ -778,18 +767,18 @@ export default function ExpandedDashboard() {
                 {/* 1. Inventory & Materials */}
                 <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">今日消耗材料核算 (Real-Time Materials Cost)</h3>
-                    <p className="text-xs text-slate-400 mb-6">实时消耗材料库存（管道、阀门、配件）及对应单价成本追踪</p>
+                    <h3 className="text-sm font-bold text-white mb-1">Real-Time Materials Cost</h3>
+                    <p className="text-xs text-slate-400 mb-6">Accounting ledger mapping plumbing parts, copper tubing, valves, and inventory usage</p>
                   </div>
 
                   <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
                         <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
-                          <th className="p-4">零件/耗材名称</th>
-                          <th className="p-4">单位成本 (Unit Cost)</th>
-                          <th className="p-4">消耗数量 (Qty Used)</th>
-                          <th className="p-4">总成本 (Total Cost)</th>
+                          <th className="p-4">Material / Inventory Name</th>
+                          <th className="p-4">Unit Cost</th>
+                          <th className="p-4">Qty Used</th>
+                          <th className="p-4">Total Cost</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -808,9 +797,8 @@ export default function ExpandedDashboard() {
                     </table>
                   </div>
 
-                  {/* Summary footer */}
                   <div className="mt-4 p-4 bg-slate-950 border border-slate-800/80 rounded-xl flex items-center justify-between text-xs shrink-0">
-                    <span className="font-semibold text-slate-400 uppercase tracking-wider">材料总成本累计 (Total Material Overhead):</span>
+                    <span className="font-semibold text-slate-400 uppercase tracking-wider">Total Material Cost:</span>
                     <span className="font-mono text-base font-black text-red-500">${totalMaterialCosts.toLocaleString()}</span>
                   </div>
                 </div>
@@ -821,8 +809,8 @@ export default function ExpandedDashboard() {
                   {/* A/R Panel */}
                   <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[280px] flex flex-col justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-white mb-1">应收款追踪 (Accounts Receivable - A/R)</h3>
-                      <p className="text-xs text-slate-400 mb-4">逾期或待付的发票账单汇总，用于现金流追踪</p>
+                      <h3 className="text-sm font-bold text-white mb-1">Accounts Receivable (A/R)</h3>
+                      <p className="text-xs text-slate-400 mb-4">Pending and overdue customer invoice tracking for cash flow health</p>
                     </div>
 
                     <div className="flex-1 overflow-y-auto space-y-2 pr-1">
@@ -845,7 +833,7 @@ export default function ExpandedDashboard() {
                     </div>
 
                     <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] font-bold shrink-0">
-                      <span className="text-slate-400 uppercase tracking-wider">A/R 待付总额 (Total Outstanding):</span>
+                      <span className="text-slate-400 uppercase tracking-wider">Total Outstanding A/R:</span>
                       <span className="font-mono text-emerald-500 text-sm">${totalAr.toLocaleString()}</span>
                     </div>
                   </div>
@@ -853,20 +841,20 @@ export default function ExpandedDashboard() {
                   {/* Profit Margin analysis */}
                   <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[190px] flex flex-col justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-white mb-1">工单类型利润率排行 (Profitability by Job Type)</h3>
-                      <p className="text-xs text-slate-400 mb-3">按业务形态划分的销售与净利润率分析</p>
+                      <h3 className="text-sm font-bold text-white mb-1">Profitability by Job Type</h3>
+                      <p className="text-xs text-slate-400 mb-3">Profit margin metrics grouped by plumbing work category</p>
                     </div>
 
                     <div className="space-y-3">
                       {[
-                        { type: "🚨 紧急疏通与维修 (Emergency Repair)", margin: 68, color: "bg-red-500" },
-                        { type: "🔧 定期维护协议 (Scheduled Maintenance)", margin: 55, color: "bg-blue-500" },
-                        { type: "📦 大型设备安装 (Equipment Install)", margin: 42, color: "bg-purple-500" },
+                        { type: "🚨 Emergency Repair & Service", margin: 68, color: "bg-red-500" },
+                        { type: "🔧 Scheduled Maintenance Contracts", margin: 55, color: "bg-blue-500" },
+                        { type: "📦 Large Appliance/Heater Install", margin: 42, color: "bg-purple-500" },
                       ].map((item, idx) => (
                         <div key={idx} className="space-y-1 text-xs">
                           <div className="flex justify-between font-semibold">
                             <span className="text-slate-300">{item.type}</span>
-                            <span className="text-slate-400 font-mono">净利 {item.margin}%</span>
+                            <span className="text-slate-400 font-mono">Net Margin: {item.margin}%</span>
                           </div>
                           <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
                             <div style={{ width: `${item.margin}%` }} className={`h-full ${item.color} rounded-full`}></div>
@@ -894,17 +882,16 @@ export default function ExpandedDashboard() {
                 {/* 1. Lead Sources */}
                 <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">潜在客户渠道分析 (Lead Sources Analytics)</h3>
-                    <p className="text-xs text-slate-400 mb-6">跟踪营销广告的转化漏斗，分析客户来源占比</p>
+                    <h3 className="text-sm font-bold text-white mb-1">Lead Sources Analytics</h3>
+                    <p className="text-xs text-slate-400 mb-6">Marketing acquisition channel distribution and lead metrics</p>
                   </div>
 
-                  {/* Horizontal Bar Chart for marketing leads sources */}
                   <div className="space-y-5 flex-1 overflow-y-auto pr-1">
                     {[
-                      { name: "Google Ads (谷歌竞价广告)", leads: 74, pct: 40, color: "bg-blue-500" },
-                      { name: "Yelp Reviews (商家推荐平台)", leads: 46, pct: 25, color: "bg-red-500" },
-                      { name: "Referrals (老客户推荐转介)", leads: 37, pct: 20, color: "bg-emerald-500" },
-                      { name: "Yard Signs (户外庭院广告牌)", leads: 27, pct: 15, color: "bg-yellow-500" },
+                      { name: "Google Search Ads", leads: 74, pct: 40, color: "bg-blue-500" },
+                      { name: "Yelp Local Reviews", leads: 46, pct: 25, color: "bg-red-500" },
+                      { name: "Customer Referrals", leads: 37, pct: 20, color: "bg-emerald-500" },
+                      { name: "Jobsite Yard Signs", leads: 27, pct: 15, color: "bg-yellow-500" },
                     ].map((src, i) => (
                       <div key={i} className="space-y-2">
                         <div className="flex items-center justify-between text-xs font-semibold">
@@ -922,27 +909,27 @@ export default function ExpandedDashboard() {
                   </div>
 
                   <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
-                    <span>分析区间：今日更新</span>
-                    <span>最高效率渠道：Google Ads</span>
+                    <span>Updated: Today</span>
+                    <span>Top Channel: Google Ads</span>
                   </div>
                 </div>
 
                 {/* 2. Customer Directory */}
                 <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">CRM 客户名册与历史 (Customer Service Directory)</h3>
-                    <p className="text-xs text-slate-400 mb-6">与 GoHighLevel 同步的活跃客户联系历史与服务协议状态</p>
+                    <h3 className="text-sm font-bold text-white mb-1">Customer Service Directory</h3>
+                    <p className="text-xs text-slate-400 mb-6">GoHighLevel synchronized contact directory and active service agreements</p>
                   </div>
 
                   <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
                         <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
-                          <th className="p-4">客户信息</th>
-                          <th className="p-4">GHL 标识符</th>
-                          <th className="p-4">上次服务项目</th>
-                          <th className="p-4">服务协议状态</th>
-                          <th className="p-4">更新时间</th>
+                          <th className="p-4">Customer Info</th>
+                          <th className="p-4">GHL Contact ID</th>
+                          <th className="p-4">Last Dispatched Service</th>
+                          <th className="p-4">Agreement Status</th>
+                          <th className="p-4">Renewal Date</th>
                         </tr>
                       </thead>
                       <tbody>
