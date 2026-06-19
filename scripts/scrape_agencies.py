@@ -29,20 +29,20 @@ def scrape_duckduckgo(query):
         print(f"✅ Found {len(links)} search results.")
         
         for item in links:
-            title_elem = item.css('.result__title a')
-            snippet_elem = item.css('.result__snippet')
+            title = item.css('.result__title a::text').get()
+            href = item.css('.result__title a::attr(href)').get()
+            snippet = item.css('.result__snippet::text').get()
             
-            if title_elem:
-                title = title_elem.text().strip()
-                href = title_elem.attrib().get('href', '')
+            if title and href:
+                title = title.strip()
+                href = href.strip()
+                snippet = snippet.strip() if snippet else ""
                 
                 # Decode DuckDuckGo redirect link to obtain direct URL
                 actual_url = href
                 if "/l/?uddg=" in href:
                     parsed = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
                     actual_url = parsed.get('uddg', [href])[0]
-                
-                snippet = snippet_elem.text().strip() if snippet_elem else ""
                 
                 # Basic filter to target actual agency websites (discarding common listings like Yelp/YellowPages)
                 ignore_domains = ['yelp.com', 'yellowpages.com', 'facebook.com', 'linkedin.com', 'twitter.com', 'instagram.com', 'youtube.com']

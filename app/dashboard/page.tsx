@@ -27,7 +27,8 @@ import {
   Clock,
   Briefcase,
   Navigation,
-  Compass
+  Compass,
+  PhoneCall
 } from "lucide-react";
 
 interface GHLLead {
@@ -141,12 +142,65 @@ export default function LiveMapDashboard() {
 
   // CRM: Customer Directory
   const [crmHistory] = useState([
-    { name: "Gregory House", contactId: "crm-c-10293", lastService: "Sewer Hydro-Jetting", date: "2026-05-18", status: "Active Contract", tag: "emergency" },
-    { name: "Lisa Cuddy", contactId: "crm-c-10294", lastService: "Kitchen Faucet Replacement", date: "2026-06-02", status: "No Contract", tag: "quote" },
-    { name: "James Wilson", contactId: "crm-c-10295", lastService: "Tankless Heater Install", date: "2026-06-17", status: "Active Contract", tag: "maintenance" },
-    { name: "Eric Foreman", contactId: "crm-c-10296", lastService: "Garbage Disposal Repair", date: "2026-06-10", status: "Active Contract", tag: "maintenance" },
-    { name: "Allison Cameron", contactId: "crm-c-10297", lastService: "Slab Leak Repipe", date: "2026-05-30", status: "No Contract", tag: "emergency" }
+    { name: "Gregory House", phone: "+16262036250", contactId: "crm-c-10293", lastService: "Sewer Hydro-Jetting", date: "2026-05-18", status: "Active Contract", tag: "emergency" },
+    { name: "Lisa Cuddy", phone: "+16265550199", contactId: "crm-c-10294", lastService: "Kitchen Faucet Replacement", date: "2026-06-02", status: "No Contract", tag: "quote" },
+    { name: "James Wilson", phone: "+16265550188", contactId: "crm-c-10295", lastService: "Tankless Heater Install", date: "2026-06-17", status: "Active Contract", tag: "maintenance" },
+    { name: "Eric Foreman", phone: "+16265550177", contactId: "crm-c-10296", lastService: "Garbage Disposal Repair", date: "2026-06-10", status: "Active Contract", tag: "maintenance" },
+    { name: "Allison Cameron", phone: "+16265550166", contactId: "crm-c-10297", lastService: "Slab Leak Repipe", date: "2026-05-30", status: "No Contract", tag: "emergency" }
   ]);
+
+  // Vapi Voice Calling State
+  const [activeDialLead, setActiveDialLead] = useState<any>(null);
+  const [dialCallStatus, setDialCallStatus] = useState<string>("idle"); // idle, dialing, ringing, in-progress, completed, failed
+  const [dialCallSummary, setDialCallSummary] = useState<string>("");
+  const [isDialing, setIsDialing] = useState<boolean>(false);
+
+  const triggerOutboundCall = async (lead: any) => {
+    setActiveDialLead(lead);
+    setIsDialing(true);
+    setDialCallStatus("dialing");
+    setDialCallSummary("");
+    
+    try {
+      const res = await fetch("/api/vapi/outbound", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          phoneNumber: lead.phone || "+16262036250",
+          name: lead.name
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setDialCallStatus("ringing");
+        
+        if (data.simulated) {
+          // Simulator flow for sandbox visual feedback
+          await new Promise(r => setTimeout(r, 2000));
+          setDialCallStatus("in-progress");
+          await new Promise(r => setTimeout(r, 4500));
+          setDialCallStatus("completed");
+          setDialCallSummary(
+            `[SIMULATION REPORT] Call completed. Plumbify AI Assistant successfully called ${lead.name} at ${lead.phone}. Pre-qualified owner on missed-call text-backs. Plumber expressed high interest, confirmed they run 3 trucks, and agreed to join a 14-day free challenge. Live demo booked for Monday at 10 AM EST.`
+          );
+        } else {
+          setDialCallStatus("in-progress");
+          setDialCallSummary("AI Call successfully placed via Vapi API! Your phone should start ringing. Once completed, Vapi webhooks will update the CRM.");
+        }
+      } else {
+        setDialCallStatus("failed");
+        setDialCallSummary(`Call failed: ${data.error || "Failed to trigger"}`);
+      }
+    } catch (err: any) {
+      setDialCallStatus("failed");
+      setDialCallSummary(`Network error: ${err.message}`);
+    } finally {
+      setIsDialing(false);
+    }
+  };
 
   // Fetch GHL data
   const fetchData = async (showRefresh = false) => {
@@ -1056,12 +1110,16 @@ export default function LiveMapDashboard() {
                           <th className="p-4">Last Dispatched Service</th>
                           <th className="p-4">Agreement Status</th>
                           <th className="p-4">Renewal Date</th>
+                          <th className="p-4 text-right">AI Outreach</th>
                         </tr>
                       </thead>
                       <tbody>
                         {crmHistory.map((cust, i) => (
                           <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
-                            <td className="p-4 font-bold text-white">{cust.name}</td>
+                            <td className="p-4 text-white">
+                              <div className="font-bold">{cust.name}</div>
+                              <div className="text-[10px] text-slate-400 font-mono mt-0.5">{cust.phone}</div>
+                            </td>
                             <td className="p-4 font-mono text-slate-500">{cust.contactId}</td>
                             <td className="p-4 text-slate-300 font-medium">{cust.lastService}</td>
                             <td className="p-4">
@@ -1075,6 +1133,15 @@ export default function LiveMapDashboard() {
                               </span>
                             </td>
                             <td className="p-4 font-mono text-slate-500">{cust.date}</td>
+                            <td className="p-4 text-right">
+                              <button
+                                onClick={() => triggerOutboundCall(cust)}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/20 hover:border-blue-500 rounded-lg text-[10px] font-bold transition-all"
+                              >
+                                <PhoneCall size={10} />
+                                <span>Dial Lead</span>
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -1090,6 +1157,131 @@ export default function LiveMapDashboard() {
         </div>
 
       </main>
+
+      {/* VAPI DIALER MODAL */}
+      {activeDialLead && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500">
+                  <Activity size={16} className={isDialing ? "animate-pulse" : ""} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">AI Outreach Dialing</h3>
+                  <p className="text-[10px] text-slate-400">Powered by Vapi Voice Engine</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setActiveDialLead(null);
+                  setDialCallStatus("idle");
+                  setDialCallSummary("");
+                }}
+                className="text-slate-400 hover:text-white transition-colors text-xs font-bold"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              
+              {/* Contact Card */}
+              <div className="bg-slate-950 border border-slate-800/80 p-4 rounded-xl flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="text-xs font-semibold text-slate-400">Recipient</div>
+                  <div className="text-sm font-bold text-white">{activeDialLead.name}</div>
+                  <div className="text-[10px] text-blue-400 font-mono">{activeDialLead.phone || "+1 (626) 203-6250"}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${
+                    dialCallStatus === "completed" ? "bg-emerald-500" :
+                    dialCallStatus === "failed" ? "bg-red-500" :
+                    dialCallStatus === "idle" ? "bg-slate-500" :
+                    "bg-blue-500 animate-ping"
+                  }`}></span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">
+                    {dialCallStatus}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Graphic */}
+              <div className="flex flex-col items-center justify-center py-4 bg-slate-950/40 border border-slate-800/60 rounded-xl">
+                {dialCallStatus === "dialing" && (
+                  <div className="text-center space-y-2">
+                    <div className="text-xs text-slate-400">Initiating call via API...</div>
+                    <div className="text-[10px] text-blue-500 animate-pulse font-mono">POST /api/vapi/outbound</div>
+                  </div>
+                )}
+                {dialCallStatus === "ringing" && (
+                  <div className="text-center space-y-2">
+                    <div className="text-xs text-blue-400 font-bold animate-bounce">Ringing Customer...</div>
+                    <div className="text-[10px] text-slate-500">Waiting for answer...</div>
+                  </div>
+                )}
+                {dialCallStatus === "in-progress" && (
+                  <div className="text-center space-y-2">
+                    <div className="text-xs text-emerald-400 font-bold animate-pulse">Call Active & Connected</div>
+                    <div className="text-[10px] text-slate-400">AI Assistant is speaking to lead</div>
+                  </div>
+                )}
+                {dialCallStatus === "completed" && (
+                  <div className="text-center space-y-1">
+                    <div className="text-xs text-emerald-500 font-bold">Call Completed Successfully</div>
+                    <div className="text-[10px] text-slate-400 font-mono">Vapi webhook synced</div>
+                  </div>
+                )}
+                {dialCallStatus === "failed" && (
+                  <div className="text-center space-y-1">
+                    <div className="text-xs text-red-500 font-bold">Call Connection Failed</div>
+                    <div className="text-[10px] text-slate-400 font-mono">Check Vapi logs or console</div>
+                  </div>
+                )}
+                {dialCallStatus === "idle" && (
+                  <div className="text-xs text-slate-400">Ready to initiate voice agent.</div>
+                )}
+              </div>
+
+              {/* Call Summary Box */}
+              {dialCallSummary && (
+                <div className="space-y-2">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Call Transcript Summary</div>
+                  <div className="bg-slate-950/80 border border-slate-800/80 p-3.5 rounded-xl text-[11px] text-slate-300 font-medium leading-relaxed max-h-[150px] overflow-y-auto">
+                    {dialCallSummary}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setActiveDialLead(null);
+                    setDialCallStatus("idle");
+                    setDialCallSummary("");
+                  }}
+                  className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold border border-slate-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                {dialCallStatus !== "ringing" && dialCallStatus !== "in-progress" && (
+                  <button
+                    onClick={() => triggerOutboundCall(activeDialLead)}
+                    disabled={isDialing}
+                    className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-500/10 flex items-center justify-center gap-1.5"
+                  >
+                    <span>Redial Lead</span>
+                  </button>
+                )}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
