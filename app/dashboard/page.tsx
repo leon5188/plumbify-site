@@ -141,11 +141,11 @@ export default function LiveMapDashboard() {
 
   // CRM: Customer Directory
   const [crmHistory] = useState([
-    { name: "Gregory House", contactId: "ghl-c-10293", lastService: "Sewer Hydro-Jetting", date: "2026-05-18", status: "Active Contract", tag: "emergency" },
-    { name: "Lisa Cuddy", contactId: "ghl-c-10294", lastService: "Kitchen Faucet Replacement", date: "2026-06-02", status: "No Contract", tag: "quote" },
-    { name: "James Wilson", contactId: "ghl-c-10295", lastService: "Tankless Heater Install", date: "2026-06-17", status: "Active Contract", tag: "maintenance" },
-    { name: "Eric Foreman", contactId: "ghl-c-10296", lastService: "Garbage Disposal Repair", date: "2026-06-10", status: "Active Contract", tag: "maintenance" },
-    { name: "Allison Cameron", contactId: "ghl-c-10297", lastService: "Slab Leak Repipe", date: "2026-05-30", status: "No Contract", tag: "emergency" }
+    { name: "Gregory House", contactId: "crm-c-10293", lastService: "Sewer Hydro-Jetting", date: "2026-05-18", status: "Active Contract", tag: "emergency" },
+    { name: "Lisa Cuddy", contactId: "crm-c-10294", lastService: "Kitchen Faucet Replacement", date: "2026-06-02", status: "No Contract", tag: "quote" },
+    { name: "James Wilson", contactId: "crm-c-10295", lastService: "Tankless Heater Install", date: "2026-06-17", status: "Active Contract", tag: "maintenance" },
+    { name: "Eric Foreman", contactId: "crm-c-10296", lastService: "Garbage Disposal Repair", date: "2026-06-10", status: "Active Contract", tag: "maintenance" },
+    { name: "Allison Cameron", contactId: "crm-c-10297", lastService: "Slab Leak Repipe", date: "2026-05-30", status: "No Contract", tag: "emergency" }
   ]);
 
   // Fetch GHL data
@@ -244,14 +244,8 @@ export default function LiveMapDashboard() {
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
         <div>
           {/* Logo */}
-          <div className="h-20 border-b border-slate-800 flex items-center px-6 gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Zap size={18} className="text-white fill-white" />
-            </div>
-            <div>
-              <div className="font-black tracking-wider text-base text-white">PLUMBIFY</div>
-              <div className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Ops Command Center</div>
-            </div>
+          <div className="h-20 border-b border-slate-800 flex items-center px-6">
+            <span className="text-2xl font-black text-blue-500 tracking-tighter">PLUMBIFY</span>
           </div>
 
           {/* Navigation Links */}
@@ -313,19 +307,7 @@ export default function LiveMapDashboard() {
           </nav>
         </div>
 
-        {/* Integration Footer */}
-        <div className="p-4 border-t border-slate-800">
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Database size={14} className="text-emerald-500" />
-              <div className="text-[10px] font-bold text-slate-300">GHL Connection</div>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-[9px] font-bold text-emerald-500 uppercase">Live</span>
-            </div>
-          </div>
-        </div>
+
       </aside>
 
       {/* MAIN LAYOUT */}
@@ -338,7 +320,7 @@ export default function LiveMapDashboard() {
               <span>Plumbify Operations Command Center</span>
               <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono font-normal">v2.0</span>
             </h1>
-            <p className="text-xs text-slate-400 mt-0.5">Automated dispatch, field tracking, and GHL ledger logs</p>
+            <p className="text-xs text-slate-400 mt-0.5">Automated dispatch, field tracking, and CRM ledger logs</p>
           </div>
 
           <div className="flex items-center gap-4">
@@ -348,7 +330,7 @@ export default function LiveMapDashboard() {
               className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl border border-slate-700 transition-colors flex items-center gap-2 text-xs font-semibold"
             >
               <RefreshCcw size={14} className={refreshing ? "animate-spin text-blue-500" : ""} />
-              <span>{refreshing ? "Syncing..." : "Sync GHL"}</span>
+              <span>{refreshing ? "Syncing..." : "Sync Database"}</span>
             </button>
           </div>
         </header>
@@ -448,7 +430,7 @@ export default function LiveMapDashboard() {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-sm font-bold text-white">Monthly Revenue & Lead Intake</h3>
-                      <p className="text-[11px] text-slate-400">Live GoHighLevel synchronization database telemetry</p>
+                      <p className="text-[11px] text-slate-400">Live CRM database synchronization telemetry</p>
                     </div>
                     <div className="flex items-center gap-4 text-xs font-medium">
                       <div className="flex items-center gap-1.5">
@@ -495,7 +477,7 @@ export default function LiveMapDashboard() {
                 <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Live Activity Stream</h3>
-                    <p className="text-[11px] text-slate-400">Recent customer interactions routed via GHL API</p>
+                    <p className="text-[11px] text-slate-400">Recent customer interactions routed via API</p>
                   </div>
 
                   <div className="space-y-4 max-h-[300px] overflow-y-auto mt-4">
@@ -1062,7 +1044,7 @@ export default function LiveMapDashboard() {
                 <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Customer Service Directory</h3>
-                    <p className="text-xs text-slate-400 mb-6">GoHighLevel synchronized contact directory and active service agreements</p>
+                    <p className="text-xs text-slate-400 mb-6">Synchronized contact directory and active service agreements</p>
                   </div>
 
                   <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
@@ -1070,7 +1052,7 @@ export default function LiveMapDashboard() {
                       <thead>
                         <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
                           <th className="p-4">Customer Info</th>
-                          <th className="p-4">GHL Contact ID</th>
+                          <th className="p-4">CRM Contact ID</th>
                           <th className="p-4">Last Dispatched Service</th>
                           <th className="p-4">Agreement Status</th>
                           <th className="p-4">Renewal Date</th>
