@@ -292,21 +292,21 @@ export default function LiveMapDashboard() {
   const routeDetails = getRouteStats();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans">
+    <div className="min-h-screen bg-[#020813] text-slate-100 flex font-sans">
       
       {/* SIDEBAR NAVIGATION */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
+      <aside className="w-64 bg-[#040e21]/90 border-r border-cyan-500/10 flex flex-col justify-between shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.05)]">
         <div>
           {/* Logo */}
-          <div className="h-20 border-b border-slate-800 flex items-center px-6">
-            <img src="/logo.png" alt="PLUMBIFY" className="h-12 w-auto object-contain" />
+          <div className="h-20 border-b border-cyan-500/10 flex items-center px-6">
+            <img src="/logo.png" alt="PLUMBIFY" className="h-12 w-auto object-contain brightness-105 contrast-105" />
           </div>
 
           {/* Navigation Links */}
           <nav className="p-4 space-y-1">
             <button 
               onClick={() => setActiveTab("overview")}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "overview" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all border ${activeTab === "overview" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/20 border-transparent"}`}
             >
               <div className="flex items-center gap-3">
                 <BarChart3 size={16} />
@@ -317,7 +317,7 @@ export default function LiveMapDashboard() {
 
             <button 
               onClick={() => setActiveTab("jobs")}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "jobs" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all border ${activeTab === "jobs" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/20 border-transparent"}`}
             >
               <div className="flex items-center gap-3">
                 <Map size={16} />
@@ -328,7 +328,7 @@ export default function LiveMapDashboard() {
 
             <button 
               onClick={() => setActiveTab("techs")}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "techs" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all border ${activeTab === "techs" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/20 border-transparent"}`}
             >
               <div className="flex items-center gap-3">
                 <UserCheck size={16} />
@@ -339,7 +339,7 @@ export default function LiveMapDashboard() {
 
             <button 
               onClick={() => setActiveTab("finance")}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "finance" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all border ${activeTab === "finance" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/20 border-transparent"}`}
             >
               <div className="flex items-center gap-3">
                 <DollarSign size={16} />
@@ -350,7 +350,7 @@ export default function LiveMapDashboard() {
 
             <button 
               onClick={() => setActiveTab("crm")}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "crm" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all border ${activeTab === "crm" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/20 border-transparent"}`}
             >
               <div className="flex items-center gap-3">
                 <Users size={16} />
@@ -368,11 +368,11 @@ export default function LiveMapDashboard() {
       <main className="flex-1 flex flex-col overflow-y-auto">
         
         {/* Top Control Bar */}
-        <header className="h-20 border-b border-slate-800 px-8 flex items-center justify-between shrink-0 bg-slate-900/40 backdrop-blur-md sticky top-0 z-40">
+        <header className="h-20 border-b border-cyan-500/10 px-8 flex items-center justify-between shrink-0 bg-[#040e21]/40 backdrop-blur-md sticky top-0 z-40 shadow-[0_4px_20px_rgba(6,182,212,0.05)]">
           <div>
             <h1 className="text-base font-bold text-white tracking-tight flex items-center gap-3">
               <span>Plumbify Operations Command Center</span>
-              <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono font-normal">v2.0</span>
+              <span className="text-[10px] bg-cyan-950/50 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded-full font-mono font-normal">v2.0</span>
             </h1>
             <p className="text-xs text-slate-400 mt-0.5">Automated dispatch, field tracking, and CRM ledger logs</p>
           </div>
@@ -381,9 +381,9 @@ export default function LiveMapDashboard() {
             <button 
               onClick={() => fetchData(true)}
               disabled={refreshing}
-              className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl border border-slate-700 transition-colors flex items-center gap-2 text-xs font-semibold"
+              className="p-2.5 bg-[#061833]/60 hover:bg-[#09264f] text-cyan-400 hover:text-cyan-300 rounded-xl border border-cyan-500/20 transition-all flex items-center gap-2 text-xs font-semibold"
             >
-              <RefreshCcw size={14} className={refreshing ? "animate-spin text-blue-500" : ""} />
+              <RefreshCcw size={14} className={refreshing ? "animate-spin text-cyan-400" : ""} />
               <span>{refreshing ? "Syncing..." : "Sync Database"}</span>
             </button>
           </div>
@@ -402,17 +402,17 @@ export default function LiveMapDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 {/* 1. Active Jobs */}
-                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.02)] hover:shadow-[0_0_20px_rgba(6,182,212,0.08)] flex flex-col justify-between">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Jobs</span>
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
                       <Briefcase size={16} />
                     </div>
                   </div>
                   <div className="mt-4">
-                    <div className="text-3xl font-black text-white font-mono">24</div>
+                    <div className="text-3xl font-black text-white font-mono drop-shadow-[0_0_8px_rgba(34,211,238,0.3)]">24</div>
                     <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-2">
-                      <span className="text-blue-400 font-semibold">12 In Progress</span>
+                      <span className="text-cyan-400 font-semibold">12 In Progress</span>
                       <span>•</span>
                       <span className="text-emerald-400 font-semibold">8 Scheduled</span>
                       <span>•</span>
@@ -422,7 +422,7 @@ export default function LiveMapDashboard() {
                 </div>
 
                 {/* 2. Total Revenue */}
-                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.02)] hover:shadow-[0_0_20px_rgba(6,182,212,0.08)] flex flex-col justify-between">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Revenue</span>
                     <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
@@ -439,7 +439,7 @@ export default function LiveMapDashboard() {
                 </div>
 
                 {/* 3. Net Profit */}
-                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.02)] hover:shadow-[0_0_20px_rgba(6,182,212,0.08)] flex flex-col justify-between">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Profit</span>
                     <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
@@ -455,7 +455,7 @@ export default function LiveMapDashboard() {
                 </div>
 
                 {/* 4. Customer Satisfaction */}
-                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 hover:border-slate-700 transition-colors flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.02)] hover:shadow-[0_0_20px_rgba(6,182,212,0.08)] flex flex-col justify-between">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer Satisfaction</span>
                     <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
@@ -480,7 +480,7 @@ export default function LiveMapDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Monthly trend */}
-                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
+                <div className="lg:col-span-2 bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-sm font-bold text-white">Monthly Revenue & Lead Intake</h3>
@@ -488,17 +488,17 @@ export default function LiveMapDashboard() {
                     </div>
                     <div className="flex items-center gap-4 text-xs font-medium">
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded bg-blue-500"></span>
+                        <span className="w-2.5 h-2.5 rounded bg-cyan-400"></span>
                         <span className="text-slate-300">Revenue (x$1,000)</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="h-64 w-full flex items-end justify-between px-2 pt-4 relative">
-                    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none py-4 border-b border-slate-800">
-                      <div className="w-full border-t border-slate-800/40"></div>
-                      <div className="w-full border-t border-slate-800/40"></div>
-                      <div className="w-full border-t border-slate-800/40"></div>
+                    <div className="absolute inset-0 flex flex-col justify-between pointer-events-none py-4 border-b border-cyan-500/5">
+                      <div className="w-full border-t border-cyan-500/5"></div>
+                      <div className="w-full border-t border-cyan-500/5"></div>
+                      <div className="w-full border-t border-cyan-500/5"></div>
                     </div>
 
                     {[
@@ -513,12 +513,12 @@ export default function LiveMapDashboard() {
                       const pct = Math.min((item.val / maxVal) * 100, 100);
                       return (
                         <div key={i} className="flex-1 flex flex-col items-center justify-end h-full z-10 group">
-                          <div className="bg-blue-600 text-white font-mono text-[9px] font-bold px-1.5 py-0.5 rounded mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute transform -translate-y-16">
+                          <div className="bg-cyan-600 text-white font-mono text-[9px] font-bold px-1.5 py-0.5 rounded mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute transform -translate-y-16 shadow-[0_0_10px_rgba(6,182,212,0.4)]">
                             ${item.rev}k ({item.val} Leads)
                           </div>
                           <div 
                             style={{ height: `${pct}%` }}
-                            className="w-10 bg-gradient-to-t from-blue-700/60 to-blue-500 hover:from-blue-600 hover:to-blue-400 rounded-t-md transition-all duration-500 shadow-lg"
+                            className="w-10 bg-gradient-to-t from-cyan-950/60 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 rounded-t-md transition-all duration-500 shadow-[0_0_10px_rgba(6,182,212,0.2)]"
                           ></div>
                           <span className="text-[9px] font-bold text-slate-500 mt-2 tracking-wider">{item.m}</span>
                         </div>
@@ -528,20 +528,20 @@ export default function LiveMapDashboard() {
                 </div>
 
                 {/* Left column sidebar for overview */}
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Live Activity Stream</h3>
                     <p className="text-[11px] text-slate-400">Recent customer interactions routed via API</p>
                   </div>
 
-                  <div className="space-y-4 max-h-[300px] overflow-y-auto mt-4">
+                  <div className="space-y-4 max-h-[300px] overflow-y-auto mt-4 pr-1">
                     {recentLeads.slice(0, 3).map((lead, idx) => (
-                      <div key={idx} className="bg-slate-950 border border-slate-800/80 p-3 rounded-xl flex items-start justify-between text-xs">
+                      <div key={idx} className="bg-[#020c1b] border border-cyan-500/10 p-3 rounded-xl flex items-start justify-between text-xs">
                         <div className="space-y-1">
                           <div className="font-bold text-white">{lead.name}</div>
                           <div className="text-[10px] text-slate-400">{lead.phone}</div>
                         </div>
-                        <span className="text-[9px] bg-blue-900/30 text-blue-300 border border-blue-500/10 px-1.5 py-0.5 rounded font-mono">
+                        <span className="text-[9px] bg-cyan-950/30 text-cyan-300 border border-cyan-500/20 px-1.5 py-0.5 rounded font-mono">
                           {lead.source}
                         </span>
                       </div>
@@ -561,17 +561,17 @@ export default function LiveMapDashboard() {
             <div className="space-y-8">
               
               {/* Header with Sub-tabs (Kanban vs Map) */}
-              <div className="flex items-center justify-between bg-slate-900/40 border border-slate-800 rounded-xl p-3">
+              <div className="flex items-center justify-between bg-[#041129]/40 border border-cyan-500/10 rounded-xl p-3 shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setJobView("kanban")}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "kanban" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
+                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all border ${jobView === "kanban" ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 border-transparent"}`}
                   >
                     Kanban Board
                   </button>
                   <button 
                     onClick={() => setJobView("map")}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "map" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
+                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all border ${jobView === "map" ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]" : "text-slate-400 hover:text-cyan-400 border-transparent"}`}
                   >
                     Live GPS Map Tracking
                   </button>
@@ -586,23 +586,23 @@ export default function LiveMapDashboard() {
                   
                   {/* Stages Columns definitions */}
                   {[
-                    { key: "unassigned", title: "Unassigned", color: "border-slate-800 bg-slate-900/30" },
-                    { key: "dispatched", title: "Dispatched", color: "border-blue-900/40 bg-blue-950/5" },
-                    { key: "inprogress", title: "In Progress", color: "border-orange-900/40 bg-orange-950/5" },
-                    { key: "onhold", title: "On Hold", color: "border-red-900/40 bg-red-950/5" },
-                    { key: "invoiced", title: "Invoiced", color: "border-emerald-900/40 bg-emerald-950/5" },
+                    { key: "unassigned", title: "Unassigned", color: "border-cyan-950/20 bg-[#041129]/20" },
+                    { key: "dispatched", title: "Dispatched", color: "border-cyan-500/20 bg-cyan-950/5" },
+                    { key: "inprogress", title: "In Progress", color: "border-orange-500/20 bg-orange-950/5" },
+                    { key: "onhold", title: "On Hold", color: "border-red-500/20 bg-red-950/5" },
+                    { key: "invoiced", title: "Invoiced", color: "border-emerald-500/20 bg-emerald-950/5" },
                   ].map((column) => {
                     const colJobs = jobs.filter(job => job.status === column.key);
                     return (
                       <div key={column.key} className={`border rounded-2xl p-4 flex flex-col space-y-4 min-h-[500px] ${column.color}`}>
                         <div className="flex items-center justify-between shrink-0">
                           <h4 className="text-[11px] font-bold text-white uppercase tracking-wider">{column.title}</h4>
-                          <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono">{colJobs.length}</span>
+                          <span className="text-[10px] bg-cyan-950/40 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded-full font-mono">{colJobs.length}</span>
                         </div>
 
                         <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                           {colJobs.map((job) => (
-                            <div key={job.id} className="bg-slate-950 border border-slate-800/80 p-4 rounded-xl space-y-3 shadow-lg hover:border-slate-700 transition-colors">
+                            <div key={job.id} className="bg-[#020c1b] border border-cyan-500/10 p-4 rounded-xl space-y-3 shadow-lg hover:border-cyan-500/30 transition-all duration-300">
                               <div className="space-y-1">
                                 <div className="flex items-start justify-between">
                                   <div className="font-bold text-white text-xs">{job.customerName}</div>
@@ -617,7 +617,7 @@ export default function LiveMapDashboard() {
                                 <div className="text-[10px] text-slate-500 leading-normal">{job.address}</div>
                               </div>
 
-                              <div className="pt-2.5 border-t border-slate-900 flex flex-col gap-1.5">
+                              <div className="pt-2.5 border-t border-cyan-950/40 flex flex-col gap-1.5">
                                 <div className="flex items-center justify-between text-[10px] text-slate-400">
                                   <span>Type: {job.jobType}</span>
                                 </div>
@@ -629,7 +629,7 @@ export default function LiveMapDashboard() {
 
                               <button 
                                 onClick={() => moveJobStage(job.id)}
-                                className="w-full py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[10px] rounded-lg border border-slate-800/60 font-semibold transition-colors flex items-center justify-center gap-1"
+                                className="w-full py-1.5 bg-[#04142d] hover:bg-[#062047] text-cyan-400 hover:text-cyan-300 text-[10px] rounded-lg border border-cyan-500/10 font-semibold transition-all flex items-center justify-center gap-1 shadow-sm"
                               >
                                 <span>Next Stage</span>
                                 <ArrowRight size={10} />
@@ -649,7 +649,7 @@ export default function LiveMapDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   
                   {/* Interactive Map Area (2 Cols) */}
-                  <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[550px] flex flex-col justify-between">
+                  <div className="lg:col-span-2 bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 h-[550px] flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                     <div className="flex items-center justify-between shrink-0">
                       <div>
                         <h3 className="text-sm font-bold text-white mb-1">Live GPS Route Tracking</h3>
@@ -660,12 +660,12 @@ export default function LiveMapDashboard() {
                       <div className="flex items-center gap-2">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">Track Route:</label>
                         <select 
-                          value={selectedTechRoute}
-                          onChange={(e) => {
-                            setSelectedTechRoute(e.target.value);
-                            setSelectedPin(null);
-                          }}
-                          className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500"
+                           value={selectedTechRoute}
+                           onChange={(e) => {
+                             setSelectedTechRoute(e.target.value);
+                             setSelectedPin(null);
+                           }}
+                           className="bg-[#020c1b] border border-cyan-500/20 text-cyan-400 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-500"
                         >
                           <option value="all">All Active Routes</option>
                           <option value="Dave">Dave (Master Plumber)</option>
@@ -677,13 +677,13 @@ export default function LiveMapDashboard() {
                     </div>
 
                     {/* SVG Map Canvas */}
-                    <div className="flex-1 bg-slate-950 border border-slate-800 rounded-xl relative overflow-hidden my-4 flex items-center justify-center">
+                    <div className="flex-1 bg-[#020c1b] border border-cyan-500/10 rounded-xl relative overflow-hidden my-4 flex items-center justify-center">
                       
                       {/* Grid representation */}
-                      <svg className="w-full h-full opacity-10 absolute inset-0" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-full h-full opacity-15 absolute inset-0" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                           <pattern id="grid-map" width="20" height="20" patternUnits="userSpaceOnUse">
-                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" strokeWidth="0.5"/>
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#06b6d4" strokeWidth="0.5" strokeOpacity="0.3"/>
                           </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill="url(#grid-map)" />
@@ -693,8 +693,8 @@ export default function LiveMapDashboard() {
                       <svg className="w-[85%] h-[85%] absolute z-10" viewBox="0 0 400 300">
                         {/* Office Base Station */}
                         <g transform="translate(200, 150)">
-                          <rect x="-8" y="-8" width="16" height="16" rx="2" fill="#3b82f6" />
-                          <text x="12" y="4" fill="#60a5fa" fontSize="8" fontWeight="bold" fontFamily="monospace">HQ</text>
+                          <rect x="-8" y="-8" width="16" height="16" rx="2" fill="#00f2fe" className="drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]" />
+                          <text x="12" y="4" fill="#00f2fe" fontSize="8" fontWeight="bold" fontFamily="monospace">HQ</text>
                         </g>
 
                         {/* Render Paths & GPS trackers */}
@@ -753,7 +753,7 @@ export default function LiveMapDashboard() {
 
                       {/* In-Map Click Overlay Info */}
                       {selectedPin && (
-                        <div className="absolute bottom-4 left-4 right-4 bg-slate-900/95 border border-slate-800 rounded-xl p-4 z-20 flex justify-between items-center shadow-2xl backdrop-blur-md">
+                        <div className="absolute bottom-4 left-4 right-4 bg-[#020d1e]/95 border border-cyan-500/20 rounded-xl p-4 z-20 flex justify-between items-center shadow-[0_0_25px_rgba(6,182,212,0.15)] backdrop-blur-md">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-white">{selectedPin.customerName}</span>
@@ -761,7 +761,7 @@ export default function LiveMapDashboard() {
                                 selectedPin.priority === "High" ? "bg-red-500/10 text-red-500" : "bg-slate-800 text-slate-400"
                               }`}>{selectedPin.priority}</span>
                             </div>
-                            <div className="text-[10px] text-slate-400">{selectedPin.address} | <span className="text-blue-400 font-semibold">{selectedPin.jobType}</span></div>
+                            <div className="text-[10px] text-slate-400">{selectedPin.address} | <span className="text-cyan-400 font-semibold">{selectedPin.jobType}</span></div>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right text-[10px]">
@@ -770,7 +770,7 @@ export default function LiveMapDashboard() {
                             </div>
                             <button 
                               onClick={() => setSelectedPin(null)}
-                              className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2 py-1 rounded"
+                              className="text-[10px] bg-cyan-950 hover:bg-cyan-900 text-cyan-400 px-2 py-1 rounded"
                             >
                               Close
                             </button>
@@ -790,28 +790,28 @@ export default function LiveMapDashboard() {
                   </div>
 
                   {/* Route planning stats / Optimization (1 Col) */}
-                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[550px] flex flex-col justify-between">
+                  <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 h-[550px] flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                     <div>
                       <div className="flex items-center gap-2 text-white mb-2 font-bold text-base">
-                        <Compass size={18} className="text-blue-500" />
+                        <Compass size={18} className="text-cyan-400" />
                         <h3>Smart Routing Optimization</h3>
                       </div>
                       <p className="text-xs text-slate-400 mb-6">Real-time GPS parameters mapped to technicians for dispatch coordination.</p>
 
-                      <div className="space-y-4 bg-slate-950 border border-slate-800/80 p-4 rounded-xl">
-                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                      <div className="space-y-4 bg-[#020c1b] border border-cyan-500/10 p-4 rounded-xl">
+                        <div className="flex justify-between items-center border-b border-cyan-500/5 pb-2 text-xs">
                           <span className="text-slate-500">Tracking Target:</span>
                           <span className="font-bold text-white">{selectedTechRoute === "all" ? "All Active Vehicles" : `${selectedTechRoute} Route`}</span>
                         </div>
-                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                        <div className="flex justify-between items-center border-b border-cyan-500/5 pb-2 text-xs">
                           <span className="text-slate-500">Active Stops:</span>
                           <span className="font-mono text-white font-semibold">{routeDetails.stops} stops</span>
                         </div>
-                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                        <div className="flex justify-between items-center border-b border-cyan-500/5 pb-2 text-xs">
                           <span className="text-slate-500">Estimated Distance:</span>
                           <span className="font-mono text-white font-semibold">{routeDetails.distance}</span>
                         </div>
-                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                        <div className="flex justify-between items-center border-b border-cyan-500/5 pb-2 text-xs">
                           <span className="text-slate-500">Estimated Drive Time:</span>
                           <span className="font-mono text-white font-semibold">{routeDetails.time}</span>
                         </div>
@@ -826,7 +826,7 @@ export default function LiveMapDashboard() {
                         <button 
                           onClick={optimizeRoutes}
                           disabled={isOptimizing}
-                          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg"
+                          className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-950/50 text-cyan-100 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all border border-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] shadow-lg"
                         >
                           <Navigation size={14} className={isOptimizing ? "animate-spin" : ""} />
                           <span>{isOptimizing ? "Re-calculating..." : "Optimize Dispatch Routes"}</span>
@@ -834,7 +834,7 @@ export default function LiveMapDashboard() {
                       </div>
                     </div>
 
-                    <div className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-xl flex items-start gap-2.5 text-[10px] text-slate-500 shrink-0">
+                    <div className="p-3 bg-[#020c1b]/60 border border-cyan-500/10 rounded-xl flex items-start gap-2.5 text-[10px] text-slate-500 shrink-0">
                       <ShieldCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                       <div className="leading-normal">{optMessage}</div>
                     </div>
@@ -855,16 +855,16 @@ export default function LiveMapDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* 1. Daily Schedule & Status */}
-                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
+                <div className="lg:col-span-2 bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 flex flex-col h-[500px] shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Technicians Dispatch Board</h3>
                     <p className="text-xs text-slate-400 mb-6">Real-time tracking of active technicians and assigned field operations</p>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+                  <div className="flex-1 overflow-y-auto border border-cyan-500/10 rounded-xl bg-[#020c1b]">
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
-                        <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
+                        <tr className="border-b border-cyan-500/10 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-cyan-950/20">
                           <th className="p-4">Technician Name</th>
                           <th className="p-4">Role / Specialization</th>
                           <th className="p-4">Current Status</th>
@@ -873,7 +873,7 @@ export default function LiveMapDashboard() {
                       </thead>
                       <tbody>
                         {techs.map((tech, i) => (
-                          <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
+                          <tr key={i} className="border-b border-cyan-500/5 hover:bg-cyan-950/10 transition-colors">
                             <td className="p-4 font-bold text-white">{tech.name}</td>
                             <td className="p-4 text-slate-300">{tech.role}</td>
                             <td className="p-4">
@@ -899,7 +899,7 @@ export default function LiveMapDashboard() {
                 </div>
 
                 {/* 2. Billable Hours & Revenue */}
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 h-[500px] flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Billing & Revenue Leaderboard</h3>
                     <p className="text-xs text-slate-400 mb-6">Comparison of total billable hours and personal monthly revenue contributions</p>
@@ -915,10 +915,10 @@ export default function LiveMapDashboard() {
                           </div>
                           <span className="font-mono text-emerald-500 font-bold">${tech.monthlyRevenue.toLocaleString()}</span>
                         </div>
-                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-cyan-950/40 rounded-full overflow-hidden">
                           <div 
                             style={{ width: `${Math.min((tech.monthlyRevenue / 20000) * 100, 100)}%` }}
-                            className="h-full bg-blue-500 rounded-full"
+                            className="h-full bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.5)]"
                           ></div>
                         </div>
                       </div>
@@ -945,16 +945,16 @@ export default function LiveMapDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* 1. Inventory & Materials */}
-                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
+                <div className="lg:col-span-2 bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 flex flex-col h-[500px] shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Real-Time Materials Cost</h3>
                     <p className="text-xs text-slate-400 mb-6">Accounting ledger mapping plumbing parts, copper tubing, valves, and inventory usage</p>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+                  <div className="flex-1 overflow-y-auto border border-cyan-500/10 rounded-xl bg-[#020c1b]">
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
-                        <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
+                        <tr className="border-b border-cyan-500/10 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-cyan-950/20">
                           <th className="p-4">Material / Inventory Name</th>
                           <th className="p-4">Unit Cost</th>
                           <th className="p-4">Qty Used</th>
@@ -963,7 +963,7 @@ export default function LiveMapDashboard() {
                       </thead>
                       <tbody>
                         {materials.map((mat, i) => (
-                          <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
+                          <tr key={i} className="border-b border-cyan-500/5 hover:bg-cyan-950/10 transition-colors">
                             <td className="p-4 font-bold text-white flex items-center gap-2">
                               <Package size={14} className="text-slate-400" />
                               <span>{mat.name}</span>
@@ -977,7 +977,7 @@ export default function LiveMapDashboard() {
                     </table>
                   </div>
 
-                  <div className="mt-4 p-4 bg-slate-950 border border-slate-800/80 rounded-xl flex items-center justify-between text-xs shrink-0">
+                  <div className="mt-4 p-4 bg-[#020c1b] border border-cyan-500/10 rounded-xl flex items-center justify-between text-xs shrink-0">
                     <span className="font-semibold text-slate-400 uppercase tracking-wider">Total Material Cost:</span>
                     <span className="font-mono text-base font-black text-red-500">${totalMaterialCosts.toLocaleString()}</span>
                   </div>
@@ -987,7 +987,7 @@ export default function LiveMapDashboard() {
                 <div className="space-y-8">
                   
                   {/* A/R Panel */}
-                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[280px] flex flex-col justify-between">
+                  <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 h-[280px] flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                     <div>
                       <h3 className="text-sm font-bold text-white mb-1">Accounts Receivable (A/R)</h3>
                       <p className="text-xs text-slate-400 mb-4">Pending and overdue customer invoice tracking for cash flow health</p>
@@ -995,7 +995,7 @@ export default function LiveMapDashboard() {
 
                     <div className="flex-1 overflow-y-auto space-y-2 pr-1">
                       {invoices.slice(0, 3).map((inv) => (
-                        <div key={inv.id} className="bg-slate-950 border border-slate-800/60 p-3 rounded-xl flex items-center justify-between text-xs">
+                        <div key={inv.id} className="bg-[#020c1b] border border-cyan-500/10 p-3 rounded-xl flex items-center justify-between text-xs">
                           <div>
                             <div className="font-bold text-white">{inv.customerName}</div>
                             <div className="text-[10px] text-slate-500 font-mono mt-0.5">{inv.id} (Due {inv.dueDate})</div>
@@ -1012,14 +1012,14 @@ export default function LiveMapDashboard() {
                       ))}
                     </div>
 
-                    <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] font-bold shrink-0">
+                    <div className="pt-3 border-t border-cyan-500/15 flex items-center justify-between text-[11px] font-bold shrink-0">
                       <span className="text-slate-400 uppercase tracking-wider">Total Outstanding A/R:</span>
                       <span className="font-mono text-emerald-500 text-sm">${totalAr.toLocaleString()}</span>
                     </div>
                   </div>
 
                   {/* Profit Margin analysis */}
-                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[190px] flex flex-col justify-between">
+                  <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 h-[190px] flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                     <div>
                       <h3 className="text-sm font-bold text-white mb-1">Profitability by Job Type</h3>
                       <p className="text-xs text-slate-400 mb-3">Profit margin metrics grouped by plumbing work category</p>
@@ -1028,7 +1028,7 @@ export default function LiveMapDashboard() {
                     <div className="space-y-3">
                       {[
                         { type: "🚨 Emergency Repair & Service", margin: 68, color: "bg-red-500" },
-                        { type: "🔧 Scheduled Maintenance Contracts", margin: 55, color: "bg-blue-500" },
+                        { type: "🔧 Scheduled Maintenance Contracts", margin: 55, color: "bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]" },
                         { type: "📦 Large Appliance/Heater Install", margin: 42, color: "bg-purple-500" },
                       ].map((item, idx) => (
                         <div key={idx} className="space-y-1 text-xs">
@@ -1036,7 +1036,7 @@ export default function LiveMapDashboard() {
                             <span className="text-slate-300">{item.type}</span>
                             <span className="text-slate-400 font-mono">Net Margin: {item.margin}%</span>
                           </div>
-                          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                          <div className="h-1.5 w-full bg-cyan-950/40 rounded-full overflow-hidden">
                             <div style={{ width: `${item.margin}%` }} className={`h-full ${item.color} rounded-full`}></div>
                           </div>
                         </div>
@@ -1060,7 +1060,7 @@ export default function LiveMapDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* 1. Lead Sources */}
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
+                <div className="bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 h-[500px] flex flex-col justify-between shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Lead Sources Analytics</h3>
                     <p className="text-xs text-slate-400 mb-6">Marketing acquisition channel distribution and lead metrics</p>
@@ -1068,7 +1068,7 @@ export default function LiveMapDashboard() {
 
                   <div className="space-y-5 flex-1 overflow-y-auto pr-1">
                     {[
-                      { name: "Google Search Ads", leads: 74, pct: 40, color: "bg-blue-500" },
+                      { name: "Google Search Ads", leads: 74, pct: 40, color: "bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]" },
                       { name: "Yelp Local Reviews", leads: 46, pct: 25, color: "bg-red-500" },
                       { name: "Customer Referrals", leads: 37, pct: 20, color: "bg-emerald-500" },
                       { name: "Jobsite Yard Signs", leads: 27, pct: 15, color: "bg-yellow-500" },
@@ -1078,7 +1078,7 @@ export default function LiveMapDashboard() {
                           <span className="text-slate-300">{src.name}</span>
                           <span className="font-mono text-slate-400 font-bold">{src.leads} Leads ({src.pct}%)</span>
                         </div>
-                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-cyan-950/40 rounded-full overflow-hidden">
                           <div 
                             style={{ width: `${src.pct}%` }}
                             className={`h-full ${src.color} rounded-full`}
@@ -1088,23 +1088,23 @@ export default function LiveMapDashboard() {
                     ))}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
+                  <div className="pt-4 border-t border-cyan-500/10 text-[10px] text-slate-500 flex justify-between">
                     <span>Updated: Today</span>
                     <span>Top Channel: Google Ads</span>
                   </div>
                 </div>
 
                 {/* 2. Customer Directory */}
-                <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col h-[500px]">
+                <div className="lg:col-span-2 bg-[#041129]/40 border border-cyan-500/10 rounded-2xl p-6 flex flex-col h-[500px] shadow-[0_0_15px_rgba(6,182,212,0.02)]">
                   <div>
                     <h3 className="text-sm font-bold text-white mb-1">Customer Service Directory</h3>
                     <p className="text-xs text-slate-400 mb-6">Synchronized contact directory and active service agreements</p>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+                  <div className="flex-1 overflow-y-auto border border-cyan-500/10 rounded-xl bg-[#020c1b]">
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
-                        <tr className="border-b border-slate-800 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/40">
+                        <tr className="border-b border-cyan-500/10 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-cyan-950/20">
                           <th className="p-4">Customer Info</th>
                           <th className="p-4">CRM Contact ID</th>
                           <th className="p-4">Last Dispatched Service</th>
@@ -1115,7 +1115,7 @@ export default function LiveMapDashboard() {
                       </thead>
                       <tbody>
                         {crmHistory.map((cust, i) => (
-                          <tr key={i} className="border-b border-slate-800/50 hover:bg-slate-900/10 transition-colors">
+                          <tr key={i} className="border-b border-cyan-500/5 hover:bg-cyan-950/10 transition-colors">
                             <td className="p-4 text-white">
                               <div className="font-bold">{cust.name}</div>
                               <div className="text-[10px] text-slate-400 font-mono mt-0.5">{cust.phone}</div>
@@ -1136,7 +1136,7 @@ export default function LiveMapDashboard() {
                             <td className="p-4 text-right">
                               <button
                                 onClick={() => triggerOutboundCall(cust)}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/20 hover:border-blue-500 rounded-lg text-[10px] font-bold transition-all"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500/20 hover:border-cyan-500 rounded-lg text-[10px] font-bold transition-all shadow-sm"
                               >
                                 <PhoneCall size={10} />
                                 <span>Dial Lead</span>
@@ -1160,12 +1160,12 @@ export default function LiveMapDashboard() {
 
       {/* VAPI DIALER MODAL */}
       {activeDialLead && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-[#020813]/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-[#030d22] border border-cyan-500/20 rounded-2xl w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,242,254,0.15)] animate-in fade-in zoom-in-95 duration-200">
             {/* Header */}
-            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+            <div className="p-6 border-b border-cyan-500/10 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-500">
+                <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
                   <Activity size={16} className={isDialing ? "animate-pulse" : ""} />
                 </div>
                 <div>
@@ -1189,18 +1189,18 @@ export default function LiveMapDashboard() {
             <div className="p-6 space-y-6">
               
               {/* Contact Card */}
-              <div className="bg-slate-950 border border-slate-800/80 p-4 rounded-xl flex items-center justify-between">
+              <div className="bg-[#020c1b] border border-cyan-500/15 p-4 rounded-xl flex items-center justify-between">
                 <div className="space-y-1">
                   <div className="text-xs font-semibold text-slate-400">Recipient</div>
                   <div className="text-sm font-bold text-white">{activeDialLead.name}</div>
-                  <div className="text-[10px] text-blue-400 font-mono">{activeDialLead.phone || "+1 (626) 203-6250"}</div>
+                  <div className="text-[10px] text-cyan-400 font-mono">{activeDialLead.phone || "+1 (626) 203-6250"}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${
                     dialCallStatus === "completed" ? "bg-emerald-500" :
                     dialCallStatus === "failed" ? "bg-red-500" :
                     dialCallStatus === "idle" ? "bg-slate-500" :
-                    "bg-blue-500 animate-ping"
+                    "bg-cyan-400 animate-ping"
                   }`}></span>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">
                     {dialCallStatus}
@@ -1209,16 +1209,16 @@ export default function LiveMapDashboard() {
               </div>
 
               {/* Status Graphic */}
-              <div className="flex flex-col items-center justify-center py-4 bg-slate-950/40 border border-slate-800/60 rounded-xl">
+              <div className="flex flex-col items-center justify-center py-4 bg-[#020c1b]/40 border border-cyan-500/10 rounded-xl">
                 {dialCallStatus === "dialing" && (
                   <div className="text-center space-y-2">
                     <div className="text-xs text-slate-400">Initiating call via API...</div>
-                    <div className="text-[10px] text-blue-500 animate-pulse font-mono">POST /api/vapi/outbound</div>
+                    <div className="text-[10px] text-cyan-400 animate-pulse font-mono">POST /api/vapi/outbound</div>
                   </div>
                 )}
                 {dialCallStatus === "ringing" && (
                   <div className="text-center space-y-2">
-                    <div className="text-xs text-blue-400 font-bold animate-bounce">Ringing Customer...</div>
+                    <div className="text-xs text-cyan-400 font-bold animate-bounce">Ringing Customer...</div>
                     <div className="text-[10px] text-slate-500">Waiting for answer...</div>
                   </div>
                 )}
@@ -1249,7 +1249,7 @@ export default function LiveMapDashboard() {
               {dialCallSummary && (
                 <div className="space-y-2">
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Call Transcript Summary</div>
-                  <div className="bg-slate-950/80 border border-slate-800/80 p-3.5 rounded-xl text-[11px] text-slate-300 font-medium leading-relaxed max-h-[150px] overflow-y-auto">
+                  <div className="bg-[#020c1b] border border-cyan-500/10 p-3.5 rounded-xl text-[11px] text-slate-300 font-medium leading-relaxed max-h-[150px] overflow-y-auto">
                     {dialCallSummary}
                   </div>
                 </div>
@@ -1271,7 +1271,7 @@ export default function LiveMapDashboard() {
                   <button
                     onClick={() => triggerOutboundCall(activeDialLead)}
                     disabled={isDialing}
-                    className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-500/10 flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-950/50 text-white rounded-xl text-xs font-bold border border-cyan-500/30 transition-all shadow-lg shadow-cyan-500/10 flex items-center justify-center gap-1.5"
                   >
                     <span>Redial Lead</span>
                   </button>
