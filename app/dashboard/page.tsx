@@ -25,7 +25,9 @@ import {
   ArrowRight,
   ChevronRight,
   Clock,
-  Briefcase
+  Briefcase,
+  Navigation,
+  Compass
 } from "lucide-react";
 
 interface GHLLead {
@@ -47,6 +49,8 @@ interface JobCard {
   status: "unassigned" | "dispatched" | "inprogress" | "onhold" | "invoiced";
   assignedTech?: string;
   estCost: number;
+  x: number; // Map X Coordinate
+  y: number; // Map Y Coordinate
 }
 
 interface Technician {
@@ -56,6 +60,8 @@ interface Technician {
   assignedJob?: string;
   billableHours: number;
   monthlyRevenue: number;
+  routeColor: string;
+  routePath: string;
 }
 
 interface Invoice {
@@ -66,7 +72,7 @@ interface Invoice {
   dueDate: string;
 }
 
-export default function EnglishDashboard() {
+export default function LiveMapDashboard() {
   // Navigation tabs (1 to 5)
   const [activeTab, setActiveTab] = useState<"overview" | "jobs" | "techs" | "finance" | "crm">("overview");
   
@@ -88,26 +94,32 @@ export default function EnglishDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Sub-tab for Jobs: Kanban vs Map
-  const [jobView, setJobView] = useState<"kanban" | "map">("kanban");
+  const [jobView, setJobView] = useState<"kanban" | "map">("map"); // Default to Map now
 
-  // Jobs Kanban Data
+  // Live Map Selected States
+  const [selectedTechRoute, setSelectedTechRoute] = useState<string>("all");
+  const [selectedPin, setSelectedPin] = useState<JobCard | null>(null);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optMessage, setOptMessage] = useState("Routes optimized based on current traffic.");
+
+  // Jobs Kanban & Coordinate Data
   const [jobs, setJobs] = useState<JobCard[]>([
-    { id: "job-1", customerName: "Sarah Connor", address: "742 Evergreen Terr", jobType: "Burst Pipe Repair", priority: "High", status: "inprogress", assignedTech: "Dave", estCost: 950 },
-    { id: "job-2", customerName: "John Connor", address: "1000 S Congress Ave", jobType: "Water Heater Installation", priority: "High", status: "dispatched", assignedTech: "Mike", estCost: 2200 },
-    { id: "job-3", customerName: "Marcus Wright", address: "1206 West Ave", jobType: "Drain Hydro-Jetting", priority: "Medium", status: "unassigned", estCost: 650 },
-    { id: "job-4", customerName: "Grace Harper", address: "508 12th St", jobType: "Garbage Disposal Fix", priority: "Low", status: "onhold", assignedTech: "John", estCost: 280 },
-    { id: "job-5", customerName: "Kate Brewster", address: "2201 Lake Austin Blvd", jobType: "Slab Leak Location", priority: "High", status: "invoiced", assignedTech: "Tyler", estCost: 1800 },
-    { id: "job-6", customerName: "Robert Brewster", address: "3500 Duval St", jobType: "Main Sewer Line Clog", priority: "Medium", status: "inprogress", assignedTech: "Steve", estCost: 1250 }
+    { id: "job-1", customerName: "Sarah Connor", address: "742 Evergreen Terr", jobType: "Burst Pipe Repair", priority: "High", status: "inprogress", assignedTech: "Dave", estCost: 950, x: 80, y: 60 },
+    { id: "job-2", customerName: "John Connor", address: "1000 S Congress Ave", jobType: "Water Heater Installation", priority: "High", status: "dispatched", assignedTech: "Mike", estCost: 2200, x: 180, y: 140 },
+    { id: "job-3", customerName: "Marcus Wright", address: "1206 West Ave", jobType: "Drain Hydro-Jetting", priority: "Medium", status: "unassigned", estCost: 650, x: 280, y: 100 },
+    { id: "job-4", customerName: "Grace Harper", address: "508 12th St", jobType: "Garbage Disposal Fix", priority: "Low", status: "onhold", assignedTech: "John", estCost: 280, x: 120, y: 220 },
+    { id: "job-5", customerName: "Kate Brewster", address: "2201 Lake Austin Blvd", jobType: "Slab Leak Location", priority: "High", status: "invoiced", assignedTech: "Tyler", estCost: 1800, x: 220, y: 80 },
+    { id: "job-6", customerName: "Robert Brewster", address: "3500 Duval St", jobType: "Main Sewer Line Clog", priority: "Medium", status: "inprogress", assignedTech: "Steve", estCost: 1250, x: 320, y: 180 }
   ]);
 
   // Technicians Data
   const [techs] = useState<Technician[]>([
-    { name: "Dave", role: "Master Plumber", status: "Active", assignedJob: "Burst Pipe Repair", billableHours: 38, monthlyRevenue: 18450 },
-    { name: "Mike", role: "Sewer Line Specialist", status: "Active", assignedJob: "Water Heater Installation", billableHours: 35, monthlyRevenue: 15900 },
-    { name: "John", role: "Service Technician", status: "Active", assignedJob: "Garbage Disposal Fix", billableHours: 32, monthlyRevenue: 11200 },
-    { name: "Steve", role: "Apprentice", status: "Active", assignedJob: "Main Sewer Line Clog", billableHours: 28, monthlyRevenue: 8500 },
-    { name: "Tyler", role: "Service Technician", status: "On Break", billableHours: 24, monthlyRevenue: 12100 },
-    { name: "Alex", role: "Installation Lead", status: "Idle", billableHours: 30, monthlyRevenue: 14800 }
+    { name: "Dave", role: "Master Plumber", status: "Active", assignedJob: "Burst Pipe Repair", billableHours: 38, monthlyRevenue: 18450, routeColor: "#3b82f6", routePath: "M 200,150 L 80,60 L 320,180" },
+    { name: "Mike", role: "Sewer Line Specialist", status: "Active", assignedJob: "Water Heater Installation", billableHours: 35, monthlyRevenue: 15900, routeColor: "#10b981", routePath: "M 200,150 L 180,140 L 120,220" },
+    { name: "John", role: "Service Technician", status: "Active", assignedJob: "Garbage Disposal Fix", billableHours: 32, monthlyRevenue: 11200, routeColor: "#f59e0b", routePath: "M 200,150 L 120,220 L 280,100" },
+    { name: "Steve", role: "Apprentice", status: "Active", assignedJob: "Main Sewer Line Clog", billableHours: 28, monthlyRevenue: 8500, routeColor: "#8b5cf6", routePath: "M 200,150 L 320,180" },
+    { name: "Tyler", role: "Service Technician", status: "On Break", billableHours: 24, monthlyRevenue: 12100, routeColor: "#ec4899", routePath: "M 200,150 L 220,80" },
+    { name: "Alex", role: "Installation Lead", status: "Idle", billableHours: 30, monthlyRevenue: 14800, routeColor: "#64748b", routePath: "" }
   ]);
 
   // Finance & Inventory Data
@@ -127,7 +139,7 @@ export default function EnglishDashboard() {
     { id: "INV-2026-005", customerName: "Allison Cameron", amount: 1800.00, status: "Overdue", dueDate: "2026-06-05" }
   ]);
 
-  // CRM: Customer Directory with past service logs
+  // CRM: Customer Directory
   const [crmHistory] = useState([
     { name: "Gregory House", contactId: "ghl-c-10293", lastService: "Sewer Hydro-Jetting", date: "2026-05-18", status: "Active Contract", tag: "emergency" },
     { name: "Lisa Cuddy", contactId: "ghl-c-10294", lastService: "Kitchen Faucet Replacement", date: "2026-06-02", status: "No Contract", tag: "quote" },
@@ -170,7 +182,7 @@ export default function EnglishDashboard() {
     fetchData();
   }, []);
 
-  // Move a job card through Kanban columns
+  // Move job card through Kanban
   const moveJobStage = (id: string) => {
     setJobs(prevJobs => {
       return prevJobs.map(job => {
@@ -185,11 +197,45 @@ export default function EnglishDashboard() {
     });
   };
 
-  // Finance Calculations
+  // Re-optimize route simulation
+  const optimizeRoutes = async () => {
+    setIsOptimizing(true);
+    await new Promise(r => setTimeout(r, 2000));
+    setOptMessage("Route sequence optimized! Fuel consumption minimized by 18.2%.");
+    setIsOptimizing(false);
+  };
+
+  // Get active route path and stats based on selections
+  const getSelectedRoutePath = () => {
+    if (selectedTechRoute === "all") return "";
+    const tech = techs.find(t => t.name === selectedTechRoute);
+    return tech ? tech.routePath : "";
+  };
+
+  const getRouteStats = () => {
+    switch (selectedTechRoute) {
+      case "Dave":
+        return { stops: 2, distance: "18.4 miles", time: "32 mins", fuelSaved: "14%" };
+      case "Mike":
+        return { stops: 2, distance: "14.2 miles", time: "25 mins", fuelSaved: "16%" };
+      case "John":
+        return { stops: 2, distance: "21.6 miles", time: "38 mins", fuelSaved: "12%" };
+      case "Steve":
+        return { stops: 1, distance: "9.8 miles", time: "18 mins", fuelSaved: "20%" };
+      case "Tyler":
+        return { stops: 1, distance: "6.2 miles", time: "12 mins", fuelSaved: "15%" };
+      default:
+        return { stops: 8, distance: "70.2 miles (combined)", time: "125 mins (total)", fuelSaved: "18.2%" };
+    }
+  };
+
+  // Calculations
   const totalAr = invoices.filter(inv => inv.status !== "Paid").reduce((acc, curr) => acc + curr.amount, 0);
   const totalMaterialCosts = materials.reduce((acc, curr) => acc + curr.total, 0);
   const totalRevenue = stats.savedRevenue || 150880;
   const netProfit = Math.round(totalRevenue * 0.35);
+
+  const routeDetails = getRouteStats();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans">
@@ -210,8 +256,6 @@ export default function EnglishDashboard() {
 
           {/* Navigation Links */}
           <nav className="p-4 space-y-1">
-            
-            {/* 1. Overview */}
             <button 
               onClick={() => setActiveTab("overview")}
               className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "overview" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
@@ -223,7 +267,6 @@ export default function EnglishDashboard() {
               <ChevronRight size={12} className="opacity-60" />
             </button>
 
-            {/* 2. Jobs Tracker */}
             <button 
               onClick={() => setActiveTab("jobs")}
               className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "jobs" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
@@ -235,7 +278,6 @@ export default function EnglishDashboard() {
               <ChevronRight size={12} className="opacity-60" />
             </button>
 
-            {/* 3. Techs Performance */}
             <button 
               onClick={() => setActiveTab("techs")}
               className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "techs" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
@@ -247,7 +289,6 @@ export default function EnglishDashboard() {
               <ChevronRight size={12} className="opacity-60" />
             </button>
 
-            {/* 4. Finance Tracker */}
             <button 
               onClick={() => setActiveTab("finance")}
               className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "finance" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
@@ -259,7 +300,6 @@ export default function EnglishDashboard() {
               <ChevronRight size={12} className="opacity-60" />
             </button>
 
-            {/* 5. CRM & Marketing */}
             <button 
               onClick={() => setActiveTab("crm")}
               className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-semibold transition-all ${activeTab === "crm" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/15" : "text-slate-400 hover:text-white hover:bg-slate-800/60"}`}
@@ -270,7 +310,6 @@ export default function EnglishDashboard() {
               </div>
               <ChevronRight size={12} className="opacity-60" />
             </button>
-
           </nav>
         </div>
 
@@ -480,7 +519,7 @@ export default function EnglishDashboard() {
           )}
 
           {/* ================================================================= */}
-          {/* TAB 2: JOBS & SCHEDULING                                          */}
+          {/* TAB 2: JOBS & SCHEDULING (MAP ROUTE PLANNING UPGRADE)             */}
           {/* ================================================================= */}
           {activeTab === "jobs" && (
             <div className="space-y-8">
@@ -498,7 +537,7 @@ export default function EnglishDashboard() {
                     onClick={() => setJobView("map")}
                     className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${jobView === "map" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
                   >
-                    Map Route View
+                    Live GPS Map Tracking
                   </button>
                 </div>
                 
@@ -552,7 +591,6 @@ export default function EnglishDashboard() {
                                 </div>
                               </div>
 
-                              {/* Action to move stages */}
                               <button 
                                 onClick={() => moveJobStage(job.id)}
                                 className="w-full py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-[10px] rounded-lg border border-slate-800/60 font-semibold transition-colors flex items-center justify-center gap-1"
@@ -570,15 +608,36 @@ export default function EnglishDashboard() {
                 </div>
               )}
 
-              {/* B. MAP VIEW */}
+              {/* B. LIVE MAP VIEW WITH ROUTE OPTIMIZATION */}
               {jobView === "map" && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   
-                  {/* SVG Route Map */}
-                  <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-sm font-bold text-white mb-1">Service Map Routing</h3>
-                      <p className="text-xs text-slate-400">Geographic mapping and routing details for today's dispatched technicians</p>
+                  {/* Interactive Map Area (2 Cols) */}
+                  <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[550px] flex flex-col justify-between">
+                    <div className="flex items-center justify-between shrink-0">
+                      <div>
+                        <h3 className="text-sm font-bold text-white mb-1">Live GPS Route Tracking</h3>
+                        <p className="text-xs text-slate-400">Animated real-time dispatch routes and active vehicle indicators</p>
+                      </div>
+
+                      {/* Technician Route Filter */}
+                      <div className="flex items-center gap-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase">Track Route:</label>
+                        <select 
+                          value={selectedTechRoute}
+                          onChange={(e) => {
+                            setSelectedTechRoute(e.target.value);
+                            setSelectedPin(null);
+                          }}
+                          className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500"
+                        >
+                          <option value="all">All Active Routes</option>
+                          <option value="Dave">Dave (Master Plumber)</option>
+                          <option value="Mike">Mike (Sewer Specialist)</option>
+                          <option value="John">John (Service Tech)</option>
+                          <option value="Steve">Steve (Apprentice)</option>
+                        </select>
+                      </div>
                     </div>
 
                     {/* SVG Map Canvas */}
@@ -587,76 +646,161 @@ export default function EnglishDashboard() {
                       {/* Grid representation */}
                       <svg className="w-full h-full opacity-10 absolute inset-0" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <pattern id="grid-map" width="20" height="20" patternUnits="userSpaceOnUse">
                             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" strokeWidth="0.5"/>
                           </pattern>
                         </defs>
-                        <rect width="100%" height="100%" fill="url(#grid)" />
+                        <rect width="100%" height="100%" fill="url(#grid-map)" />
                       </svg>
 
-                      {/* Map lines */}
-                      <svg className="w-[80%] h-[80%] absolute z-10" viewBox="0 0 400 300">
-                        {/* Connected Route Paths */}
-                        <path d="M 80,60 L 180,140 L 280,100 M 180,140 L 120,220 L 320,180" fill="none" stroke="#2563eb" strokeWidth="2" strokeDasharray="4,4" className="animate-[dash_5s_linear_infinite]" />
-                        
-                        {/* Location Pins */}
-                        <g transform="translate(80, 60)">
-                          <circle r="6" fill="#f97316" />
-                          <circle r="12" fill="#f97316" fillOpacity="0.2" className="animate-ping" />
-                          <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">Sarah (Burst Pipe)</text>
+                      {/* Live Map Graphics */}
+                      <svg className="w-[85%] h-[85%] absolute z-10" viewBox="0 0 400 300">
+                        {/* Office Base Station */}
+                        <g transform="translate(200, 150)">
+                          <rect x="-8" y="-8" width="16" height="16" rx="2" fill="#3b82f6" />
+                          <text x="12" y="4" fill="#60a5fa" fontSize="8" fontWeight="bold" fontFamily="monospace">HQ</text>
                         </g>
 
-                        <g transform="translate(180, 140)">
-                          <circle r="6" fill="#ef4444" />
-                          <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">John (Water Heater)</text>
-                        </g>
+                        {/* Render Paths & GPS trackers */}
+                        {techs.map((tech, i) => {
+                          const isSelected = selectedTechRoute === "all" || selectedTechRoute === tech.name;
+                          if (!tech.routePath || !isSelected) return null;
 
-                        <g transform="translate(280, 100)">
-                          <circle r="6" fill="#64748b" />
-                          <text x="-12" y="-8" fill="white" fontSize="8" textAnchor="end" fontWeight="bold">Marcus (Hydro-Jet)</text>
-                        </g>
+                          return (
+                            <g key={i}>
+                              {/* Background route path line */}
+                              <path 
+                                d={tech.routePath} 
+                                fill="none" 
+                                stroke={tech.routeColor} 
+                                strokeWidth={selectedTechRoute === tech.name ? "3" : "1.5"} 
+                                strokeOpacity={selectedTechRoute === "all" ? "0.4" : "0.9"}
+                                strokeDasharray={selectedTechRoute === "all" ? "4,4" : "0"}
+                              />
 
-                        <g transform="translate(120, 220)">
-                          <circle r="6" fill="#ef4444" />
-                          <text x="-12" y="8" fill="white" fontSize="8" textAnchor="end" fontWeight="bold">Grace (Disposal)</text>
-                        </g>
+                              {/* GPS vehicle animation tracker moving along path */}
+                              <circle r="5" fill="#ffffff" stroke={tech.routeColor} strokeWidth="2">
+                                <animateMotion 
+                                  dur={selectedTechRoute === "all" ? "12s" : "7s"} 
+                                  repeatCount="indefinite" 
+                                  path={tech.routePath} 
+                                />
+                              </circle>
+                            </g>
+                          );
+                        })}
 
-                        <g transform="translate(320, 180)">
-                          <circle r="6" fill="#10b981" />
-                          <text x="12" y="4" fill="white" fontSize="8" fontWeight="bold">Robert (Sewer Clog)</text>
-                        </g>
+                        {/* Render clickable location pins */}
+                        {jobs.map((job) => {
+                          const isTarget = selectedTechRoute === "all" || job.assignedTech === selectedTechRoute;
+                          const opacityClass = isTarget ? "opacity-100" : "opacity-20 pointer-events-none";
+
+                          return (
+                            <g 
+                              key={job.id} 
+                              transform={`translate(${job.x}, ${job.y})`}
+                              className={`cursor-pointer transition-all duration-300 ${opacityClass}`}
+                              onClick={() => setSelectedPin(job)}
+                            >
+                              <circle r="7" fill={job.priority === "High" ? "#ef4444" : job.priority === "Medium" ? "#f59e0b" : "#64748b"} />
+                              <circle 
+                                r="12" 
+                                fill={job.priority === "High" ? "#ef4444" : job.priority === "Medium" ? "#f59e0b" : "#64748b"} 
+                                fillOpacity="0.2" 
+                                className={job.status === "inprogress" ? "animate-ping" : ""}
+                              />
+                              <text x="10" y="3" fill="#94a3b8" fontSize="7" fontWeight="bold">{job.customerName.split(" ")[0]}</text>
+                            </g>
+                          );
+                        })}
                       </svg>
+
+                      {/* In-Map Click Overlay Info */}
+                      {selectedPin && (
+                        <div className="absolute bottom-4 left-4 right-4 bg-slate-900/95 border border-slate-800 rounded-xl p-4 z-20 flex justify-between items-center shadow-2xl backdrop-blur-md">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-white">{selectedPin.customerName}</span>
+                              <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                                selectedPin.priority === "High" ? "bg-red-500/10 text-red-500" : "bg-slate-800 text-slate-400"
+                              }`}>{selectedPin.priority}</span>
+                            </div>
+                            <div className="text-[10px] text-slate-400">{selectedPin.address} | <span className="text-blue-400 font-semibold">{selectedPin.jobType}</span></div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right text-[10px]">
+                              <span className="text-slate-500 block">Assigned Tech: {selectedPin.assignedTech || "None"}</span>
+                              <span className="text-emerald-500 font-bold block">${selectedPin.estCost} est.</span>
+                            </div>
+                            <button 
+                              onClick={() => setSelectedPin(null)}
+                              className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2 py-1 rounded"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex justify-between items-center text-[10px] text-slate-500">
-                      <span>Service Area: Austin, TX Metro</span>
+                      <span>Service Area: Austin Metro Area (HQ Base: downtown)</span>
                       <div className="flex gap-4">
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span>High Priority</span>
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-500"></span>In Progress</span>
-                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-500"></span>Unassigned</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500"></span>High Priority</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-500"></span>Medium Priority</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-500"></span>Low Priority</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Job Detail List Panel */}
-                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[500px] flex flex-col">
-                    <h3 className="text-sm font-bold text-white mb-4">Job Specifications</h3>
-                    <div className="flex-1 overflow-y-auto space-y-3.5 pr-1">
-                      {jobs.map((job) => (
-                        <div key={job.id} className="bg-slate-950 border border-slate-800 p-3 rounded-xl space-y-2 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-white">{job.customerName}</span>
-                            <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${
-                              job.priority === "High" ? "bg-red-500/10 text-red-500" : "bg-slate-800 text-slate-400"
-                            }`}>{job.priority} Priority</span>
-                          </div>
-                          <div className="text-[10px] text-slate-400 leading-normal">{job.address}</div>
-                          <div className="text-[10px] flex justify-between text-slate-500 pt-1 border-t border-slate-900">
-                            <span>Service: {job.jobType}</span>
-                            <span className="font-mono text-emerald-500">${job.estCost}</span>
-                          </div>
+                  {/* Route planning stats / Optimization (1 Col) */}
+                  <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 h-[550px] flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 text-white mb-2 font-bold text-base">
+                        <Compass size={18} className="text-blue-500" />
+                        <h3>Smart Routing Optimization</h3>
+                      </div>
+                      <p className="text-xs text-slate-400 mb-6">Real-time GPS parameters mapped to technicians for dispatch coordination.</p>
+
+                      <div className="space-y-4 bg-slate-950 border border-slate-800/80 p-4 rounded-xl">
+                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                          <span className="text-slate-500">Tracking Target:</span>
+                          <span className="font-bold text-white">{selectedTechRoute === "all" ? "All Active Vehicles" : `${selectedTechRoute} Route`}</span>
                         </div>
-                      ))}
+                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                          <span className="text-slate-500">Active Stops:</span>
+                          <span className="font-mono text-white font-semibold">{routeDetails.stops} stops</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                          <span className="text-slate-500">Estimated Distance:</span>
+                          <span className="font-mono text-white font-semibold">{routeDetails.distance}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-900 pb-2 text-xs">
+                          <span className="text-slate-500">Estimated Drive Time:</span>
+                          <span className="font-mono text-white font-semibold">{routeDetails.time}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-slate-500">Fuel Savings:</span>
+                          <span className="font-mono text-emerald-500 font-semibold">+{routeDetails.fuelSaved}</span>
+                        </div>
+                      </div>
+
+                      {/* Route re-optimization trigger */}
+                      <div className="mt-6">
+                        <button 
+                          onClick={optimizeRoutes}
+                          disabled={isOptimizing}
+                          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg"
+                        >
+                          <Navigation size={14} className={isOptimizing ? "animate-spin" : ""} />
+                          <span>{isOptimizing ? "Re-calculating..." : "Optimize Dispatch Routes"}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-xl flex items-start gap-2.5 text-[10px] text-slate-500 shrink-0">
+                      <ShieldCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <div className="leading-normal">{optMessage}</div>
                     </div>
                   </div>
 
