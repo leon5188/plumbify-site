@@ -8,6 +8,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
     }
 
+    let customerName = name || "Customer";
+    if (customerName.length > 40) {
+      customerName = customerName.substring(0, 37) + "...";
+    }
+
     const VAPI_API_KEY = process.env.VAPI_API_KEY;
     const VAPI_PHONE_NUMBER_ID = process.env.VAPI_PHONE_NUMBER_ID;
     const VAPI_ASSISTANT_ID = process.env.VAPI_ASSISTANT_ID;
@@ -36,7 +41,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         customer: {
           number: phoneNumber,
-          name: name || "Customer"
+          name: customerName
         },
         phoneNumberId: VAPI_PHONE_NUMBER_ID,
         assistantId: VAPI_ASSISTANT_ID

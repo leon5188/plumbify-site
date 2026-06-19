@@ -10,7 +10,10 @@ export async function POST(req: NextRequest) {
     const phone = payload.phone;
     const firstName = payload.first_name || "";
     const lastName = payload.last_name || "";
-    const fullName = `${firstName} ${lastName}`.trim() || "Customer";
+    let fullName = `${firstName} ${lastName}`.trim() || "Customer";
+    if (fullName.length > 40) {
+      fullName = fullName.substring(0, 37) + "...";
+    }
 
     if (!phone) {
       console.error("GHL Trigger failed: No phone number provided.");
