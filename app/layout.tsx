@@ -52,6 +52,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <link rel="preconnect" href="https://services.leadconnectorhq.com" />
+        <link rel="dns-prefetch" href="https://services.leadconnectorhq.com" />
+      </head>
       <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased`}>
         <Navbar />
         {children}

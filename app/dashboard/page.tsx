@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { 
   BarChart3, 
   Users, 
@@ -299,7 +300,7 @@ export default function LiveMapDashboard() {
         <div>
           {/* Logo */}
           <div className="h-20 border-b border-cyan-500/10 flex items-center px-6">
-            <img src="/logo.png" alt="PLUMBIFY" className="h-12 w-auto object-contain brightness-105 contrast-105" />
+            <Image src="/logo.png" alt="PLUMBIFY" width={144} height={48} className="h-12 w-auto object-contain brightness-105 contrast-105" priority />
           </div>
 
           {/* Navigation Links */}

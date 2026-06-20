@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Zap, Users, PhoneIncoming, BookOpen, Calendar, RefreshCcw, CreditCard, Heart, Shield, Sparkles } from "lucide-react";
 
@@ -17,7 +18,7 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <img src="/logo.png" alt="PLUMBIFY" className="h-10 w-auto object-contain" />
+          <Image src="/logo.png" alt="PLUMBIFY" width={120} height={40} className="h-10 w-auto object-contain" priority />
         </Link>
         
         <div className="hidden md:flex gap-8 text-sm font-medium text-slate-600">
