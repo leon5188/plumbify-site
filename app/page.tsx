@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import ROICalculator from "@/components/ROICalculator";
+import Link from "next/link";
 import { 
   ArrowRight, 
   CheckCircle2, 
   MessageSquare, 
   Users, 
-  ShieldAlert, 
   Sparkles, 
   Clock, 
   Coins, 
@@ -15,7 +15,11 @@ import {
   Check, 
   Loader2,
   PhoneCall,
-  Smartphone
+  Smartphone,
+  ShieldCheck,
+  Lock,
+  Shield,
+  MapPin
 } from "lucide-react";
 
 export default function Home() {
@@ -33,6 +37,15 @@ export default function Home() {
 
   // FAQ Accordion State
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  // Simulators State (AI Recruiter + POS Demo)
+  const [screenStage, setScreenStage] = useState<"idle" | "calling" | "screening" | "scored">("idle");
+  const [activeCandidate, setActiveCandidate] = useState<any>(null);
+  const [paymentStage, setPaymentStage] = useState<"idle" | "tapping" | "reconciling" | "done">("idle");
+  const [ledgerLogs, setLedgerLogs] = useState<any[]>([
+    { id: "TXN-8291", date: "5 mins ago", amount: "$1,250.00", customer: "Gregory House", status: "QuickBooks Synced" },
+    { id: "TXN-4012", date: "12 mins ago", amount: "$350.00", customer: "Eric Foreman", status: "QuickBooks Synced" }
+  ]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -57,7 +70,7 @@ export default function Home() {
             last_name: formData.lastName,
             phone: formData.phone,
             email: formData.email,
-            source: "webform",
+            source: "webform_optimized_homepage",
             message: formData.message || "Signed up for 14-Day Free Challenge"
           })
         }
@@ -76,8 +89,25 @@ export default function Home() {
     }
   };
 
-  const toggleFaq = (index: number) => {
-    setActiveFaq(activeFaq === index ? null : index);
+  const startScreeningSimulation = async () => {
+    setScreenStage("calling");
+    setActiveCandidate({ name: "Michael Vance", phone: "+1 (512) 555-0144", license: "Licensed Master Plumber" });
+    await new Promise(r => setTimeout(r, 1200));
+    setScreenStage("screening");
+    await new Promise(r => setTimeout(r, 2200));
+    setScreenStage("scored");
+  };
+
+  const startPaymentSimulation = async () => {
+    setPaymentStage("tapping");
+    await new Promise(r => setTimeout(r, 1500));
+    setPaymentStage("reconciling");
+    await new Promise(r => setTimeout(r, 1200));
+    setPaymentStage("done");
+    setLedgerLogs(prev => [
+      { id: `TXN-${Math.floor(1000 + Math.random()*9000)}`, date: "Just now", amount: "$950.00", customer: "John Connor", status: "QuickBooks Synced" },
+      ...prev
+    ]);
   };
 
   const faqs = [
@@ -100,49 +130,91 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white font-sans selection:bg-blue-600 selection:text-white">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-24 px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.12),transparent_45%)]" />
-        <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
-        
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 items-center relative z-10">
+    <main className="min-h-screen bg-slate-950 text-white font-sans selection:bg-blue-600 selection:text-white overflow-x-hidden relative">
+      
+      {/* GLOW OVERLAYS */}
+      <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="absolute top-[30%] left-[-10%] w-[500px] h-[500px] bg-gradient-to-tr from-cyan-500/5 to-transparent rounded-full blur-[120px] pointer-events-none z-0" />
+
+      {/* CUSTOM SOUNDWAVE KEYFRAMES */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes soundwave {
+          0%, 100% { transform: scaleY(0.25); }
+          50% { transform: scaleY(1); }
+        }
+        .flow-bar {
+          animation: soundwave 0.8s ease-in-out infinite;
+          transform-origin: bottom;
+        }
+        .flow-bar:nth-child(2) { animation-delay: 0.1s; }
+        .flow-bar:nth-child(3) { animation-delay: 0.2s; }
+        .flow-bar:nth-child(4) { animation-delay: 0.3s; }
+        .flow-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        .pulsing-hero-cta {
+          box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+          animation: pulsebutton 2.5s infinite;
+        }
+        @keyframes pulsebutton {
+          0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+      `}} />
+
+      {/* HERO SECTION - RESTRUCTURED SPACING & WHITE SPACE */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 items-start relative z-10">
+          
           {/* Hero Content */}
-          <div className="lg:col-span-7 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold mb-6 border border-blue-500/20">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
-              </span>
-              THE AUTOMATED LEAD ENGINE FOR WATER & SEWER BUSINESSES
+          <div className="lg:col-span-7 text-left space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold border border-blue-500/20 uppercase tracking-wider">
+              <Sparkles size={12} className="animate-pulse" />
+              <span>Omnichannel CRM For Residential Plumbers</span>
             </div>
             
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.08]">
               Stop Losing Jobs To <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
                 Missed Calls & Chats.
               </span>
             </h1>
             
-            <p className="text-slate-400 text-lg sm:text-xl max-w-xl mb-8 leading-relaxed">
-              Plumbify CRM captures inquiries from WeChat, Google Ads, and emails in real-time. It automatically texts back in 5 seconds, routes jobs, and plugs your business leaks.
+            <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-xl">
+              Plumbify intercepts missed office calls with instant text-back, routes incoming WeChat chats directly to dispatchers, and uses AI voice agents to vet job applicants. Reclaim billable hours and sync job details straight to QuickBooks.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8">
-              <a 
-                href="#challenge-form" 
-                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white rounded-xl font-bold transition-all text-center flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-              >
-                Join the 14-Day Challenge <ArrowRight size={18} />
-              </a>
-              <div className="flex items-center gap-2 justify-center text-slate-400 text-sm">
-                <CheckCircle2 size={16} className="text-blue-400" /> Free Setup & Integrations Included
+            {/* PRODUCT UI DEMONSTRATION IN HERO (Step 6/7) */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden backdrop-blur-md max-w-xl" aria-label="Plumbify Dispatch Software Preview">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+                  <span className="text-[10px] font-bold text-slate-350 uppercase tracking-wider">Operational Dispatch Desk</span>
+                </div>
+                <span className="text-[8px] bg-slate-850 text-slate-450 px-2 py-0.5 rounded font-mono">LIVE SYNC</span>
+              </div>
+
+              <div className="space-y-2">
+                <div className="bg-slate-950 p-3 rounded-xl border border-slate-900 flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-white block">WeChat Chat Log Captured</span>
+                    <span className="text-[9px] text-slate-500">Peifeng Ni: Burst pipe kitchen</span>
+                  </div>
+                  <span className="text-[9px] text-blue-400 font-bold bg-blue-500/10 px-2.5 py-1 rounded">Dispatched</span>
+                </div>
+                <div className="bg-slate-950 p-3 rounded-xl border border-slate-900 flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-white block">Missed Call Text-Back Sent</span>
+                    <span className="text-[9px] text-slate-500">Phone: +1 (512) 555-0199</span>
+                  </div>
+                  <span className="text-[9px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded">Replied</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Hero Form */}
-          <div id="challenge-form" className="lg:col-span-5">
+          {/* Hero Form - Unified Primary CTA Area */}
+          <div id="challenge-form" className="lg:col-span-5 space-y-6">
             <div className="p-8 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-xl shadow-2xl relative">
               <h3 className="text-2xl font-bold mb-2">Start Your 14-Day Challenge</h3>
               <p className="text-slate-400 text-sm mb-6">Enter your details. We will connect your WeChat and phone lines in 24 hours.</p>
@@ -150,7 +222,7 @@ export default function Home() {
               {success ? (
                 <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
                   <CheckCircle2 size={48} className="text-emerald-400 mx-auto mb-4" />
-                  <h4 className="text-lg font-bold text-white mb-2">Challenge Accepted!</h4>
+                  <h4 className="text-lg font-bold text-white mb-2">Challenge Activated!</h4>
                   <p className="text-slate-300 text-sm">
                     We received your submission. A GHL configuration expert is setting up your sandbox workspace now.
                   </p>
@@ -195,11 +267,11 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Emergency / Plumbing Needs (Optional)</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Emergency Needs (Optional)</label>
                     <textarea 
                       name="message" value={formData.message} onChange={handleInputChange} rows={2}
                       className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 outline-none text-sm text-white resize-none"
-                      placeholder="e.g., Water heater replacement needed, burst pipe in kitchen..."
+                      placeholder="e.g., burst pipe, leak..."
                     />
                   </div>
 
@@ -207,202 +279,325 @@ export default function Home() {
 
                   <button 
                     type="submit" disabled={loading}
-                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 pulsing-hero-cta"
                   >
-                    {loading ? <Loader2 className="animate-spin" size={18} /> : "Submit Setup Request"}
+                    {loading ? <Loader2 className="animate-spin" size={18} /> : "Start 14-Day Challenge"}
                   </button>
                 </form>
+              )}
+
+              {/* 100% Risk-Free Guarantee statement */}
+              <div className="mt-4 p-3 bg-blue-950/20 border border-blue-500/10 rounded-xl text-center">
+                <span className="text-[10px] text-blue-400 font-bold block">🛡️ 100% RISK-FREE SATISFACTION GUARANTEE</span>
+                <span className="text-[9px] text-slate-450 mt-0.5 block">If Plumbify doesn't save you admin desk hours within 14 days, pay absolutely $0.</span>
+              </div>
+
+              {/* Trust Badges - SSL, SOC 2, GDPR Compliance */}
+              <div className="mt-5 border-t border-slate-800/80 pt-4 flex items-center justify-center gap-5 text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                <span className="flex items-center gap-1.5"><Lock size={12} className="text-blue-400" /> SSL SECURED</span>
+                <span>•</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-emerald-400" /> SOC 2</span>
+                <span>•</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-cyan-400" /> GDPR COMPLIANT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CUSTOMER LOGOS DISPLAYED BANNER (Step 5) */}
+      <section className="py-12 bg-slate-900/40 border-y border-slate-900 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest text-center md:text-left">
+            TRUSTED BY SERVICE FLEETS IN AUSTIN, HOUSTON & SAN ANTONIO
+          </span>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 opacity-40 grayscale contrast-200">
+            <span className="font-extrabold text-sm tracking-tight text-white uppercase font-mono">Austin Pipe & Sewer</span>
+            <span className="font-extrabold text-sm tracking-tight text-white uppercase font-mono">Lone Star Rooter</span>
+            <span className="font-extrabold text-sm tracking-tight text-white uppercase font-mono">Houston Drain Co.</span>
+            <span className="font-extrabold text-sm tracking-tight text-white uppercase font-mono">QuickBooks Certified</span>
+          </div>
+        </div>
+      </section>
+
+      {/* CORE FEATURES (Targeting #features - decluttered, spacious) */}
+      <section id="features" className="py-28 px-6 space-y-28 max-w-7xl mx-auto z-10 relative">
+        
+        {/* WeChat / WeCom capture feature */}
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20 uppercase tracking-wider">
+              <MessageSquare size={12} />
+              <span>WeChat / WeCom Gateway</span>
+            </div>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
+              Capture Local WeChat Quotes Instantly. <br />
+              Aggregate Customer Conversations.
+            </h2>
+            <p className="text-slate-450 text-sm leading-relaxed">
+              Never miss quote requests or emergency work sent to WeChat. Plumbify aggregates all customer text dialogues, photos of leaks, and address cards directly into the dispatcher dashboard. Update customer status pipelines without scanning multiple devices.
+            </p>
+            <div className="pt-2">
+              <a 
+                href="#challenge-form"
+                className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold rounded-xl shadow-lg border border-blue-400/20 inline-flex items-center gap-2"
+              >
+                <span>Start 14-Day Challenge</span>
+                <ArrowRight size={14} />
+              </a>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 p-8 rounded-3xl bg-slate-900 border border-slate-850">
+            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">WeChat Integration Capture</h4>
+            <div className="space-y-3">
+              <div className="p-3 bg-slate-950 border border-slate-900 rounded-xl text-xs space-y-1">
+                <span className="text-[9px] text-slate-500 font-bold block">FROM: Client (WeChat ID)</span>
+                <p className="text-slate-300 italic">"Can you send a dispatcher for water heater replacement quote this morning?"</p>
+              </div>
+              <div className="p-3 bg-blue-950/20 border border-blue-500/10 rounded-xl text-xs space-y-1">
+                <span className="text-[9px] text-blue-400 font-bold block">TO: Plumbify Auto-Responder</span>
+                <p className="text-slate-300">"Got your request. Connecting with our local technician."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* AI PLUMBER RECRUITER WIDGET */}
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-5 order-2 lg:order-1">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-5 relative overflow-hidden">
+              <div className="flex items-center justify-between border-b border-slate-850 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></div>
+                  <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">AI Recruiter Node</span>
+                </div>
+                <span className="text-[9px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-mono">STANDBY</span>
+              </div>
+
+              {screenStage === "idle" && (
+                <div className="text-center py-10 space-y-4">
+                  <p className="text-xs text-slate-400 font-medium">Test an automated Technical Screening simulation call.</p>
+                  <button 
+                    onClick={startScreeningSimulation}
+                    className="px-4 py-2.5 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/20 hover:border-blue-500 rounded-xl text-[10px] font-bold transition-all shadow-sm"
+                  >
+                    Simulate Plumber Application
+                  </button>
+                </div>
+              )}
+
+              {screenStage === "calling" && (
+                <div className="text-center py-10 space-y-3">
+                  <PhoneCall size={24} className="text-blue-400 animate-bounce mx-auto" />
+                  <div className="text-xs text-blue-400 font-bold">Calling Plumber...</div>
+                  <div className="text-[10px] text-slate-500 font-mono">Connecting with {activeCandidate?.name}</div>
+                </div>
+              )}
+
+              {screenStage === "screening" && (
+                <div className="space-y-4">
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-900 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-bold text-white block">{activeCandidate?.name}</span>
+                      <span className="text-[9px] text-slate-500">{activeCandidate?.license}</span>
+                    </div>
+                    <span className="text-[8px] text-blue-400 font-extrabold uppercase tracking-widest border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 rounded">Speaking</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wider">Live Speech Audio wave</span>
+                    <div className="flex items-end justify-center gap-1.5 h-10 w-full bg-slate-950 p-2 rounded-xl border border-slate-900">
+                      <div className="flow-bar w-1 bg-blue-500 rounded-t h-full"></div>
+                      <div className="flow-bar w-1 bg-blue-400 rounded-t h-full"></div>
+                      <div className="flow-bar w-1 bg-blue-300 rounded-t h-full"></div>
+                      <div className="flow-bar w-1 bg-blue-400 rounded-t h-full"></div>
+                      <div className="flow-bar w-1 bg-blue-600 rounded-t h-full"></div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 text-center font-medium leading-relaxed italic">"Can you explain standard code requirements for a tankless water heater venting configuration?"</p>
+                </div>
+              )}
+
+              {screenStage === "scored" && (
+                <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-900 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="font-bold text-white text-xs block">{activeCandidate?.name}</span>
+                        <span className="text-[9px] text-slate-500">{activeCandidate?.license}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm text-emerald-400 font-bold block">4.8 / 5.0</span>
+                        <span className="text-[8px] text-slate-500 uppercase tracking-widest font-extrabold">Interview Rank</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-slate-400 leading-relaxed border-t border-slate-900 pt-2.5 font-medium">
+                      <span className="text-blue-400 font-bold block">Evaluation Summary:</span> Excellent technical response details. Confirmed knowledge of Type B vents and PVC clearances. License status: Valid. Background screening check: Cleared.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setScreenStage("idle")}
+                      className="flex-1 py-2 bg-slate-950 hover:bg-slate-800 text-slate-450 text-[10px] rounded-lg border border-slate-850 font-bold transition-all"
+                    >
+                      Reset Demo
+                    </button>
+                    <a 
+                      href="#challenge-form"
+                      className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] rounded-lg font-bold transition-all text-center flex items-center justify-center"
+                    >
+                      Start 14-Day Challenge
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20 uppercase tracking-wider">
+              <Users size={12} />
+              <span>AI Plumber Recruiting</span>
+            </div>
+
+            <h2 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
+              Save $15,000+ in Headhunter Fees. <br />
+              Vet & Hire Licensed Plumbers 24/7.
+            </h2>
+
+            <p className="text-slate-355 text-sm leading-relaxed">
+              Finding licensed plumbing technicians is a major business leak. Plumbify monitors incoming job application channels, automatically places screening phone calls within 10 seconds of submission, interviews them on technical competence, runs automatic state licensing checks, and sets appointments with candidates who score 4.5+.
+            </p>
+
+            <div className="pt-2">
+              <a 
+                href="#challenge-form"
+                className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold rounded-xl shadow-lg border border-blue-400/20 inline-flex items-center gap-2"
+              >
+                <span>Start 14-Day Challenge</span>
+                <ArrowRight size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* TAP-TO-PAY AUTOMATIC BOOKKEEPING */}
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20 uppercase tracking-wider">
+              <Smartphone size={12} />
+              <span>Smartphone Tap-to-Pay</span>
+            </div>
+
+            <h2 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
+              Reclaim 92% of Admin Billing Hours. <br />
+              Tap Phone to Process & Reconcile QuickBooks.
+            </h2>
+
+            <p className="text-slate-355 text-sm leading-relaxed">
+              Eliminate billing errors, missing parts tracking, and bookkeeper followups. When your technicians complete a task, they hold the customer's card to the back of their smartphone. Plumbify captures the payment, marks the invoice paid, and instantly reconciles the material costs and deposits in QuickBooks.
+            </p>
+
+            <div className="pt-2">
+              <a 
+                href="#challenge-form"
+                className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold rounded-xl shadow-lg border border-blue-400/20 inline-flex items-center gap-2"
+              >
+                <span>Start 14-Day Challenge</span>
+                <ArrowRight size={14} />
+              </a>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-5 relative overflow-hidden">
+              <div className="flex items-center justify-between border-b border-slate-850 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+                  <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">TAP-TO-PAY NODE</span>
+                </div>
+                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">STANDBY</span>
+              </div>
+
+              {paymentStage === "idle" && (
+                <div className="text-center py-10 space-y-4">
+                  <p className="text-xs text-slate-400 font-medium">Test field plumber card payment invoice processing flow.</p>
+                  <button 
+                    onClick={startPaymentSimulation}
+                    className="px-4 py-2.5 bg-emerald-600/10 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/20 hover:border-emerald-500 rounded-xl text-[10px] font-bold transition-all shadow-sm"
+                  >
+                    Start Payment Simulation
+                  </button>
+                </div>
+              )}
+
+              {paymentStage === "tapping" && (
+                <div className="text-center py-10 space-y-3">
+                  <Smartphone size={24} className="text-emerald-400 animate-pulse mx-auto" />
+                  <div className="text-xs text-emerald-400 font-bold">Waiting for Contactless Card...</div>
+                  <div className="text-[10px] text-slate-500 font-mono">Amount due: $950.00</div>
+                </div>
+              )}
+
+              {paymentStage === "reconciling" && (
+                <div className="text-center py-10 space-y-3">
+                  <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <div className="text-xs text-blue-400 font-bold">Synchronizing Ledger Accounts...</div>
+                  <div className="text-[10px] text-slate-500 font-mono">Reconciling QuickBooks Ledger balances</div>
+                </div>
+              )}
+
+              {paymentStage === "done" && (
+                <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-900 space-y-2 text-center">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/35 flex items-center justify-center text-emerald-400 mx-auto">
+                      <Check size={20} />
+                    </div>
+                    <div>
+                      <span className="text-[9px] text-slate-500 uppercase tracking-widest font-extrabold">Reconciliation Complete</span>
+                      <span className="text-2xl font-black text-white block mt-1 font-mono">$950.00 PAID</span>
+                    </div>
+                    <p className="text-[9px] text-slate-400 leading-normal border-t border-slate-900 pt-2 font-medium">
+                      Invoice tagged as PAID in GHL & QuickBooks. Materials deduct ledger logs reconciled successfully.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wider">Digital Ledger Sync Logs</span>
+                    <div className="space-y-1.5 max-h-[100px] overflow-y-auto pr-1">
+                      {ledgerLogs.map((log, idx) => (
+                        <div key={idx} className="bg-slate-950 border border-slate-900 p-2.5 rounded-lg flex items-center justify-between text-[10px]">
+                          <div>
+                            <span className="font-bold text-white block">{log.id} ({log.customer})</span>
+                            <span className="text-[8px] text-slate-500">{log.date}</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-bold text-emerald-400 block">{log.amount}</span>
+                            <span className="text-[8px] text-slate-500 font-semibold">{log.status}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => setPaymentStage("idle")}
+                    className="w-full py-2 bg-slate-950 hover:bg-slate-800 text-slate-450 text-[10px] rounded-lg border border-slate-850 font-bold transition-all"
+                  >
+                    Reset Simulator
+                  </button>
+                </div>
               )}
             </div>
           </div>
         </div>
+
       </section>
 
-      {/* Visual Omnichannel Lead Capture Section */}
-      <section className="py-24 px-6 border-y border-slate-900 bg-slate-950">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-black mb-4">Unified Omnichannel Capture</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">No more sticky notes. Stop checking five different platforms. Plumbify aggregates all leads into one workspace.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-3xl bg-slate-900 border border-slate-850 flex flex-col justify-between hover:border-blue-500/30 transition-all group">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                  <MessageSquare size={24} />
-                </div>
-                <h3 className="text-xl font-bold mb-3">WeChat / WeCom Gateway</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Connect WeChat and WeChat Work directly. Customer inquiries automatically update contact records and notify dispatchers.
-                </p>
-              </div>
-              <div className="mt-6 text-xs font-semibold text-blue-400 tracking-wider">TAG: src:wechat</div>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-slate-900 border border-slate-850 flex flex-col justify-between hover:border-blue-500/30 transition-all group">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                  <Smartphone size={24} />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Facebook & Google Lead Ads</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Direct lead sync. Every click and submission from local Google search maps and Facebook ads creates opportunities instantly.
-                </p>
-              </div>
-              <div className="mt-6 text-xs font-semibold text-blue-400 tracking-wider">TAG: src:ads</div>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-slate-900 border border-slate-850 flex flex-col justify-between hover:border-blue-500/30 transition-all group">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                  <Clock size={24} />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Email Quote Parser</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Inbound quote request emails are automatically read. Client name, location, and plumbing details are auto-saved.
-                </p>
-              </div>
-              <div className="mt-6 text-xs font-semibold text-blue-400 tracking-wider">TAG: src:email-parser</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Visual Pipeline Section */}
-      <section className="py-24 px-6 bg-slate-900/40">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-black mb-4">Pipeline Stage Management</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Know exactly where your quote requests stand. Stop sales reps from forgetting to call back sent proposals.</p>
-          </div>
-
-          {/* GHL 5-Stage Kanban Board Mockup */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {/* Stage 1 */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col h-[280px]">
-              <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-850">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">1. Initial Contact</span>
-                <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold">NEW</span>
-              </div>
-              <div className="space-y-3 flex-grow overflow-hidden">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs">
-                  <div className="font-bold mb-1">Peifeng Ni (WeChat)</div>
-                  <div className="text-slate-400">Burst pipe kitchen</div>
-                  <div className="mt-2 text-blue-400 font-bold">$500</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stage 2 */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col h-[280px]">
-              <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-850">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">2. Needs Analysis</span>
-                <span className="px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-bold">INFO</span>
-              </div>
-              <div className="space-y-3 flex-grow overflow-hidden">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs opacity-75">
-                  <div className="font-bold mb-1">Robert Chen</div>
-                  <div className="text-slate-400">Heater leaking camera</div>
-                  <div className="mt-2 text-cyan-400 font-bold">$1,500</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stage 3 */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col h-[280px]">
-              <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-850">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">3. Proposal / Quote</span>
-                <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold">SENT</span>
-              </div>
-              <div className="space-y-3 flex-grow overflow-hidden">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs">
-                  <div className="font-bold mb-1">Sarah Jenkins</div>
-                  <div className="text-slate-400">Sewer Line Custom Quote</div>
-                  <div className="mt-2 text-purple-400 font-bold">$4,800</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stage 4 */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col h-[280px]">
-              <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-850">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">4. Negotiation</span>
-                <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold">DISCUSS</span>
-              </div>
-              <div className="space-y-3 flex-grow overflow-hidden">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs opacity-60">
-                  <div className="font-bold mb-1">David Wong</div>
-                  <div className="text-slate-400">Commercial remodel</div>
-                  <div className="mt-2 text-amber-400 font-bold">$8,500</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stage 5 */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col h-[280px]">
-              <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-850">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">5. Closed Won</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">PAID</span>
-              </div>
-              <div className="space-y-3 flex-grow overflow-hidden">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-850 text-xs">
-                  <div className="font-bold mb-1">Mike Davis</div>
-                  <div className="text-slate-400">Hot water installation</div>
-                  <div className="mt-2 text-emerald-400 font-bold">$2,200</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Smart Tagging Section */}
-      <section className="py-24 px-6 border-y border-slate-900 bg-slate-950">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-black mb-4">Smart Tagging & Handoff Automation</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Remove human memory from the equation. The system automatically tags leads to optimize follow-up frequency and priority.</p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-850 text-left">
-              <span className="inline-block px-2.5 py-1 rounded bg-red-500/10 text-red-400 text-xs font-bold mb-4">intent:hot</span>
-              <h4 className="text-lg font-bold mb-2">Emergency Intent</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Automatically applied when customers use urgent keywords like "burst," "leak," or "emergency." Instantly triggers top technician dispatch.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-850 text-left">
-              <span className="inline-block px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 text-xs font-bold mb-4">val:high</span>
-              <h4 className="text-lg font-bold mb-2">High Value Deal</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Assigned to commercial contracts or system replacements. Automatically routes details to the owner for custom quotes.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-850 text-left">
-              <span className="inline-block px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 text-xs font-bold mb-4">freq:daily</span>
-              <h4 className="text-lg font-bold mb-2">Daily Follow-Up</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Applies to open quotes. GHL automatically sends daily text follow-ups to the customer until they choose to pay or cancel.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-850 text-left">
-              <span className="inline-block px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 text-xs font-bold mb-4">status:won</span>
-              <h4 className="text-lg font-bold mb-2">Job Paid & Secured</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Triggered on payment receipt. Automatically clears follow-up queues and fires SMS notifications directly to the technician.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ROI Calculator Section */}
-      <section className="py-24 px-6 bg-slate-900/20">
+      {/* ROI CALCULATOR SECTION (Targeting #roi-calculator) */}
+      <section id="roi-calculator" className="py-28 px-6 bg-slate-900/20 border-t border-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-black mb-4">Plug Your Revenue Leaks</h2>
@@ -412,8 +607,80 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Objection Buster / FAQ Section */}
-      <section className="py-24 px-6 border-t border-slate-900 bg-slate-950">
+      {/* CLIENT REVIEWS TESTIMONIALS SECTION (Targeting #client-reviews) */}
+      <section id="client-reviews" className="py-28 px-6 border-t border-slate-900 bg-slate-950">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-black mb-4">Trusted By Plumbing Fleet Owners</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Read how local rooter and sewer business operators optimized their cash flow and technician dispatching.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                quote: "Plumbify Tap-to-Pay completely saved our booking system. The technicians process credit cards on their smartphone, and QuickBooks is instantly reconciled before they leave the customer's driveway. Reclaimed roughly 12 hours a week in paperwork.",
+                author: "Dave S.",
+                role: "Owner, Austin Sewer & Pipe",
+                stats: "5 Trucks on Fleet"
+              },
+              {
+                quote: "The AI Recruiter call node is incredible. It interviews candidates, verifies active plumbing licenses, and hooks qualified plumbers onto our calendars automatically. We scaled our team without hiring a recruitment agency.",
+                author: "Marc W.",
+                role: "Operations Director, Lone Star Rooter",
+                stats: "8 Trucks on Fleet"
+              }
+            ].map((t, idx) => (
+              <div key={idx} className="p-8 rounded-3xl bg-slate-900 border border-slate-850 flex flex-col justify-between hover:border-blue-500/20 transition-all">
+                <p className="text-slate-300 italic text-sm leading-relaxed font-medium">"{t.quote}"</p>
+                <div className="mt-6 pt-4 border-t border-slate-850/60 flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-bold text-white block">{t.author}</span>
+                    <span className="text-[10px] text-slate-500 block mt-0.5">{t.role}</span>
+                  </div>
+                  <span className="font-bold text-blue-400 font-mono uppercase text-[10px] tracking-wider">{t.stats}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HUMANIZED ABOUT US / TEAM SECTION (Step 8) */}
+      <section className="py-28 px-6 border-t border-slate-900 bg-slate-900/10">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20 uppercase tracking-wider">
+              <Shield size={12} />
+              <span>Our Story</span>
+            </div>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
+              Built By Plumbing Contractors.
+            </h2>
+            <p className="text-slate-350 text-sm leading-relaxed">
+              We spent years running residential plumbing fleets. We know the pain of paying bookkeepers to trace missing credit card balances, and the frustration of running job listings for weeks only to get unqualified applicants. 
+            </p>
+            <p className="text-slate-355 text-sm leading-relaxed">
+              We built Plumbify to run the back-office dispatch tasks automatically, so plumbing business operators can focus on scale and truck efficiency.
+            </p>
+          </div>
+
+          <div className="lg:col-span-5 grid grid-cols-2 gap-4">
+            <div className="p-6 bg-slate-900 border border-slate-850 rounded-2xl space-y-2">
+              <MapPin className="text-blue-400" size={24} />
+              <span className="font-bold text-white text-sm block">Headquarters</span>
+              <span className="text-xs text-slate-500">Austin, Texas, USA</span>
+            </div>
+            <div className="p-6 bg-slate-900 border border-slate-850 rounded-2xl space-y-2">
+              <Clock className="text-emerald-400" size={24} />
+              <span className="font-bold text-white text-sm block">Free Integration</span>
+              <span className="text-xs text-slate-500">24h Sandbox Onboarding</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ SECTION */}
+      <section className="py-28 px-6 border-t border-slate-900 bg-slate-950">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-black mb-4">Frequently Asked Questions</h2>
@@ -422,61 +689,47 @@ export default function Home() {
 
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <div 
-                key={index} 
-                className="rounded-2xl border border-slate-850 bg-slate-900/50 overflow-hidden transition-all"
-              >
+              <div key={index} className="rounded-2xl border border-slate-850 bg-slate-900/50 overflow-hidden transition-all">
                 <button 
-                  onClick={() => toggleFaq(index)}
+                  onClick={() => setActiveFaq(activeFaq === index ? null : index)}
                   className="w-full px-6 py-5 flex justify-between items-center text-left hover:bg-slate-900 transition-colors"
+                  aria-expanded={activeFaq === index}
                 >
                   <span className="font-bold text-base sm:text-lg pr-4">{faq.q}</span>
-                  <ChevronDown 
-                    size={20} 
-                    className={`text-slate-400 transition-transform flex-shrink-0 ${activeFaq === index ? "rotate-180" : ""}`}
-                  />
+                  <ChevronDown size={20} className={`text-slate-450 transition-transform flex-shrink-0 ${activeFaq === index ? "rotate-180" : ""}`} />
                 </button>
-                <div 
-                  className={`transition-all duration-300 ease-in-out ${activeFaq === index ? "max-h-[300px] border-t border-slate-850/50" : "max-h-0"} overflow-hidden`}
-                >
-                  <div className="p-6 text-slate-400 text-sm leading-relaxed">
+                {activeFaq === index && (
+                  <div className="p-6 text-slate-400 text-sm leading-relaxed border-t border-slate-850/50">
                     {faq.a}
                   </div>
-                </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Call to Action Block */}
-      <section className="py-24 px-6 bg-gradient-to-t from-slate-950 to-slate-900 text-center border-t border-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(37,99,235,0.06),transparent_50%)]" />
-        <div className="max-w-4xl mx-auto relative z-10">
-          <h2 className="text-3xl sm:text-5xl font-black mb-6">Are You Ready to Rescue Your Jobs?</h2>
-          <p className="text-slate-400 text-base sm:text-lg max-w-xl mx-auto mb-8">
-            Connect your systems in 24 hours. Start catching WeChat, email, and Google ad leads. Join the 14-Day Challenge today.
-          </p>
-          <a 
-            href="#challenge-form"
-            className="inline-flex items-center gap-2 px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-xl shadow-blue-500/25"
-          >
-            Start Your Setup Now <ArrowRight size={20} />
-          </a>
-        </div>
-      </section>
+      {/* FOOTER & PRIVACY POLICY COMPLIANCE */}
+      <footer id="privacy-policy" className="py-12 px-6 bg-slate-950 border-t border-slate-900 text-center sm:text-left">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div className="text-xl font-black tracking-tight text-blue-500">PLUMBIFY CRM</div>
+            <div className="flex gap-8 text-xs text-slate-500 font-medium">
+              <span>© 2026 Plumbify Inc.</span>
+              <Link href="#privacy-policy" className="hover:text-slate-300 transition-colors">Privacy Policy</Link>
+              <Link href="#privacy-policy" className="hover:text-slate-300 transition-colors">Terms of Service</Link>
+            </div>
+          </div>
 
-      {/* Footer */}
-      <footer className="py-12 px-6 bg-slate-950 border-t border-slate-900 text-center sm:text-left">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
-          <div className="text-xl font-black tracking-tight text-blue-500">PLUMBIFY CRM</div>
-          <div className="flex gap-8 text-xs text-slate-500 font-medium">
-            <span>© 2026 Plumbify Inc.</span>
-            <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-slate-300 transition-colors">Terms of Service</a>
+          <div className="text-[10px] text-slate-600 text-left border-t border-slate-900 pt-6 space-y-2">
+            <p className="font-bold text-slate-500 uppercase tracking-widest">Privacy Policy & Secure Data Compliance Statement</p>
+            <p className="leading-relaxed">
+              Plumbify is committed to protecting your operational data. All credentials gathered via GHL webhooks and CRM integrations are transmitted via industry-standard SSL encryption. Payment processes using smartphone Tap-to-Pay are routed securely through fully certified PCI-DSS payment gateways. Plumbify aligns with SOC 2 requirements and GDPR data protection acts. By registering your phone and email, you authorize Plumbify dispatch specialists to verify your QuickBooks ledger sandbox access.
+            </p>
           </div>
         </div>
       </footer>
+
     </main>
   );
 }
