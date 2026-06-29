@@ -1,4 +1,4 @@
-import { BookOpen, Shield, Zap, ArrowRight } from "lucide-react";
+import { BookOpen, Shield, Zap, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 const resources = [
@@ -22,6 +22,13 @@ const resources = [
     link: "/resources/demos",
     icon: <Zap className="text-orange-500" />,
     color: "bg-orange-50"
+  },
+  {
+    title: "On-Demand Masterclass",
+    desc: "Free Training: The 3 AI systems that plumbing businesses use to recapture $150k+ in missed phone call revenue.",
+    link: "/resources/webinar",
+    icon: <Sparkles className="text-cyan-500" />,
+    color: "bg-cyan-50"
   }
 ];
 
@@ -44,7 +51,7 @@ export default function ResourcesIndex() {
       {/* Resource Grid */}
       <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {resources.map((r, i) => (
               <Link key={i} href={r.link} className={`p-10 rounded-[40px] ${r.color} border border-slate-100 flex flex-col justify-between transition-all hover:scale-[1.03] hover:shadow-2xl group`}>
                 <div>

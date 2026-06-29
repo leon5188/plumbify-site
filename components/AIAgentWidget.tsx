@@ -154,8 +154,8 @@ export default function AIAgentWidget({ isEmbedPage: isEmbedPageProp }: { isEmbe
   const isEmbedPage = isEmbedPageProp ?? (pathname === "/widget-embed");
 
   // Widget Open/Close
-  const [isOpen, setIsOpen] = useState(false);
-  const [showNotification, setShowNotification] = useState(true);
+  const [isOpen, setIsOpen] = useState(isEmbedPage);
+  const [showNotification, setShowNotification] = useState(!isEmbedPage);
   const [language, setLanguage] = useState<"en" | "zh-TW" | "es" | "fr">("en");
   
   // Chat dialogue state
