@@ -174,14 +174,14 @@ export default function Home() {
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.08]">
-              Stop Losing Jobs To <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                Missed Calls & Chats.
+              The Cost of Silence: <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 text-3xl sm:text-4xl md:text-5xl block mt-2">
+                Unanswered Calls & Chats.
               </span>
             </h1>
             
             <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-xl">
-              Plumbify intercepts missed office calls with instant text-back, routes incoming WeChat chats directly to dispatchers, and uses AI voice agents to vet job applicants. Reclaim billable hours and sync job details straight to QuickBooks.
+              Never miss a lead or waste time on unqualified applicants again. Plumbify powers instant call-backs, WeChat dispatch, and AI vetting, directly translating to more billable hours and QuickBooks sync.
             </p>
 
             {/* PRODUCT UI DEMONSTRATION IN HERO (Step 6/7) */}
@@ -281,7 +281,7 @@ export default function Home() {
                     type="submit" disabled={loading}
                     className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 pulsing-hero-cta"
                   >
-                    {loading ? <Loader2 className="animate-spin" size={18} /> : "Start 14-Day Challenge"}
+                    {loading ? <Loader2 className="animate-spin" size={18} /> : "Commit to 14 Days, See the Change"}
                   </button>
                 </form>
               )}

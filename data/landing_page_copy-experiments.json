@@ -1,0 +1,823 @@
+{
+  "run_id": "autoresearch-gemini-1782762698",
+  "content_type": "landing_page",
+  "elements": {
+    "hero_headline": {
+      "element": "hero_headline",
+      "original": "Stop Losing Jobs To Missed Calls & Chats.",
+      "winner": "The Cost of Silence: Unanswered Calls & Chats Are Directly Hitting Your Bottom Line.",
+      "winner_score": 89.5,
+      "rounds": [
+        {
+          "round": 1,
+          "element": "hero_headline",
+          "variants": [
+            {
+              "variant_id": 1,
+              "text": "Is Your Business Losing Money From Missed Customer Inquiries?",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 2,
+              "text": "Never Lose Another Job Opportunity To An Unanswered Call Or Chat.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 3,
+              "text": "Imagine Capturing Every Single Customer Lead \u2013 No Exceptions.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 4,
+              "text": "The Hidden Cost Of Missed Calls: Are You Losing Out On Business?",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 5,
+              "text": "Don't Let Another Valuable Job Slip Away Unanswered.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 6,
+              "text": "Turn Every Incoming Call & Chat Into A Confirmed Job.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 7,
+              "text": "Secure Every Lead: Stop Missing Out On High-Value Clients.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 8,
+              "text": "Plug The Revenue Leak: Convert Every Customer Interaction Into Profit.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 9,
+              "text": "What If You Could Guarantee Zero Missed Customer Opportunities?",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 10,
+              "text": "Maximize Every Lead. Eliminate Missed Calls & Boost Your Bookings.",
+              "avg_score": 0
+            }
+          ],
+          "top_3_ids": [
+            1,
+            2,
+            3
+          ],
+          "winner_score": 0
+        },
+        {
+          "round": 2,
+          "element": "hero_headline",
+          "variants": [
+            {
+              "variant_id": 1,
+              "text": "Stop Leaving Money on the Table: Capture Every Customer Inquiry.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 2,
+              "text": "Is Your Business Secretly Losing Jobs to Unanswered Calls & Chats?",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 3,
+              "text": "Never Miss Another Potential Job Opportunity. Ever Again.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 4,
+              "text": "Imagine a World Where Every Customer Lead Is Captured, Automatically.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 5,
+              "text": "Unlock Hidden Revenue: Turn Missed Inquiries Into Booked Jobs.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 6,
+              "text": "Don't Let Your Competitors Steal Jobs You Earned \u2013 Answer Every Lead.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 7,
+              "text": "The Cost of a Missed Call: Stop Losing Business Now.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 8,
+              "text": "Guarantee No Customer Inquiry Slips Through the Cracks.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 9,
+              "text": "Transform Your Missed Calls & Chats Into Your Most Reliable Lead Source.",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 10,
+              "text": "Empower Your Business: Secure Every Job That Comes Your Way.",
+              "avg_score": 0
+            }
+          ],
+          "top_3_ids": [
+            1,
+            2,
+            3
+          ],
+          "winner_score": 0
+        },
+        {
+          "round": 3,
+          "element": "hero_headline",
+          "variants": [
+            {
+              "variant_id": 6,
+              "text": "The Cost of Silence: Unanswered Calls & Chats Are Directly Hitting Your Bottom Line.",
+              "expert_scores": {
+                "cmo": 88,
+                "skeptical_founder": 85,
+                "cro": 88,
+                "copywriter": 85,
+                "founder": 92
+              },
+              "dimension_scores": {
+                "first_impression": 90,
+                "clarity": 90,
+                "trust": 90,
+                "urgency": 95,
+                "would_convert": 92
+              },
+              "avg_score": 89.5
+            },
+            {
+              "variant_id": 10,
+              "text": "Every Unanswered Call is a Lost Job. Let's Change That.",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 85,
+                "cro": 88,
+                "copywriter": 82,
+                "founder": 90
+              },
+              "dimension_scores": {
+                "first_impression": 85,
+                "clarity": 92,
+                "trust": 90,
+                "urgency": 88,
+                "would_convert": 90
+              },
+              "avg_score": 87.0
+            },
+            {
+              "variant_id": 1,
+              "text": "Stop the Bleeding: Reclaim Every Job Opportunity Lost to Missed Calls & Chats.",
+              "expert_scores": {
+                "cmo": 85,
+                "skeptical_founder": 75,
+                "cro": 88,
+                "copywriter": 82,
+                "founder": 90
+              },
+              "dimension_scores": {
+                "first_impression": 85,
+                "clarity": 90,
+                "trust": 78,
+                "urgency": 92,
+                "would_convert": 87
+              },
+              "avg_score": 85.2
+            },
+            {
+              "variant_id": 4,
+              "text": "Don't Let Leads Slip Away. Secure Every Job Opportunity Before Your Competitors Do.",
+              "expert_scores": {
+                "cmo": 82,
+                "skeptical_founder": 75,
+                "cro": 85,
+                "copywriter": 80,
+                "founder": 85
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 88,
+                "trust": 80,
+                "urgency": 88,
+                "would_convert": 87
+              },
+              "avg_score": 83.0
+            },
+            {
+              "variant_id": 3,
+              "text": "Never Miss Another Potential Job: Capture Every Call, Every Chat, Every Lead.",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 78,
+                "cro": 85,
+                "copywriter": 78,
+                "founder": 82
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 90,
+                "trust": 85,
+                "urgency": 70,
+                "would_convert": 85
+              },
+              "avg_score": 81.3
+            },
+            {
+              "variant_id": 5,
+              "text": "Transform Missed Connections into Closed Deals. Stop Losing Jobs to Unanswered Inquiries.",
+              "expert_scores": {
+                "cmo": 78,
+                "skeptical_founder": 75,
+                "cro": 82,
+                "copywriter": 78,
+                "founder": 80
+              },
+              "dimension_scores": {
+                "first_impression": 75,
+                "clarity": 80,
+                "trust": 80,
+                "urgency": 75,
+                "would_convert": 80
+              },
+              "avg_score": 78.3
+            },
+            {
+              "variant_id": 2,
+              "text": "Is Your Business Secretly Leaking Jobs? Unanswered Calls & Chats Are the Culprit.",
+              "expert_scores": {
+                "cmo": 78,
+                "skeptical_founder": 70,
+                "cro": 80,
+                "copywriter": 75,
+                "founder": 72
+              },
+              "dimension_scores": {
+                "first_impression": 75,
+                "clarity": 80,
+                "trust": 70,
+                "urgency": 78,
+                "would_convert": 75
+              },
+              "avg_score": 75.3
+            },
+            {
+              "variant_id": 8,
+              "text": "Stop Guessing. Know You're Capturing Every Job Opportunity, Not Just Some.",
+              "expert_scores": {
+                "cmo": 70,
+                "skeptical_founder": 80,
+                "cro": 75,
+                "copywriter": 70,
+                "founder": 78
+              },
+              "dimension_scores": {
+                "first_impression": 68,
+                "clarity": 75,
+                "trust": 82,
+                "urgency": 65,
+                "would_convert": 70
+              },
+              "avg_score": 73.3
+            },
+            {
+              "variant_id": 7,
+              "text": "Tired of Losing Valuable Jobs? We Ensure You Never Miss Another Customer Again.",
+              "expert_scores": {
+                "cmo": 75,
+                "skeptical_founder": 70,
+                "cro": 78,
+                "copywriter": 72,
+                "founder": 75
+              },
+              "dimension_scores": {
+                "first_impression": 70,
+                "clarity": 78,
+                "trust": 65,
+                "urgency": 70,
+                "would_convert": 72
+              },
+              "avg_score": 72.5
+            },
+            {
+              "variant_id": 9,
+              "text": "Unlock Your Business's Full Potential: End Lost Jobs From Missed Calls & Chats.",
+              "expert_scores": {
+                "cmo": 75,
+                "skeptical_founder": 70,
+                "cro": 78,
+                "copywriter": 75,
+                "founder": 72
+              },
+              "dimension_scores": {
+                "first_impression": 70,
+                "clarity": 75,
+                "trust": 70,
+                "urgency": 68,
+                "would_convert": 72
+              },
+              "avg_score": 72.5
+            }
+          ],
+          "top_3_ids": [
+            6,
+            10,
+            1
+          ],
+          "winner_score": 89.5
+        }
+      ]
+    },
+    "subheadline": {
+      "element": "subheadline",
+      "original": "Plumbify intercepts missed office calls with instant text-back, routes incoming WeChat chats directly to dispatchers, and uses AI voice agents to vet job applicants. Reclaim billable hours and sync job details straight to QuickBooks.",
+      "winner": "Never miss a lead or waste time on unqualified applicants again. Plumbify powers instant call-backs, WeChat dispatch, and AI vetting, directly translating to more billable hours and QuickBooks sync.",
+      "winner_score": 88.0,
+      "rounds": [
+        {
+          "round": 1,
+          "element": "subheadline",
+          "variants": [
+            {
+              "variant_id": 8,
+              "text": "Never miss a lead or waste time on unqualified applicants again. Plumbify powers instant call-backs, WeChat dispatch, and AI vetting, directly translating to more billable hours and QuickBooks sync.",
+              "expert_scores": {
+                "cmo": 85,
+                "skeptical_founder": 80,
+                "cro": 90,
+                "copywriter": 90,
+                "founder": 90
+              },
+              "dimension_scores": {
+                "first_impression": 90,
+                "clarity": 90,
+                "trust": 85,
+                "urgency": 90,
+                "would_convert": 90
+              },
+              "avg_score": 88.0
+            },
+            {
+              "variant_id": 5,
+              "text": "Eliminate the stress of missed calls and time-consuming applicant vetting. Plumbify handles instant text-backs, WeChat routing, and AI screening, freeing your team to focus and syncing financials to QuickBooks.",
+              "expert_scores": {
+                "cmo": 85,
+                "skeptical_founder": 75,
+                "cro": 85,
+                "copywriter": 85,
+                "founder": 80
+              },
+              "dimension_scores": {
+                "first_impression": 85,
+                "clarity": 85,
+                "trust": 80,
+                "urgency": 80,
+                "would_convert": 85
+              },
+              "avg_score": 82.5
+            },
+            {
+              "variant_id": 2,
+              "text": "Stop losing leads and drowning in applicant resumes. Plumbify automates call-backs, WeChat routing, and AI vetting, empowering you to reclaim billable hours and sync effortlessly with QuickBooks.",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 70,
+                "cro": 85,
+                "copywriter": 80,
+                "founder": 80
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 85,
+                "trust": 75,
+                "urgency": 75,
+                "would_convert": 80
+              },
+              "avg_score": 79.0
+            },
+            {
+              "variant_id": 7,
+              "text": "How much time do you lose to missed calls and manual hiring? Plumbify's smart automation for call-backs, WeChat, and AI applicant vetting helps you reclaim hours and sync job details to QuickBooks.",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 75,
+                "cro": 80,
+                "copywriter": 75,
+                "founder": 80
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 85,
+                "trust": 80,
+                "urgency": 75,
+                "would_convert": 80
+              },
+              "avg_score": 79.0
+            },
+            {
+              "variant_id": 10,
+              "text": "Transform missed opportunities into profitable outcomes. Plumbify deploys AI for call-backs, WeChat routing, and applicant vetting, ensuring maximum billable hours and seamless QuickBooks synchronization.",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 70,
+                "cro": 85,
+                "copywriter": 80,
+                "founder": 85
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 85,
+                "trust": 75,
+                "urgency": 70,
+                "would_convert": 80
+              },
+              "avg_score": 78.5
+            },
+            {
+              "variant_id": 3,
+              "text": "Capture every opportunity and streamline hiring. Plumbify ensures missed calls get text-backs, WeChat chats reach dispatch, and AI screens applicants, all while boosting billable hours and syncing with QuickBooks.",
+              "expert_scores": {
+                "cmo": 75,
+                "skeptical_founder": 70,
+                "cro": 80,
+                "copywriter": 70,
+                "founder": 75
+              },
+              "dimension_scores": {
+                "first_impression": 75,
+                "clarity": 80,
+                "trust": 70,
+                "urgency": 65,
+                "would_convert": 75
+              },
+              "avg_score": 73.5
+            },
+            {
+              "variant_id": 9,
+              "text": "Optimize lead capture and hiring with Plumbify. Instant text-back for missed calls, direct WeChat routing, and AI applicant screening mean more billable hours and simpler QuickBooks integration.",
+              "expert_scores": {
+                "cmo": 70,
+                "skeptical_founder": 70,
+                "cro": 75,
+                "copywriter": 65,
+                "founder": 75
+              },
+              "dimension_scores": {
+                "first_impression": 70,
+                "clarity": 80,
+                "trust": 75,
+                "urgency": 60,
+                "would_convert": 70
+              },
+              "avg_score": 71.0
+            },
+            {
+              "variant_id": 6,
+              "text": "Imagine effortlessly turning missed calls into leads, instantly connecting WeChat users, and having AI vet job applicants. Plumbify delivers this, reclaiming your time and syncing directly to QuickBooks.",
+              "expert_scores": {
+                "cmo": 75,
+                "skeptical_founder": 65,
+                "cro": 70,
+                "copywriter": 80,
+                "founder": 70
+              },
+              "dimension_scores": {
+                "first_impression": 75,
+                "clarity": 75,
+                "trust": 65,
+                "urgency": 60,
+                "would_convert": 70
+              },
+              "avg_score": 70.5
+            },
+            {
+              "variant_id": 4,
+              "text": "Revolutionize your operations: Plumbify's AI handles missed calls and applicant screening, while routing WeChat directly. Boost efficiency, reclaim hours, and integrate seamlessly with QuickBooks.",
+              "expert_scores": {
+                "cmo": 70,
+                "skeptical_founder": 60,
+                "cro": 75,
+                "copywriter": 70,
+                "founder": 75
+              },
+              "dimension_scores": {
+                "first_impression": 70,
+                "clarity": 75,
+                "trust": 65,
+                "urgency": 60,
+                "would_convert": 70
+              },
+              "avg_score": 69.0
+            },
+            {
+              "variant_id": 1,
+              "text": "Plumbify intercepts missed calls with instant text-back, routes WeChat chats directly to dispatchers, and uses AI to vet applicants. Reclaim billable hours and sync job details straight to QuickBooks.",
+              "expert_scores": {
+                "cmo": 65,
+                "skeptical_founder": 75,
+                "cro": 70,
+                "copywriter": 60,
+                "founder": 70
+              },
+              "dimension_scores": {
+                "first_impression": 65,
+                "clarity": 80,
+                "trust": 75,
+                "urgency": 50,
+                "would_convert": 65
+              },
+              "avg_score": 67.5
+            }
+          ],
+          "top_3_ids": [
+            8,
+            5,
+            2
+          ],
+          "winner_score": 88.0
+        }
+      ]
+    },
+    "cta": {
+      "element": "cta",
+      "original": "Start 14-Day Challenge",
+      "winner": "Commit to 14 Days, See the Change",
+      "winner_score": 80.0,
+      "rounds": [
+        {
+          "round": 1,
+          "element": "cta",
+          "variants": [
+            {
+              "variant_id": 1,
+              "text": "Start Your 14-Day Challenge",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 2,
+              "text": "Begin Your 14-Day Transformation",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 3,
+              "text": "Ready for Your 14-Day Journey?",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 4,
+              "text": "Join the 14-Day Challenge Now",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 5,
+              "text": "Unlock Your Potential in 14 Days",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 6,
+              "text": "Begin Your 2-Week Challenge",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 7,
+              "text": "Embrace Your 14-Day Growth",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 8,
+              "text": "Kickstart Your Progress: 14 Days",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 9,
+              "text": "Your 14-Day Discovery Starts Here",
+              "avg_score": 0
+            },
+            {
+              "variant_id": 10,
+              "text": "Get Started with Your 14-Day Plan",
+              "avg_score": 0
+            }
+          ],
+          "top_3_ids": [
+            1,
+            2,
+            3
+          ],
+          "winner_score": 0
+        },
+        {
+          "round": 2,
+          "element": "cta",
+          "variants": [
+            {
+              "variant_id": 10,
+              "text": "Commit to 14 Days, See the Change",
+              "expert_scores": {
+                "cmo": 78,
+                "skeptical_founder": 75,
+                "cro": 80,
+                "copywriter": 82,
+                "founder": 85
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 85,
+                "trust": 78,
+                "urgency": 75,
+                "would_convert": 82
+              },
+              "avg_score": 80.0
+            },
+            {
+              "variant_id": 6,
+              "text": "Experience Your 14-Day Breakthrough",
+              "expert_scores": {
+                "cmo": 85,
+                "skeptical_founder": 60,
+                "cro": 75,
+                "copywriter": 88,
+                "founder": 85
+              },
+              "dimension_scores": {
+                "first_impression": 85,
+                "clarity": 78,
+                "trust": 62,
+                "urgency": 68,
+                "would_convert": 80
+              },
+              "avg_score": 76.6
+            },
+            {
+              "variant_id": 1,
+              "text": "Start Your 14-Day Challenge Now",
+              "expert_scores": {
+                "cmo": 75,
+                "skeptical_founder": 70,
+                "cro": 80,
+                "copywriter": 70,
+                "founder": 75
+              },
+              "dimension_scores": {
+                "first_impression": 75,
+                "clarity": 85,
+                "trust": 75,
+                "urgency": 80,
+                "would_convert": 80
+              },
+              "avg_score": 76.5
+            },
+            {
+              "variant_id": 8,
+              "text": "Make Your Next 14 Days Count",
+              "expert_scores": {
+                "cmo": 75,
+                "skeptical_founder": 80,
+                "cro": 65,
+                "copywriter": 78,
+                "founder": 80
+              },
+              "dimension_scores": {
+                "first_impression": 78,
+                "clarity": 70,
+                "trust": 85,
+                "urgency": 70,
+                "would_convert": 75
+              },
+              "avg_score": 75.6
+            },
+            {
+              "variant_id": 2,
+              "text": "Begin Your 14-Day Transformation",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 65,
+                "cro": 75,
+                "copywriter": 85,
+                "founder": 80
+              },
+              "dimension_scores": {
+                "first_impression": 80,
+                "clarity": 75,
+                "trust": 68,
+                "urgency": 65,
+                "would_convert": 78
+              },
+              "avg_score": 75.1
+            },
+            {
+              "variant_id": 5,
+              "text": "Join the 14-Day Challenge",
+              "expert_scores": {
+                "cmo": 70,
+                "skeptical_founder": 72,
+                "cro": 78,
+                "copywriter": 68,
+                "founder": 70
+              },
+              "dimension_scores": {
+                "first_impression": 70,
+                "clarity": 80,
+                "trust": 78,
+                "urgency": 65,
+                "would_convert": 75
+              },
+              "avg_score": 72.6
+            },
+            {
+              "variant_id": 4,
+              "text": "Unlock Your 14-Day Potential",
+              "expert_scores": {
+                "cmo": 80,
+                "skeptical_founder": 68,
+                "cro": 70,
+                "copywriter": 80,
+                "founder": 75
+              },
+              "dimension_scores": {
+                "first_impression": 78,
+                "clarity": 70,
+                "trust": 70,
+                "urgency": 60,
+                "would_convert": 70
+              },
+              "avg_score": 72.1
+            },
+            {
+              "variant_id": 9,
+              "text": "Discover Your 14-Day Difference",
+              "expert_scores": {
+                "cmo": 78,
+                "skeptical_founder": 65,
+                "cro": 70,
+                "copywriter": 80,
+                "founder": 70
+              },
+              "dimension_scores": {
+                "first_impression": 75,
+                "clarity": 70,
+                "trust": 68,
+                "urgency": 60,
+                "would_convert": 70
+              },
+              "avg_score": 70.6
+            },
+            {
+              "variant_id": 7,
+              "text": "Your 14 Days to a New Beginning",
+              "expert_scores": {
+                "cmo": 70,
+                "skeptical_founder": 65,
+                "cro": 55,
+                "copywriter": 75,
+                "founder": 50
+              },
+              "dimension_scores": {
+                "first_impression": 65,
+                "clarity": 60,
+                "trust": 70,
+                "urgency": 45,
+                "would_convert": 55
+              },
+              "avg_score": 61.0
+            },
+            {
+              "variant_id": 3,
+              "text": "Ready for Your 14-Day Journey?",
+              "expert_scores": {
+                "cmo": 60,
+                "skeptical_founder": 65,
+                "cro": 50,
+                "copywriter": 65,
+                "founder": 45
+              },
+              "dimension_scores": {
+                "first_impression": 55,
+                "clarity": 60,
+                "trust": 70,
+                "urgency": 40,
+                "would_convert": 50
+              },
+              "avg_score": 56.0
+            }
+          ],
+          "top_3_ids": [
+            10,
+            6,
+            1
+          ],
+          "winner_score": 80.0
+        }
+      ]
+    }
+  },
+  "final_score": 85.8
+}
